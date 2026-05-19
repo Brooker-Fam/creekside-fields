@@ -88,10 +88,6 @@ function SharesSummary({ animals, shares }: { animals: Animal[]; shares: ShareOp
         <ShareTile name="Half" count={halves.length} freezer="upright freezer" price={priceFor(halves)} />
         <ShareTile name="Quarter" count={quarters.length} freezer="freezer drawer" price={priceFor(quarters)} />
       </div>
-      <p className="mt-6 text-sm text-mud-600">
-        Wholes, halves, and quarters overlap — a whole pig sold means its halves and quarters come off
-        the list. Pick whichever cut fits your freezer and we'll match you to a pig.
-      </p>
       {firstAvailableAnimalId && (
         <div className="mt-6">
           <Link to={`/pig/${firstAvailableAnimalId}`} className="btn-primary">
