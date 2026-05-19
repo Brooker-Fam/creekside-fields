@@ -4,6 +4,7 @@ import { insforge, formatCents, priceRange } from '../../lib/insforge'
 import type { Animal, Processor, Reservation, ShareOption } from '../../lib/types'
 import BillOfSale from '../../components/BillOfSale'
 import Invoice, { computeInvoice, sharePctFromKind } from '../../components/Invoice'
+import { renderBillOfSaleEmail, renderInvoiceEmail } from '../../lib/emailTemplates'
 
 type Tab = 'reservations' | 'animals' | 'shares' | 'processors'
 
@@ -193,6 +194,9 @@ function ReservationRow({
 }) {
   const [expanded, setExpanded] = useState(false)
   const [view, setView] = useState<'closed' | 'bos' | 'invoice'>('closed')
+  const [sendingBos, setSendingBos] = useState(false)
+  const [sendingInvoice, setSendingInvoice] = useState(false)
+  const [sendStatus, setSendStatus] = useState<{ kind: 'ok' | 'err'; msg: string } | null>(null)
 
   async function update(patch: Partial<Reservation>) {
     await insforge.database.from('reservations').update(patch).eq('id', r.id)
@@ -202,55 +206,87 @@ function ReservationRow({
   const isNew = !r.acknowledged_at
   const sharePct = r.share_percentage ?? (share ? sharePctFromKind(share.kind) : 0)
 
-  function emailBillOfSale() {
-    const subject = `Your bill of sale — Creekside Fields — ${share?.label ?? share?.kind}`
-    const body = [
-      `Hi ${r.customer_name.split(' ')[0]},`,
-      '',
-      `Thanks again for reserving the ${sharePct}% share of ${animal?.breed || 'one of our hogs'}. Your bill of sale is at the link below — sign and reply, and I'll send deposit instructions.`,
-      '',
-      `https://creeksidefields.com/reserve/${r.share_option_id}/confirmed`,
-      '',
-      'Deposit options: check (made out to Creekside Fields), Venmo, or Zelle. Reply if you need details.',
-      '',
-      'Thanks,',
-      'Matt — Creekside Fields',
-      '49 Clarks Mills Rd, Greenwich, NY 12834',
-    ].join('\n')
-    window.location.href = `mailto:${r.customer_email}?cc=${FARM_EMAIL}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-  }
-
-  function emailInvoice() {
-    if (!animal || !share) return
-    const calc = computeInvoice({ reservation: r, share, animal, processor })
-    if (!calc.canCompute) {
-      alert('Set hanging weight and rate on the animal first (Animals tab).')
+  async function emailBillOfSale() {
+    if (!share || !animal) {
+      setSendStatus({ kind: 'err', msg: 'Share or animal missing — cannot render bill of sale.' })
       return
     }
+    setSendingBos(true)
+    setSendStatus(null)
+    const pickupPref = (r.cut_preferences as Record<string, unknown>)?.pickup_preference as string | null ?? null
+    const html = renderBillOfSaleEmail({
+      customer: {
+        name: r.customer_name,
+        email: r.customer_email,
+        phone: r.customer_phone,
+        address: r.customer_address,
+      },
+      share,
+      animal,
+      pickup_preference: pickupPref,
+      share_percentage: sharePct,
+      date: r.created_at,
+      signature_url: r.signature_url,
+      signed_at: r.bill_of_sale_signed_at,
+    })
+    const subject = `Your bill of sale — Creekside Fields — ${share.label ?? share.kind}`
+    const { error } = await insforge.emails.send({
+      to: r.customer_email,
+      cc: FARM_EMAIL,
+      replyTo: FARM_EMAIL,
+      subject,
+      html,
+      from: 'Creekside Fields',
+    })
+    setSendingBos(false)
+    if (error) {
+      setSendStatus({ kind: 'err', msg: `Send failed: ${error.message}` })
+      return
+    }
+    setSendStatus({ kind: 'ok', msg: `Bill of sale sent to ${r.customer_email}.` })
+  }
+
+  async function emailInvoice() {
+    if (!animal || !share) {
+      setSendStatus({ kind: 'err', msg: 'Share or animal missing.' })
+      return
+    }
+    const calc = computeInvoice({ reservation: r, share, animal, processor })
+    if (!calc.canCompute || calc.shareHwLbs == null || calc.finalTotalCents == null || calc.balanceCents == null || calc.rate == null) {
+      setSendStatus({ kind: 'err', msg: 'Set hanging weight and rate on the animal first (Animals tab).' })
+      return
+    }
+    setSendingInvoice(true)
+    setSendStatus(null)
+    const html = renderInvoiceEmail({
+      customer: { name: r.customer_name, email: r.customer_email },
+      animal: { breed: animal.breed },
+      share: { label: share.label, kind: share.kind },
+      hangingWeight: calc.hangingWeight ?? 0,
+      sharePct: calc.sharePct,
+      shareHwLbs: calc.shareHwLbs,
+      rateCents: calc.rate,
+      finalTotalCents: calc.finalTotalCents,
+      depositPaidCents: r.total_paid_cents || 0,
+      balanceCents: calc.balanceCents,
+      processor: processor ? { name: processor.name, address: processor.address } : null,
+    })
     const subject = `Final invoice — Creekside Fields — ${share.label ?? share.kind}`
-    const dollar = (c: number | null) => (c == null ? '—' : `$${(c / 100).toFixed(0)}`)
-    const body = [
-      `Hi ${r.customer_name.split(' ')[0]},`,
-      '',
-      `Your hog is processed and ready. Final invoice:`,
-      '',
-      `  Hanging weight: ${calc.hangingWeight} lb`,
-      `  Your share: ${calc.sharePct}% = ${calc.shareHwLbs?.toFixed(1)} lb HW`,
-      `  Rate: $${((calc.rate ?? 0) / 100).toFixed(2)}/lb HW`,
-      `  Subtotal: ${dollar(calc.finalTotalCents)}`,
-      `  Less deposit paid: − ${dollar(r.total_paid_cents || 0)}`,
-      `  Balance due: ${dollar(calc.balanceCents)}`,
-      '',
-      processor
-        ? `Pickup at ${processor.name}${processor.address ? ` (${processor.address})` : ''}. Their cut & wrap bill is separate, paid directly to them.`
-        : 'Pickup details to follow.',
-      '',
-      'Payment: check, Venmo, or Zelle — reply for details.',
-      '',
-      'Thanks,',
-      'Matt — Creekside Fields',
-    ].join('\n')
-    window.location.href = `mailto:${r.customer_email}?cc=${FARM_EMAIL}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    const { error } = await insforge.emails.send({
+      to: r.customer_email,
+      cc: FARM_EMAIL,
+      replyTo: FARM_EMAIL,
+      subject,
+      html,
+      from: 'Creekside Fields',
+    })
+    setSendingInvoice(false)
+    if (error) {
+      setSendStatus({ kind: 'err', msg: `Send failed: ${error.message}` })
+      return
+    }
+    await update({ invoice_sent_at: new Date().toISOString() })
+    setSendStatus({ kind: 'ok', msg: `Invoice sent to ${r.customer_email}.` })
   }
 
   async function markAcknowledged() {
@@ -304,11 +340,11 @@ function ReservationRow({
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2 text-sm">
-        <button onClick={emailBillOfSale} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 font-semibold hover:bg-blush-100">
-          ✉ Email bill of sale
+        <button onClick={emailBillOfSale} disabled={sendingBos} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 font-semibold hover:bg-blush-100 disabled:opacity-60">
+          {sendingBos ? 'Sending…' : '✉ Email bill of sale'}
         </button>
-        <button onClick={emailInvoice} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 font-semibold hover:bg-blush-100">
-          ✉ Email invoice
+        <button onClick={emailInvoice} disabled={sendingInvoice} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 font-semibold hover:bg-blush-100 disabled:opacity-60">
+          {sendingInvoice ? 'Sending…' : '✉ Email invoice'}
         </button>
         <button onClick={() => setView(view === 'bos' ? 'closed' : 'bos')} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 hover:bg-blush-100">
           {view === 'bos' ? 'Hide' : 'View'} bill of sale
@@ -325,6 +361,18 @@ function ReservationRow({
           {expanded ? '▲ less' : '▼ more'}
         </button>
       </div>
+
+      {sendStatus && (
+        <p
+          className={`mt-3 rounded-xl border-2 px-3 py-2 text-sm ${
+            sendStatus.kind === 'ok'
+              ? 'border-sage-700 bg-sage-200 text-sage-700'
+              : 'border-blush-500 bg-blush-100 text-mud-800'
+          }`}
+        >
+          {sendStatus.msg}
+        </p>
+      )}
 
       {expanded && (
         <div className="mt-3 rounded-xl border border-mud-800/20 bg-cream-50 p-3 text-sm">
@@ -358,6 +406,8 @@ function ReservationRow({
                 pickup_preference: (r.cut_preferences as Record<string, unknown>)?.pickup_preference as string | null ?? null,
                 share_percentage: sharePct,
                 date: r.created_at,
+                signature_url: r.signature_url,
+                signed_at: r.bill_of_sale_signed_at,
               }}
             />
           ) : (

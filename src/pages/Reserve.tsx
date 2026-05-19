@@ -80,26 +80,31 @@ export default function Reserve() {
     const reservationNotes = String(fd.get('notes') ?? '').trim() || null
     if (pickupPreference) prefs.pickup_preference = pickupPreference
 
-    const { error } = await insforge.database.from('reservations').insert([
-      {
-        share_option_id: share.id,
-        customer_name,
-        customer_email,
-        customer_phone,
-        customer_address,
-        share_percentage: sharePct,
-        cut_preferences: prefs,
-        notes: reservationNotes,
-      },
-    ])
+    const { data: inserted, error } = await insforge.database
+      .from('reservations')
+      .insert([
+        {
+          share_option_id: share.id,
+          customer_name,
+          customer_email,
+          customer_phone,
+          customer_address,
+          share_percentage: sharePct,
+          cut_preferences: prefs,
+          notes: reservationNotes,
+        },
+      ])
+      .select()
 
     if (error) {
       setError(error.message ?? 'Something went sideways. Try again or email us.')
       setSubmitting(false)
       return
     }
+    const reservationId = Array.isArray(inserted) ? inserted[0]?.id : (inserted as { id?: string } | null)?.id
     navigate(`/reserve/${share.id}/confirmed`, {
       state: {
+        reservation_id: reservationId,
         customer: { name: customer_name, email: customer_email, phone: customer_phone, address: customer_address },
         share,
         animal,

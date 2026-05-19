@@ -8,6 +8,8 @@ export interface BillOfSaleData {
   pickup_preference: string | null
   share_percentage: number | null
   date: string
+  signature_url?: string | null
+  signed_at?: string | null
 }
 
 const PICKUP_LABELS: Record<string, string> = {
@@ -23,7 +25,7 @@ const FARM = {
 }
 
 export default function BillOfSale({ data }: { data: BillOfSaleData }) {
-  const { customer, share, animal, pickup_preference, share_percentage, date } = data
+  const { customer, share, animal, pickup_preference, share_percentage, date, signature_url, signed_at } = data
   const issued = new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -152,7 +154,12 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
       </section>
 
       <section className="mt-8 grid gap-6 sm:grid-cols-2">
-        <SignatureBlock label="Buyer signature" name={customer.name} />
+        <SignatureBlock
+          label="Buyer signature"
+          name={customer.name}
+          signatureUrl={signature_url}
+          signedAt={signed_at}
+        />
         <SignatureBlock label="Seller signature" name={FARM.name} />
       </section>
 
@@ -172,15 +179,36 @@ function Block({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
-function SignatureBlock({ label, name }: { label: string; name: string }) {
+function SignatureBlock({
+  label,
+  name,
+  signatureUrl,
+  signedAt,
+}: {
+  label: string
+  name: string
+  signatureUrl?: string | null
+  signedAt?: string | null
+}) {
+  const dateStr = signedAt
+    ? new Date(signedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : null
   return (
     <div>
       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-mud-600">{label}</p>
-      <div className="h-12 border-b-2 border-mud-800" />
+      <div className="flex h-12 items-end border-b-2 border-mud-800">
+        {signatureUrl && (
+          <img src={signatureUrl} alt="Signature" className="max-h-12 max-w-full object-contain" />
+        )}
+      </div>
       <p className="mt-1 text-sm">{name}</p>
       <div className="mt-2 flex items-center gap-2 text-xs text-mud-600">
         <span>Date:</span>
-        <div className="h-4 flex-1 border-b border-mud-800" />
+        {dateStr ? (
+          <span className="flex-1">{dateStr}</span>
+        ) : (
+          <div className="h-4 flex-1 border-b border-mud-800" />
+        )}
       </div>
     </div>
   )

@@ -1,9 +1,26 @@
+import { useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import BillOfSale, { type BillOfSaleData } from '../components/BillOfSale'
+import SignaturePad, { type SignaturePadHandle } from '../components/SignaturePad'
+import { insforge } from '../lib/insforge'
+import { renderBillOfSaleEmail } from '../lib/emailTemplates'
+
+const FARM_EMAIL = 'brookerhousehold@gmail.com'
+
+type LocationState = (BillOfSaleData & { reservation_id?: string }) | null
 
 export default function ReserveConfirm() {
   const location = useLocation()
-  const data = location.state as BillOfSaleData | null
+  const state = location.state as LocationState
+  const [data, setData] = useState<BillOfSaleData | null>(state)
+  const reservationId = state?.reservation_id
+  const padRef = useRef<SignaturePadHandle>(null)
+  const [signing, setSigning] = useState(false)
+  const [emailing, setEmailing] = useState(false)
+  const [signed, setSigned] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [hasInk, setHasInk] = useState(false)
 
   if (!data) {
     return (
@@ -15,7 +32,7 @@ export default function ReserveConfirm() {
         </p>
         <p className="mt-2 text-mud-600">
           Got a question?{' '}
-          <a className="font-semibold text-blush-500 underline" href="mailto:brookerhousehold@gmail.com">
+          <a className="font-semibold text-blush-500 underline" href={`mailto:${FARM_EMAIL}`}>
             Email us →
           </a>
         </p>
@@ -26,18 +43,79 @@ export default function ReserveConfirm() {
     )
   }
 
-  function emailBillOfSale() {
-    if (!data) return
-    const subject = `Bill of Sale — Creekside Fields — ${data.customer.name}`
-    const body = `Hi ${data.customer.name},
+  async function signAndSend() {
+    if (!data || !reservationId) {
+      setError("Reservation reference missing — we can't save the signature. Try reserving again.")
+      return
+    }
+    const pad = padRef.current
+    if (!pad || pad.isEmpty()) {
+      setError('Please sign in the box first.')
+      return
+    }
+    setError(null)
+    setSigning(true)
 
-Thanks for reserving a share with us. Here's your bill of sale to look over.
+    const blob = await pad.toBlob()
+    if (!blob) {
+      setError("Couldn't read the signature. Try again.")
+      setSigning(false)
+      return
+    }
+    const file = new File([blob], `signature-${reservationId}.png`, { type: 'image/png' })
+    const path = `reservations/${reservationId}/${Date.now()}.png`
+    const { data: uploaded, error: uploadError } = await insforge.storage
+      .from('signatures')
+      .upload(path, file)
 
-Once you've signed it, please email it back to brookerhousehold@gmail.com (or print, sign, and mail to 49 Clarks Mills Rd, Greenwich, NY 12834). We'll send wiring/check details for the deposit separately.
+    if (uploadError || !uploaded) {
+      setError(uploadError?.message ?? 'Could not upload signature.')
+      setSigning(false)
+      return
+    }
 
-— Creekside Fields
-${window.location.origin}`
-    window.location.href = `mailto:${data.customer.email}?cc=brookerhousehold@gmail.com&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    const signedAt = new Date().toISOString()
+    const { error: updateError } = await insforge.database
+      .from('reservations')
+      .update({
+        signature_url: uploaded.url,
+        signature_key: uploaded.key,
+        bill_of_sale_signed_at: signedAt,
+      })
+      .eq('id', reservationId)
+
+    if (updateError) {
+      setError(updateError.message ?? 'Could not save signature to reservation.')
+      setSigning(false)
+      return
+    }
+
+    const nextData: BillOfSaleData = {
+      ...data,
+      signature_url: uploaded.url,
+      signed_at: signedAt,
+    }
+    setData(nextData)
+    setSigned(true)
+    setSigning(false)
+
+    setEmailing(true)
+    const html = renderBillOfSaleEmail(nextData)
+    const subject = `Bill of sale — Creekside Fields — ${nextData.customer.name}`
+    const { error: sendError } = await insforge.emails.send({
+      to: nextData.customer.email,
+      cc: FARM_EMAIL,
+      replyTo: FARM_EMAIL,
+      subject,
+      html,
+      from: 'Creekside Fields',
+    })
+    setEmailing(false)
+    if (sendError) {
+      setError(`Signature saved, but email failed: ${sendError.message}`)
+      return
+    }
+    setEmailSent(true)
   }
 
   return (
@@ -46,28 +124,66 @@ ${window.location.origin}`
         <p className="hand text-4xl text-blush-500">High five.</p>
         <h1 className="mt-2 font-display text-5xl">Your share is on hold.</h1>
         <p className="mx-auto mt-4 max-w-xl text-mud-600">
-          Below is your bill of sale. Print it, sign it, and either drop it in the mail or scan/email it back —
-          we'll then send deposit instructions. We've saved a copy of the reservation on our end too.
+          Read the bill of sale below, then sign at the bottom — we'll email you a signed copy and
+          send deposit instructions separately.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <button onClick={() => window.print()} className="btn-primary">
-            🖨 Print bill of sale
-          </button>
-          <button onClick={emailBillOfSale} className="btn-secondary">
-            ✉ Email a copy
-          </button>
-          <Link to="/" className="btn-secondary">Back to the farm</Link>
-        </div>
       </div>
 
       <div className="mt-10">
         <BillOfSale data={data} />
       </div>
 
+      <section className="card mt-8 print:hidden">
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-2xl">Sign the bill of sale</h2>
+          {signed && (
+            <span className="rounded-full border-2 border-sage-700 bg-sage-200 px-3 py-1 text-xs font-bold uppercase text-sage-700">
+              Signed
+            </span>
+          )}
+        </div>
+        <p className="mt-1 text-sm text-mud-600">
+          Use your finger on a phone, or your mouse on a laptop. The signed BoS will be emailed to{' '}
+          <strong>{data.customer.email}</strong> with us on CC.
+        </p>
+        <div className="mt-4">
+          <SignaturePad ref={padRef} onChange={setHasInk} />
+        </div>
+
+        {error && (
+          <p className="mt-4 rounded-2xl border-2 border-blush-500 bg-blush-100 p-3 text-sm">{error}</p>
+        )}
+        {emailSent && (
+          <p className="mt-4 rounded-2xl border-2 border-sage-700 bg-sage-200 p-3 text-sm text-sage-700">
+            Signed copy sent to {data.customer.email}. Check your inbox (and spam, just in case).
+          </p>
+        )}
+
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <button
+            onClick={signAndSend}
+            disabled={signing || emailing || !hasInk || emailSent}
+            className="btn-primary disabled:opacity-60"
+          >
+            {signing
+              ? 'Saving signature…'
+              : emailing
+                ? 'Sending email…'
+                : emailSent
+                  ? 'Sent ✓'
+                  : 'Sign & email me a copy'}
+          </button>
+          <button onClick={() => window.print()} className="btn-secondary">
+            🖨 Print
+          </button>
+          <Link to="/" className="btn-secondary">Back to the farm</Link>
+        </div>
+      </section>
+
       <p className="mt-8 text-center text-sm text-mud-600 print:hidden">
         Questions?{' '}
-        <a className="underline" href="mailto:brookerhousehold@gmail.com">
-          brookerhousehold@gmail.com
+        <a className="underline" href={`mailto:${FARM_EMAIL}`}>
+          {FARM_EMAIL}
         </a>
       </p>
     </div>

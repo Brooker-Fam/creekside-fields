@@ -63,6 +63,8 @@ export interface Reservation {
   customer_address: string | null
   share_percentage: number | null
   bill_of_sale_signed_at: string | null
+  signature_url: string | null
+  signature_key: string | null
   acknowledged_at: string | null
   invoice_sent_at: string | null
   final_total_cents: number | null
