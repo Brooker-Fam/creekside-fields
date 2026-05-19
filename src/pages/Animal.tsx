@@ -114,6 +114,8 @@ const SHARE_DESC: Record<string, { title: string; blurb: string; freezer: string
 
 function ShareGroup({ kind, shares }: { kind: string; shares: ShareOption[] }) {
   const info = SHARE_DESC[kind]
+  const available = shares.filter((s) => s.status === 'available')
+  const ref = available[0] ?? shares[0]
   return (
     <div className="card">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -123,29 +125,25 @@ function ShareGroup({ kind, shares }: { kind: string; shares: ShareOption[] }) {
         </div>
         <p className="text-sm text-mud-600">{info.freezer}</p>
       </div>
-      <ul className="mt-4 divide-y divide-mud-800/20">
-        {shares.map((s) => (
-          <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-            <div>
-              <p className="font-semibold">{s.label ?? info.title}</p>
-              <p className="text-sm text-mud-600">
-                Est. {priceRange(s.est_total_low_cents, s.est_total_high_cents)} · deposit {formatCents(s.deposit_cents)}
-              </p>
-            </div>
-            {s.status === 'available' ? (
-              <Link to={`/reserve/${s.id}`} className="btn-primary">
-                Reserve →
-              </Link>
-            ) : (
-              <span className={`rounded-full border-2 border-mud-800 px-4 py-2 text-sm font-semibold uppercase ${
-                s.status === 'sold' ? 'bg-sage-200 text-sage-700' : 'bg-cream-200 text-mud-600'
-              }`}>
-                {s.status === 'sold' ? 'Sold' : 'Held'}
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mud-800/20 pt-4">
+        <div>
+          <p className="text-sm text-mud-600">
+            Est. {priceRange(ref.est_total_low_cents, ref.est_total_high_cents)} · deposit {formatCents(ref.deposit_cents)}
+          </p>
+          <p className="mt-1 text-sm font-semibold">
+            {available.length > 0 ? `${available.length} available` : 'All sold'}
+          </p>
+        </div>
+        {available[0] ? (
+          <Link to={`/reserve/${available[0].id}`} className="btn-primary">
+            Reserve →
+          </Link>
+        ) : (
+          <span className="rounded-full border-2 border-mud-800 bg-sage-200 px-4 py-2 text-sm font-semibold uppercase text-sage-700">
+            Sold out
+          </span>
+        )}
+      </div>
     </div>
   )
 }
