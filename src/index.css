@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: theme('fontFamily.body');
+    color: theme('colors.mud.800');
+    background-color: theme('colors.cream.50');
+  }
+
+  h1, h2, h3 {
+    font-family: theme('fontFamily.display');
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(143, 177, 139, 0.12) 0 2px, transparent 3px),
+      radial-gradient(circle at 78% 32%, rgba(238, 162, 154, 0.18) 0 3px, transparent 4px),
+      radial-gradient(circle at 24% 78%, rgba(154, 123, 95, 0.15) 0 2px, transparent 3px),
+      radial-gradient(circle at 88% 84%, rgba(143, 177, 139, 0.15) 0 3px, transparent 4px);
+    background-size: 320px 320px;
+  }
+}
+
+@layer components {
+  .hand {
+    font-family: theme('fontFamily.hand');
+  }
+
+  @media print {
+    body { background: white; }
+    body * { visibility: hidden; }
+    .bos, .bos * { visibility: visible; }
+    .bos { position: absolute; inset: 0; margin: 0; padding: 0.4in; }
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full bg-blush-400 px-6 py-3 font-semibold text-cream-50 shadow-sketch transition-transform hover:-translate-y-0.5 hover:bg-blush-500 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-full border-2 border-mud-800 bg-cream-100 px-6 py-3 font-semibold text-mud-800 shadow-sketch transition-transform hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .card {
+    @apply rounded-3xl border-2 border-mud-800 bg-cream-100 p-6 shadow-sketch;
+  }
+
+  .label {
+    @apply mb-1 block text-sm font-semibold uppercase tracking-wide text-mud-600;
+  }
+
+  .input {
+    @apply w-full rounded-xl border-2 border-mud-800 bg-cream-50 px-4 py-2.5 text-mud-800 placeholder-mud-400 focus:outline-none focus:ring-2 focus:ring-blush-300;
+  }
+}
