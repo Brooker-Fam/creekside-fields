@@ -74,15 +74,15 @@ export default function ReserveConfirm() {
       return
     }
 
+    // Use the sign_reservation RPC — anon can't UPDATE reservations directly
+    // (admin-only by RLS), so we go through a SECURITY DEFINER function that
+    // only allows writing the three signature columns and only on an unsigned row.
     const signedAt = new Date().toISOString()
-    const { error: updateError } = await insforge.database
-      .from('reservations')
-      .update({
-        signature_url: uploaded.url,
-        signature_key: uploaded.key,
-        bill_of_sale_signed_at: signedAt,
-      })
-      .eq('id', reservationId)
+    const { error: updateError } = await insforge.database.rpc('sign_reservation', {
+      p_reservation_id: reservationId,
+      p_signature_url: uploaded.url,
+      p_signature_key: uploaded.key,
+    })
 
     if (updateError) {
       setError(updateError.message ?? 'Could not save signature to reservation.')

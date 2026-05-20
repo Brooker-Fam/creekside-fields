@@ -80,10 +80,15 @@ export default function Reserve() {
     const reservationNotes = String(fd.get('notes') ?? '').trim() || null
     if (pickupPreference) prefs.pickup_preference = pickupPreference
 
-    const { data: inserted, error } = await insforge.database
+    // Generate the reservation ID client-side so we don't need a public SELECT
+    // policy on `reservations` to read the row back after insert. The customer
+    // still gets a stable id for the signature step + admin lookup.
+    const reservationId = crypto.randomUUID()
+    const { error } = await insforge.database
       .from('reservations')
       .insert([
         {
+          id: reservationId,
           share_option_id: share.id,
           customer_name,
           customer_email,
@@ -94,14 +99,12 @@ export default function Reserve() {
           notes: reservationNotes,
         },
       ])
-      .select()
 
     if (error) {
       setError(error.message ?? 'Something went sideways. Try again or email us.')
       setSubmitting(false)
       return
     }
-    const reservationId = Array.isArray(inserted) ? inserted[0]?.id : (inserted as { id?: string } | null)?.id
     navigate(`/reserve/${share.id}/confirmed`, {
       state: {
         reservation_id: reservationId,
