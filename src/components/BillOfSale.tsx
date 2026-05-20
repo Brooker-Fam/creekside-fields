@@ -132,8 +132,10 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
             animal is delivered to the custom processor.
           </li>
           <li>
-            <strong>Custom-exempt processing.</strong> Buyer will arrange and pay for processing
-            directly with the chosen custom-exempt processor under 9 CFR 303.1(a)(2)(i). Every
+            <strong>Custom-exempt processing.</strong> Seller, acting solely as scheduling agent
+            for Buyer and the other share-owners of the animal, will deliver the animal to a
+            custom-exempt processor under 9 CFR 303.1(a)(2)(i) and remit the processor's fees on
+            Buyer's behalf. Processing fees are passed through at cost in the final invoice. Every
             wrapped package will bear the federally-required "Not For Sale" stamp.
           </li>
           <li>

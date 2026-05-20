@@ -139,7 +139,7 @@ export function renderInvoiceEmail(d: InvoiceEmailData): string {
   const dollar = (c: number) => `$${(c / 100).toFixed(0)}`
   const rate = `$${(d.rateCents / 100).toFixed(2)}`
   const pickup = d.processor
-    ? `Pickup at <strong>${escape(d.processor.name)}</strong>${d.processor.address ? ` (${escape(d.processor.address)})` : ''}. Their cut &amp; wrap bill is separate, paid directly to them.`
+    ? `Pickup at <strong>${escape(d.processor.name)}</strong>${d.processor.address ? ` (${escape(d.processor.address)})` : ''}. Processing fees are already included in the total above — one bill, paid to us.`
     : 'Pickup details to follow.'
 
   const inner = `
