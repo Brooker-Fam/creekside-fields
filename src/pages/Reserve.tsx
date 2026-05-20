@@ -16,6 +16,13 @@ const SHARE_PCT: Record<string, number> = {
   eighth: 12.5,
 }
 
+const SHARE_KIND_TITLE: Record<string, string> = {
+  whole: 'Whole hog',
+  half: 'Half hog',
+  quarter: 'Quarter hog',
+  eighth: 'Eighth hog',
+}
+
 const CUT_OPTIONS = {
   bacon: { label: 'Bacon thickness', choices: ['Thin', 'Standard', 'Thick'] },
   chops: { label: 'Chop thickness', choices: ['3/4"', '1"', '1.5"'] },
@@ -40,7 +47,20 @@ export default function Reserve() {
 
   useEffect(() => {
     if (!shareId) return
-    insforge.database.from('share_options').select('*').eq('id', shareId).single().then(async ({ data }) => {
+    // The param is either a specific share_option UUID (legacy/admin link) or a
+    // kind name (whole|half|quarter|eighth) — the customer-facing flow always
+    // uses kind. If it's a kind, pick any available share of that kind.
+    const isKind = shareId in SHARE_PCT
+    const query = isKind
+      ? insforge.database
+          .from('share_options')
+          .select('*')
+          .eq('kind', shareId)
+          .eq('status', 'available')
+          .limit(1)
+          .maybeSingle()
+      : insforge.database.from('share_options').select('*').eq('id', shareId).maybeSingle()
+    query.then(async ({ data }) => {
       if (!data) {
         setLoading(false)
         return
@@ -121,17 +141,28 @@ export default function Reserve() {
   }
 
   if (loading) return <div className="mx-auto max-w-2xl px-4 py-20">Loading…</div>
-  if (!share || !animal) return <div className="mx-auto max-w-2xl px-4 py-20">Share not found.</div>
+  if (!share || !animal) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+        <p className="hand text-3xl text-blush-500">Oh shoot.</p>
+        <h1 className="mt-2 font-display text-4xl">That share isn't available.</h1>
+        <p className="mt-4 text-mud-600">It may have just been claimed. Head back and pick another size.</p>
+        <Link to="/" className="btn-secondary mt-6 inline-flex">Back to the farm</Link>
+      </div>
+    )
+  }
+
+  const kindTitle = SHARE_KIND_TITLE[share.kind] ?? share.label ?? share.kind
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <Link to={`/pig/${animal.id}`} className="hand text-2xl text-blush-500 hover:underline">
-        ← back to this pig
+      <Link to="/" className="hand text-2xl text-blush-500 hover:underline">
+        ← back to the shares
       </Link>
       <p className="hand mt-4 text-3xl text-blush-500">Reserve your share</p>
-      <h1 className="font-display text-4xl">{share.label ?? share.kind}</h1>
+      <h1 className="font-display text-4xl">{kindTitle}</h1>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
-        <span>{animal.breed} · {animal.headline}</span>
+        <span>{animal.breed} gilt</span>
         <span>·</span>
         <span>Est. {priceRange(share.est_total_low_cents, share.est_total_high_cents)}</span>
         <span>·</span>

@@ -59,7 +59,7 @@ function SharesSkeleton() {
   )
 }
 
-function SharesSummary({ animals, shares }: { animals: Animal[]; shares: ShareOption[] }) {
+function SharesSummary({ shares }: { animals: Animal[]; shares: ShareOption[] }) {
   const available = shares.filter((s) => s.status === 'available')
   const byKind = (k: ShareKind) => available.filter((s) => s.kind === k)
   const wholes = byKind('whole')
@@ -79,44 +79,56 @@ function SharesSummary({ animals, shares }: { animals: Animal[]; shares: ShareOp
     return priceRange(low ?? undefined, high ?? undefined)
   }
 
-  const firstAvailableAnimalId = animals.find((a) => available.some((s) => s.animal_id === a.id))?.id
-
   return (
     <div className="card">
       <div className="grid gap-6 md:grid-cols-3">
-        <ShareTile name="Whole" count={wholes.length} freezer="chest freezer" price={priceFor(wholes)} />
-        <ShareTile name="Half" count={halves.length} freezer="upright freezer" price={priceFor(halves)} />
-        <ShareTile name="Quarter" count={quarters.length} freezer="freezer drawer" price={priceFor(quarters)} />
+        <ShareTile kind="whole" name="Whole" count={wholes.length} freezer="chest freezer" price={priceFor(wholes)} />
+        <ShareTile kind="half" name="Half" count={halves.length} freezer="upright freezer" price={priceFor(halves)} />
+        <ShareTile kind="quarter" name="Quarter" count={quarters.length} freezer="freezer drawer" price={priceFor(quarters)} />
       </div>
-      {firstAvailableAnimalId && (
-        <div className="mt-6">
-          <Link to={`/pig/${firstAvailableAnimalId}`} className="btn-primary">
-            Pick a share <span aria-hidden>→</span>
-          </Link>
-        </div>
-      )}
+      <p className="mt-4 text-xs text-mud-600">
+        Pick a size and we'll match you to one of our two gilts at reserve time. They're sisters from the
+        same litter — same breed, same diet, same pasture.
+      </p>
     </div>
   )
 }
 
 function ShareTile({
+  kind,
   name,
   count,
   freezer,
   price,
 }: {
+  kind: ShareKind
   name: string
   count: number
   freezer: string
   price: string | null
 }) {
-  return (
-    <div className="rounded-2xl border-2 border-mud-800 bg-cream-50 p-5 shadow-sketch">
+  const soldOut = count === 0
+  const inner = (
+    <>
       <p className="text-xs uppercase tracking-wide text-mud-600">{name} shares</p>
       <p className="mt-1 font-display text-4xl">{count}</p>
-      <p className="mt-1 text-sm text-mud-600">available · {freezer}</p>
+      <p className="mt-1 text-sm text-mud-600">{soldOut ? 'sold out' : `available · ${freezer}`}</p>
       {price && <p className="mt-3 text-sm font-semibold">{price}</p>}
-    </div>
+      {!soldOut && (
+        <p className="mt-3 text-sm font-semibold text-blush-500">
+          Reserve <span aria-hidden>→</span>
+        </p>
+      )}
+    </>
+  )
+  const classes = `block rounded-2xl border-2 border-mud-800 p-5 shadow-sketch transition ${
+    soldOut ? 'cursor-not-allowed bg-cream-200 opacity-60' : 'bg-cream-50 hover:-translate-y-0.5 hover:bg-blush-100'
+  }`
+  if (soldOut) return <div className={classes}>{inner}</div>
+  return (
+    <Link to={`/reserve/${kind}`} className={classes}>
+      {inner}
+    </Link>
   )
 }
 
