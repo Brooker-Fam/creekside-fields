@@ -1,7 +1,7 @@
 // Vercel serverless function — sends the signed bill of sale via Resend.
 // Self-contained: no imports from src/ (Vercel's bundler doesn't include it).
 
-export const config = { runtime: 'nodejs' }
+export const config = { runtime: 'edge' }
 
 const FARM_EMAIL = 'brookerhousehold@gmail.com'
 const FARM = {
