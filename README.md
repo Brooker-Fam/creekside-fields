@@ -1,73 +1,89 @@
-# React + TypeScript + Vite
+# Creekside Fields
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The customer-facing site + admin tooling for selling pasture-raised
+Gloucestershire Old Spots pork shares from our farm in Greenwich, NY.
 
-Currently, two official plugins are available:
+Live at **https://creeksidefields.com**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it does
 
-## React Compiler
+Customers reserve a whole / half / quarter share of one of our gilts, sign
+a bill of sale on-screen, get the signed copy by email, and pick up the
+meat from the processor (or the farm) once it's ready. The site sells
+under the federal **custom-exempt** model (9 CFR 303.1(a)(2)(i)) plus NY
+Ag &amp; Markets Law Article 5-A §96-d — the customer buys the live animal
+share before slaughter, every package gets a "Not For Sale" stamp, and
+the farm handles processing scheduling on the buyer's behalf with one
+bundled invoice at the end.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+See **`docs/INFRA.md`** for accounts, env vars, DNS, and everything that
+isn't in the code.
+See **`docs/MODEL.md`** for the legal/business model summary.
 
-## Expanding the ESLint configuration
+## Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React + Vite + TypeScript + Tailwind v3.4, deployed on
+  Vercel (`guava-tri/creekside-fields`).
+- **Backend**: InsForge (Postgres + auth + storage). Project `umvug9f9` at
+  `https://umvug9f9.us-east.insforge.app`.
+- **Email**: Resend, sending from `hello@creeksidefields.com`. Called from
+  a Vercel edge function at `api/send-bill-of-sale.ts`.
+- **Domain**: `creeksidefields.com`, registered at Squarespace, DNS
+  managed by Vercel (we switched nameservers to `ns1/ns2.vercel-dns.com`).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Running locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
+cp .env.example .env   # if .env.example exists; otherwise see below
+pnpm dev               # http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+`.env` needs:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+VITE_INSFORGE_URL=https://umvug9f9.us-east.insforge.app
+VITE_INSFORGE_ANON_KEY=<grab from `npx @insforge/cli secrets get ANON_KEY`>
+```
+
+`RESEND_API_KEY` is only needed server-side; pull it from Vercel with
+`vercel env pull .env.local` if you want to run the function locally
+with `vercel dev`.
+
+## Project layout
+
+```
+src/
+  pages/         Home, Animal, Reserve, ReserveConfirm, About, admin/{Login,Dashboard}
+  components/    Layout, BillOfSale, Invoice, SignaturePad, Spots
+  lib/           insforge client, types, emailTemplates
+api/
+  send-bill-of-sale.ts   Vercel edge function — emails the signed BoS via Resend
+migrations/      SQL migrations applied via `npx @insforge/cli db migrations up`
+scripts/         seed.sql for the initial pigs + processors
+public/farm-media/   Hero photos of the gilts
+```
+
+## Common admin tasks
+
+```bash
+# DB inspection
+npx @insforge/cli db query "SELECT count(*) FROM reservations"
+
+# Apply pending migrations
+npx @insforge/cli db migrations up --all
+
+# Deploy (auto from main push, or manual)
+npx vercel@latest deploy --prod
+
+# Add yourself as admin (after signing up at /admin/login)
+npx @insforge/cli db query "INSERT INTO admin_users (user_id) SELECT id FROM auth.users WHERE email='you@example.com'"
+```
+
+## Repos / accounts
+
+- GitHub: https://github.com/Brooker-Fam/creekside-fields
+- Vercel: https://vercel.com/guava-tri/creekside-fields
+- InsForge: https://insforge.dev/dashboard/project/e8b24022-b154-4add-95e3-055fe892292f
+- Resend: https://resend.com (logged in as `creeksidefields@gmail.com`)
+- Squarespace (domain only): https://account.squarespace.com/domains
