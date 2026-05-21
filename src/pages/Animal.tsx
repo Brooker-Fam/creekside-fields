@@ -73,9 +73,17 @@ export default function AnimalPage() {
       <section className="mx-auto max-w-4xl px-4 pb-20">
         <p className="hand text-3xl text-blush-500">Reserve a share</p>
         <h2 className="font-display text-4xl">Pick your portion</h2>
-        <p className="mt-2 max-w-prose text-mud-600">
-          Final price is hanging weight × per-pound rate (the share's portion), paid in one bill to
-          us. The deposit holds your share and counts toward your total.
+        {animal.rate_per_lb_hw_cents != null && (
+          <div className="mt-4 inline-flex items-baseline gap-2 rounded-full border-2 border-mud-800 bg-cream-100 px-4 py-1.5 shadow-sketch">
+            <span className="text-xs font-semibold uppercase tracking-wide text-mud-600">Rate</span>
+            <span className="font-display text-xl">
+              ${(animal.rate_per_lb_hw_cents / 100).toFixed(2)} / lb hanging weight
+            </span>
+          </div>
+        )}
+        <p className="mt-3 max-w-prose text-mud-600">
+          Final price is hanging weight × per-pound rate × your share, paid in one bill to us. The
+          deposit holds your share and counts toward your total.
         </p>
         <div className="mt-8 space-y-6">
           {(['whole', 'half', 'quarter'] as const).map((kind) =>

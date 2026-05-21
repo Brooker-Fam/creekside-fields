@@ -164,6 +164,14 @@ export default function Reserve() {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
         <span>{animal.breed} gilt</span>
         <span>·</span>
+        {animal.rate_per_lb_hw_cents != null && (
+          <>
+            <span>
+              <strong>${(animal.rate_per_lb_hw_cents / 100).toFixed(2)}/lb</strong> hanging weight
+            </span>
+            <span>·</span>
+          </>
+        )}
         <span>Est. {priceRange(share.est_total_low_cents, share.est_total_high_cents)}</span>
         <span>·</span>
         <span>Deposit {formatCents(share.deposit_cents)}</span>

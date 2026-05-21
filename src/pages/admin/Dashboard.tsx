@@ -480,6 +480,12 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
             value={form.estimated_live_weight_lbs?.toString() ?? ''}
             onChange={(v) => setForm({ ...form, estimated_live_weight_lbs: v ? parseInt(v) : null })}
           />
+          <TextField
+            label="Rate ($/lb HW) — shown on every bill of sale"
+            type="number"
+            value={form.rate_per_lb_hw_cents != null ? (form.rate_per_lb_hw_cents / 100).toString() : ''}
+            onChange={(v) => setForm({ ...form, rate_per_lb_hw_cents: v ? Math.round(parseFloat(v) * 100) : null })}
+          />
           <SelectField
             label="Status"
             value={form.status}
@@ -487,8 +493,8 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
             options={['available','reserved','sold','processed','retired']}
           />
           <div className="sm:col-span-2 mt-2 rounded-2xl border-2 border-mud-800 bg-sage-100 p-3">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-mud-600">After slaughter — drives invoice math</p>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-mud-600">After slaughter — drives final invoice math</p>
+            <div className="grid gap-3 sm:grid-cols-2">
               <TextField
                 label="Slaughter date"
                 type="date"
@@ -500,12 +506,6 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
                 type="number"
                 value={form.hanging_weight_lbs?.toString() ?? ''}
                 onChange={(v) => setForm({ ...form, hanging_weight_lbs: v ? parseFloat(v) : null })}
-              />
-              <TextField
-                label="Rate ($/lb HW)"
-                type="number"
-                value={form.rate_per_lb_hw_cents != null ? (form.rate_per_lb_hw_cents / 100).toString() : ''}
-                onChange={(v) => setForm({ ...form, rate_per_lb_hw_cents: v ? Math.round(parseFloat(v) * 100) : null })}
               />
             </div>
           </div>

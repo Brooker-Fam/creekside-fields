@@ -59,7 +59,7 @@ function SharesSkeleton() {
   )
 }
 
-function SharesSummary({ shares }: { animals: Animal[]; shares: ShareOption[] }) {
+function SharesSummary({ animals, shares }: { animals: Animal[]; shares: ShareOption[] }) {
   const available = shares.filter((s) => s.status === 'available')
   const byKind = (k: ShareKind) => available.filter((s) => s.kind === k)
   const wholes = byKind('whole')
@@ -79,16 +79,31 @@ function SharesSummary({ shares }: { animals: Animal[]; shares: ShareOption[] })
     return priceRange(low ?? undefined, high ?? undefined)
   }
 
+  // Both gilts share the same rate, so any one with a rate set is fine.
+  const rateCents = animals.find((a) => a.rate_per_lb_hw_cents != null)?.rate_per_lb_hw_cents ?? null
+
   return (
     <div className="card">
+      {rateCents != null && (
+        <div className="mb-6 flex flex-wrap items-baseline gap-2">
+          <span className="rounded-full border-2 border-mud-800 bg-cream-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide shadow-sketch">
+            Rate
+          </span>
+          <span className="font-display text-2xl">
+            ${(rateCents / 100).toFixed(2)} / lb hanging weight
+          </span>
+          <span className="text-sm text-mud-600">all-in, no separate processor invoice</span>
+        </div>
+      )}
       <div className="grid gap-6 md:grid-cols-3">
         <ShareTile kind="whole" name="Whole" count={wholes.length} freezer="chest freezer" price={priceFor(wholes)} />
         <ShareTile kind="half" name="Half" count={halves.length} freezer="upright freezer" price={priceFor(halves)} />
         <ShareTile kind="quarter" name="Quarter" count={quarters.length} freezer="freezer drawer" price={priceFor(quarters)} />
       </div>
       <p className="mt-4 text-xs text-mud-600">
-        Pick a size and we'll match you to one of our two gilts at reserve time. They're sisters from the
-        same litter — same breed, same diet, same pasture.
+        Final price = your share % × actual hanging weight × the rate above. Locked at slaughter;
+        the dollar ranges in each tile are estimates. Pick a size and we'll match you to one of our
+        two gilts at reserve time — they're sisters from the same litter.
       </p>
     </div>
   )

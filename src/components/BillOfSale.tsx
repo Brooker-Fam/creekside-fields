@@ -88,20 +88,57 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
       </section>
 
       <section className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Block label="Price">
-          <p className="text-sm">
-            Estimated total: <strong>{priceRange(share.est_total_low_cents, share.est_total_high_cents)}</strong>
+        <Block label="Rate">
+          <p className="font-display text-2xl">
+            {animal.rate_per_lb_hw_cents != null
+              ? `$${(animal.rate_per_lb_hw_cents / 100).toFixed(2)} / lb`
+              : '—'}
           </p>
-          <p className="mt-1 text-sm">
-            Final amount = hanging weight of the share × per-pound rate, locked at the time of
-            slaughter. Estimate is provided for budgeting only.
+          <p className="mt-1 text-xs text-mud-600">
+            Hanging weight, all-in. Includes the farm's cut and our pass-through of the
+            processor's cut &amp; wrap.
           </p>
         </Block>
         <Block label="Deposit (due at signing)">
-          <p className="text-2xl font-display">{formatCents(share.deposit_cents)}</p>
+          <p className="font-display text-2xl">{formatCents(share.deposit_cents)}</p>
           <p className="mt-1 text-xs text-mud-600">
-            Credited toward the final total. Balance due when meat is ready for pickup.
+            Credited toward the final total. Balance due at pickup.
           </p>
+        </Block>
+      </section>
+
+      <section className="mt-4">
+        <Block label="Estimated total">
+          {(() => {
+            const lw = animal.estimated_live_weight_lbs
+            const sharePct = share_percentage ?? 0
+            const estHwLow = lw ? Math.round(lw * 0.66) : null
+            const estHwHigh = lw ? Math.round(lw * 0.74) : null
+            const shareHwLow = estHwLow ? (estHwLow * sharePct) / 100 : null
+            const shareHwHigh = estHwHigh ? (estHwHigh * sharePct) / 100 : null
+            return (
+              <>
+                <p className="text-sm">
+                  Your share:{' '}
+                  <strong>
+                    {sharePct}%
+                    {shareHwLow && shareHwHigh
+                      ? ` × ~${estHwLow}–${estHwHigh} lb HW ≈ ${shareHwLow.toFixed(0)}–${shareHwHigh.toFixed(0)} lb HW`
+                      : ''}
+                  </strong>
+                </p>
+                <p className="mt-1 text-sm">
+                  Estimated total: <strong>{priceRange(share.est_total_low_cents, share.est_total_high_cents)}</strong>
+                </p>
+                <p className="mt-2 text-xs text-mud-600">
+                  Final = (your share %) × (actual hanging weight) × ($
+                  {animal.rate_per_lb_hw_cents != null ? (animal.rate_per_lb_hw_cents / 100).toFixed(2) : '—'}
+                  /lb). Locked at slaughter; the range above is an estimate based on a typical hanging
+                  weight for this breed and size.
+                </p>
+              </>
+            )
+          })()}
         </Block>
       </section>
 
