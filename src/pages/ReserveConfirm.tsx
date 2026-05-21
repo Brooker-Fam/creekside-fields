@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import BillOfSale, { type BillOfSaleData } from '../components/BillOfSale'
 import SignaturePad, { type SignaturePadHandle } from '../components/SignaturePad'
 import { insforge } from '../lib/insforge'
-import { renderBillOfSaleEmail } from '../lib/emailTemplates'
 
 const FARM_EMAIL = 'brookerhousehold@gmail.com'
 
@@ -100,19 +99,16 @@ export default function ReserveConfirm() {
     setSigning(false)
 
     setEmailing(true)
-    const html = renderBillOfSaleEmail(nextData)
-    const subject = `Bill of sale — Creekside Fields — ${nextData.customer.name}`
-    const { error: sendError } = await insforge.emails.send({
-      to: nextData.customer.email,
-      cc: FARM_EMAIL,
-      replyTo: FARM_EMAIL,
-      subject,
-      html,
-      from: 'Creekside Fields',
+    const resp = await fetch('/api/send-bill-of-sale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: nextData }),
     })
     setEmailing(false)
-    if (sendError) {
-      setError(`Signature saved, but email failed: ${sendError.message}`)
+    if (!resp.ok) {
+      const body = await resp.json().catch(() => ({}))
+      const msg = (body as { error?: string; detail?: { message?: string } }).detail?.message ?? (body as { error?: string }).error ?? `HTTP ${resp.status}`
+      setError(`Signature saved, but email failed: ${msg}`)
       return
     }
     setEmailSent(true)
