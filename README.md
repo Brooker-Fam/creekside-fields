@@ -44,8 +44,8 @@ pnpm dev               # http://localhost:5173
 ```
 VITE_INSFORGE_URL=https://umvug9f9.us-east.insforge.app
 VITE_INSFORGE_ANON_KEY=<grab from `npx @insforge/cli secrets get ANON_KEY`>
-VITE_PUBLIC_POSTHOG_KEY=<PostHog project token>
-VITE_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+VITE_POSTHOG_KEY=<PostHog project token>
+VITE_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 `RESEND_API_KEY` is only needed server-side; pull it from Vercel with

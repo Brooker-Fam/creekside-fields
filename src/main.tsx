@@ -6,8 +6,8 @@ import App from './App.tsx'
 import posthog from 'posthog-js'
 import { PostHogErrorBoundary, PostHogProvider } from '@posthog/react'
 
-const posthogKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY
-const posthogHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com'
+const posthogKey = import.meta.env.VITE_POSTHOG_KEY
+const posthogHost = import.meta.env.VITE_POSTHOG_HOST ?? 'https://us.i.posthog.com'
 
 if (posthogKey) {
   posthog.init(posthogKey, {
