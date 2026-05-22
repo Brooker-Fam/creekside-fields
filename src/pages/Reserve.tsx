@@ -24,6 +24,13 @@ const SHARE_KIND_TITLE: Record<string, string> = {
   eighth: 'Eighth hog',
 }
 
+const SHARE_KIND_BLURB: Record<string, { meat: string; freezer: string }> = {
+  whole:   { meat: '~140–150 lb of cut & wrapped meat', freezer: 'fills a chest freezer' },
+  half:    { meat: '~70–75 lb of cut & wrapped meat',   freezer: 'fits an upright freezer' },
+  quarter: { meat: '~35–40 lb of cut & wrapped meat',   freezer: 'fits in a freezer drawer' },
+  eighth:  { meat: '~18–20 lb of cut & wrapped meat',   freezer: 'fits a freezer shelf' },
+}
+
 const CUT_OPTIONS = {
   bacon: { label: 'Bacon thickness', choices: ['Thin', 'Standard', 'Thick'] },
   chops: { label: 'Chop thickness', choices: ['3/4"', '1"', '1.5"'] },
@@ -176,6 +183,8 @@ export default function Reserve() {
 
   const kindTitle = SHARE_KIND_TITLE[share.kind] ?? share.label ?? share.kind
   const rateCents = getShareRateCents(share, animal)
+  const blurb = SHARE_KIND_BLURB[share.kind]
+  const heroImage = animal.hero_image_url ?? '/farm-media/pig-grazing.jpg'
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
@@ -198,6 +207,31 @@ export default function Reserve() {
         <span>Est. {priceRange(share.est_total_low_cents, share.est_total_high_cents)}</span>
         <span>·</span>
         <span>Deposit {formatCents(share.deposit_cents)}</span>
+      </div>
+
+      <div className="card mt-6 grid gap-4 sm:grid-cols-[140px_1fr] sm:items-center">
+        <img
+          src={heroImage}
+          alt="Pasture-raised Gloucestershire Old Spots"
+          className="h-28 w-full rounded-2xl border-2 border-mud-800 object-cover shadow-sketch sm:h-32"
+        />
+        <div>
+          {blurb && (
+            <p className="font-display text-xl">{blurb.meat}</p>
+          )}
+          {blurb && (
+            <p className="text-sm text-mud-600">{blurb.freezer}</p>
+          )}
+          <p className="mt-2 text-sm text-mud-700">
+            Heritage breed, pasture-raised in Greenwich, NY. Includes processing — one bundled
+            bill at pickup.
+          </p>
+          <p className="mt-2 text-sm">
+            <Link to="/about" className="font-semibold text-blush-500 hover:underline">
+              How it works <span aria-hidden>→</span>
+            </Link>
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-8">
