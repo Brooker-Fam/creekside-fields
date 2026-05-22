@@ -15,8 +15,8 @@ export default function About() {
 
       <Section title="What you're actually buying">
         A whole (100%), half (50%), or quarter (25%) share. You sign a quick bill of sale and put
-        down a deposit to hold the share. When the meat is ready, you pick it up — and you pay one
-        single bill to us, no separate processor invoice to chase.
+        down a deposit to hold the share. When the meat is ready, you pick it up and pay one bill
+        to us — processing fees already included.
       </Section>
 
       <Section title="The share size">
@@ -25,15 +25,17 @@ export default function About() {
       </Section>
 
       <Section title="Processing">
-        We're working on going USDA-inspected so we can sell finished cuts directly. We haven't
-        scheduled the slaughter date yet — we'll hear back from the processor and update reservation
-        holders as soon as we know.
+        Slaughter and cut &amp; wrap happen at Eagle Bridge Custom Meat &amp; Smokehouse, about 12
+        miles from the farm. Slaughter date isn't locked in yet — we'll text reservation holders
+        as soon as it is.
       </Section>
 
       <Section title="The price">
         Hanging weight of your share × per-pound rate. Hanging weight is typically ~70% of live
-        weight. We post an estimated price range when you reserve, and lock in the final number once
-        we have the actual hanging weight. One bill, paid to us.
+        weight. The per-pound rate is set per share size — smaller shares cost a little more per
+        pound, since each one takes the same coordination as a whole. We post an estimated price
+        range when you reserve and lock in the final number once we have the actual hanging weight.
+        Processing fees are baked into the rate.
       </Section>
 
       <Section title="The cut sheet">

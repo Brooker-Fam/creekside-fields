@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
-import { insforge, priceRange } from '../lib/insforge'
+import { insforge, priceRange, getShareRateCents } from '../lib/insforge'
 import type { Animal, ShareOption, ShareKind } from '../lib/types'
 import Spots from '../components/Spots'
 
@@ -80,31 +80,24 @@ function SharesSummary({ animals, shares }: { animals: Animal[]; shares: ShareOp
     return priceRange(low ?? undefined, high ?? undefined)
   }
 
-  // Both gilts share the same rate, so any one with a rate set is fine.
-  const rateCents = animals.find((a) => a.rate_per_lb_hw_cents != null)?.rate_per_lb_hw_cents ?? null
+  const rateFor = (rows: ShareOption[]) => {
+    const fallback = animals.find((a) => a.rate_per_lb_hw_cents != null) ?? null
+    const cents = rows.length ? getShareRateCents(rows[0], fallback) : null
+    return cents != null ? `$${(cents / 100).toFixed(2)} / lb HW` : null
+  }
 
   return (
     <div className="card">
-      {rateCents != null && (
-        <div className="mb-6 flex flex-wrap items-baseline gap-2">
-          <span className="rounded-full border-2 border-mud-800 bg-cream-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide shadow-sketch">
-            Rate
-          </span>
-          <span className="font-display text-2xl">
-            ${(rateCents / 100).toFixed(2)} / lb hanging weight
-          </span>
-          <span className="text-sm text-mud-600">all-in, no separate processor invoice</span>
-        </div>
-      )}
       <div className="grid gap-6 md:grid-cols-3">
-        <ShareTile kind="whole" name="Whole" count={wholes.length} freezer="chest freezer" price={priceFor(wholes)} />
-        <ShareTile kind="half" name="Half" count={halves.length} freezer="upright freezer" price={priceFor(halves)} />
-        <ShareTile kind="quarter" name="Quarter" count={quarters.length} freezer="freezer drawer" price={priceFor(quarters)} />
+        <ShareTile kind="whole"   name="Whole"   count={wholes.length}   freezer="chest freezer"  rate={rateFor(wholes)}   price={priceFor(wholes)} />
+        <ShareTile kind="half"    name="Half"    count={halves.length}   freezer="upright freezer" rate={rateFor(halves)}   price={priceFor(halves)} />
+        <ShareTile kind="quarter" name="Quarter" count={quarters.length} freezer="freezer drawer"  rate={rateFor(quarters)} price={priceFor(quarters)} />
       </div>
       <p className="mt-4 text-xs text-mud-600">
-        Final price = your share % × actual hanging weight × the rate above. Locked at slaughter;
-        the dollar ranges in each tile are estimates. Pick a size and we'll match you to one of our
-        two gilts at reserve time — they're sisters from the same litter.
+        Rate shown is per pound of hanging weight, all-in — includes our cut and the processor's
+        cut &amp; wrap. Final price = your share % × actual hanging weight × the rate above;
+        locked at slaughter. Smaller shares cost a little more per pound to cover the extra
+        coordination — same heritage pork either way.
       </p>
     </div>
   )
@@ -115,12 +108,14 @@ function ShareTile({
   name,
   count,
   freezer,
+  rate,
   price,
 }: {
   kind: ShareKind
   name: string
   count: number
   freezer: string
+  rate: string | null
   price: string | null
 }) {
   const posthog = usePostHog()
@@ -130,7 +125,10 @@ function ShareTile({
       <p className="text-xs uppercase tracking-wide text-mud-600">{name} shares</p>
       <p className="mt-1 font-display text-4xl">{count}</p>
       <p className="mt-1 text-sm text-mud-600">{soldOut ? 'sold out' : `available · ${freezer}`}</p>
-      {price && <p className="mt-3 text-sm font-semibold">{price}</p>}
+      {rate && (
+        <p className="mt-3 font-display text-xl text-blush-500">{rate}</p>
+      )}
+      {price && <p className="mt-1 text-sm text-mud-600">est. {price}</p>}
       {!soldOut && (
         <p className="mt-3 text-sm font-semibold text-blush-500">
           Reserve <span aria-hidden>→</span>
@@ -235,7 +233,7 @@ function HowItWorks() {
     {
       n: '3',
       title: 'Pick up from the farm or processor',
-      body: 'We\'re going USDA-inspected, so you can grab your meat directly from the processor or come pick it up at our place — whichever\'s easier.',
+      body: 'Grab your meat directly from the processor or come pick it up at the farm — whichever\'s easier.',
     },
   ]
   return (

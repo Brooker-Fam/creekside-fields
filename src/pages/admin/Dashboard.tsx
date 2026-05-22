@@ -486,7 +486,7 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
             onChange={(v) => setForm({ ...form, estimated_live_weight_lbs: v ? parseInt(v) : null })}
           />
           <TextField
-            label="Rate ($/lb HW) — shown on every bill of sale"
+            label="Fallback rate ($/lb HW) — used only if a share has no rate set"
             type="number"
             value={form.rate_per_lb_hw_cents != null ? (form.rate_per_lb_hw_cents / 100).toString() : ''}
             onChange={(v) => setForm({ ...form, rate_per_lb_hw_cents: v ? Math.round(parseFloat(v) * 100) : null })}
@@ -572,6 +572,12 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
   }
   return (
     <div className="space-y-2">
+      <p className="text-sm text-mud-600">
+        Per-pound rate is set per share so smaller shares can carry a higher per-lb rate (more
+        coordination per share). Defaults from the migration: <strong>$7.50</strong> whole,
+        <strong> $8.00</strong> half, <strong>$8.50</strong> quarter. Edit any cell and tab out
+        to save.
+      </p>
       {animals.map((a) => (
         <div key={a.id} className="card">
           <p className="font-display text-lg">{a.headline}</p>
@@ -580,6 +586,7 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
               <tr className="text-left text-xs uppercase tracking-wide text-mud-600">
                 <th className="py-1">Label</th>
                 <th>Kind</th>
+                <th>Rate ($/lb HW)</th>
                 <th>Price range</th>
                 <th>Deposit</th>
                 <th>Status</th>
@@ -590,6 +597,12 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
                 <tr key={s.id} className="border-t border-mud-800/10">
                   <td className="py-2">{s.label}</td>
                   <td>{s.kind}</td>
+                  <td>
+                    <RateInput
+                      cents={s.rate_per_lb_hw_cents}
+                      onSave={(cents) => update(s.id, { rate_per_lb_hw_cents: cents })}
+                    />
+                  </td>
                   <td>{priceRange(s.est_total_low_cents, s.est_total_high_cents)}</td>
                   <td>{formatCents(s.deposit_cents)}</td>
                   <td>
@@ -610,6 +623,30 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
         </div>
       ))}
     </div>
+  )
+}
+
+function RateInput({ cents, onSave }: { cents: number | null; onSave: (cents: number | null) => void }) {
+  const [value, setValue] = useState(cents != null ? (cents / 100).toFixed(2) : '')
+  useEffect(() => {
+    setValue(cents != null ? (cents / 100).toFixed(2) : '')
+  }, [cents])
+  function commit() {
+    const parsed = value.trim() === '' ? null : Math.round(parseFloat(value) * 100)
+    if (parsed === cents) return
+    if (parsed != null && Number.isNaN(parsed)) return
+    onSave(parsed)
+  }
+  return (
+    <input
+      type="number"
+      step="0.01"
+      min="0"
+      className="input w-24 py-1 text-xs"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={commit}
+    />
   )
 }
 

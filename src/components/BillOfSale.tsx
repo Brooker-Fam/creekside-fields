@@ -1,5 +1,5 @@
 import type { Animal, ShareOption } from '../lib/types'
-import { formatCents, priceRange } from '../lib/insforge'
+import { formatCents, priceRange, getShareRateCents } from '../lib/insforge'
 
 export interface BillOfSaleData {
   customer: { name: string; email: string; phone: string | null; address: string | null }
@@ -26,6 +26,7 @@ const FARM = {
 
 export default function BillOfSale({ data }: { data: BillOfSaleData }) {
   const { customer, share, animal, pickup_preference, share_percentage, date, signature_url, signed_at } = data
+  const rateCents = getShareRateCents(share, animal)
   const issued = new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -90,13 +91,11 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
       <section className="mt-6 grid gap-4 sm:grid-cols-2">
         <Block label="Rate">
           <p className="font-display text-2xl">
-            {animal.rate_per_lb_hw_cents != null
-              ? `$${(animal.rate_per_lb_hw_cents / 100).toFixed(2)} / lb`
-              : '—'}
+            {rateCents != null ? `$${(rateCents / 100).toFixed(2)} / lb` : '—'}
           </p>
           <p className="mt-1 text-xs text-mud-600">
-            Hanging weight, all-in. Includes the farm's cut and our pass-through of the
-            processor's cut &amp; wrap.
+            Hanging weight, all-in. Per-pound rate for a {share.kind} share. Includes the farm's
+            cut and our pass-through of the processor's cut &amp; wrap.
           </p>
         </Block>
         <Block label="Deposit (due at signing)">
@@ -132,7 +131,7 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
                 </p>
                 <p className="mt-2 text-xs text-mud-600">
                   Final = (your share %) × (actual hanging weight) × ($
-                  {animal.rate_per_lb_hw_cents != null ? (animal.rate_per_lb_hw_cents / 100).toFixed(2) : '—'}
+                  {rateCents != null ? (rateCents / 100).toFixed(2) : '—'}
                   /lb). Locked at slaughter; the range above is an estimate based on a typical hanging
                   weight for this breed and size.
                 </p>

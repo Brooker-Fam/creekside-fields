@@ -1,5 +1,5 @@
 import type { BillOfSaleData } from '../components/BillOfSale'
-import { formatCents, priceRange } from './insforge'
+import { formatCents, priceRange, getShareRateCents } from './insforge'
 
 const PICKUP_LABELS: Record<string, string> = {
   farm: 'Farm pickup (Greenwich, NY)',
@@ -56,6 +56,8 @@ export function renderBillOfSaleEmail(data: BillOfSaleData): string {
   const shareLabel = share_percentage
     ? `${share_percentage}% undivided interest`
     : share.label ?? share.kind
+  const rateCents = getShareRateCents(share, animal)
+  const rateStr = rateCents != null ? `$${(rateCents / 100).toFixed(2)} / lb HW` : null
 
   const sigSection = signature_url
     ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0 0;">
@@ -92,8 +94,8 @@ export function renderBillOfSaleEmail(data: BillOfSaleData): string {
       )}
       ${block(
         'Price',
-        `Estimated total: <strong>${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong><br>
-         Final = hanging weight × per-pound rate, locked at slaughter.`,
+        `${rateStr ? `Rate: <strong>${escape(rateStr)}</strong> (per-pound for a ${escape(share.kind)} share)<br>` : ''}Estimated total: <strong>${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong><br>
+         Final = (your share %) × (actual hanging weight) × the rate above. Locked at slaughter.`,
       )}
       ${block(
         'Deposit (due at signing)',

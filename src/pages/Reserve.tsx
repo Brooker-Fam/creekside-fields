@@ -1,7 +1,7 @@
 import { type FormEvent, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
-import { insforge, formatCents, priceRange } from '../lib/insforge'
+import { insforge, formatCents, priceRange, getShareRateCents } from '../lib/insforge'
 import type { Animal, ShareOption } from '../lib/types'
 
 const PICKUP_OPTIONS = [
@@ -175,6 +175,7 @@ export default function Reserve() {
   }
 
   const kindTitle = SHARE_KIND_TITLE[share.kind] ?? share.label ?? share.kind
+  const rateCents = getShareRateCents(share, animal)
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
@@ -186,10 +187,10 @@ export default function Reserve() {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
         <span>{animal.breed} gilt</span>
         <span>·</span>
-        {animal.rate_per_lb_hw_cents != null && (
+        {rateCents != null && (
           <>
             <span>
-              <strong>${(animal.rate_per_lb_hw_cents / 100).toFixed(2)}/lb</strong> hanging weight
+              <strong>${(rateCents / 100).toFixed(2)}/lb</strong> hanging weight
             </span>
             <span>·</span>
           </>
@@ -216,9 +217,8 @@ export default function Reserve() {
         <section className="card">
           <h2 className="font-display text-2xl">Pickup</h2>
           <p className="mt-1 text-sm text-mud-600">
-            We're going USDA-inspected, so once the meat's ready you can grab it from the processor
-            or from us at the farm. Slaughter date isn't scheduled yet — we'll text you with details
-            when it is.
+            Once the meat's ready you can grab it from the processor or from us at the farm.
+            Slaughter date isn't scheduled yet — we'll text you with details when it is.
           </p>
           <div className="mt-4 grid gap-3">
             {PICKUP_OPTIONS.map((opt) => (

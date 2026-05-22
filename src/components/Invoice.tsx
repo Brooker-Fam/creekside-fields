@@ -1,5 +1,5 @@
 import type { Animal, Processor, Reservation, ShareOption } from '../lib/types'
-import { formatCents } from '../lib/insforge'
+import { formatCents, getShareRateCents } from '../lib/insforge'
 
 const FARM = {
   name: 'Creekside Fields',
@@ -19,7 +19,7 @@ export function computeInvoice(data: InvoiceData) {
   const { reservation, share, animal } = data
   const sharePct = reservation.share_percentage ?? sharePctFromKind(share.kind)
   const hangingWeight = animal.hanging_weight_lbs
-  const rate = animal.rate_per_lb_hw_cents
+  const rate = getShareRateCents(share, animal)
   const shareHwLbs = hangingWeight != null && sharePct != null ? (hangingWeight * sharePct) / 100 : null
   const finalTotalCents =
     shareHwLbs != null && rate != null ? Math.round(shareHwLbs * rate) : reservation.final_total_cents ?? null
@@ -116,8 +116,9 @@ export default function Invoice({ data }: { data: InvoiceData }) {
         <section className="mt-6">
           <Block label="Charges">
             <p className="text-sm italic text-mud-600">
-              Hanging weight or per-lb rate not set yet — invoice cannot be finalized. Set both on the
-              animal record in admin and refresh.
+              Hanging weight or per-lb rate not set yet — invoice cannot be finalized. Set the
+              hanging weight on the animal (Animals tab) and the rate on this share (Shares tab),
+              then refresh.
             </p>
           </Block>
         </section>

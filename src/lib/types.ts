@@ -48,6 +48,7 @@ export interface ShareOption {
   label: string | null
   est_total_low_cents: number | null
   est_total_high_cents: number | null
+  rate_per_lb_hw_cents: number | null
   deposit_cents: number
   status: ShareStatus
   created_at: string

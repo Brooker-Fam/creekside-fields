@@ -26,6 +26,7 @@ interface BillOfSaleData {
     deposit_cents: number
     est_total_low_cents: number | null
     est_total_high_cents: number | null
+    rate_per_lb_hw_cents: number | null
   }
   animal: {
     id: string
@@ -38,6 +39,15 @@ interface BillOfSaleData {
   share_percentage: number | null
   date: string
   signature_url?: string | null
+}
+
+// Prefer the share-level rate (per-kind tier); fall back to the animal's
+// legacy single rate for pre-migration shares.
+function shareRateCents(
+  share: BillOfSaleData['share'],
+  animal: BillOfSaleData['animal'],
+): number | null {
+  return share.rate_per_lb_hw_cents ?? animal.rate_per_lb_hw_cents ?? null
 }
 
 function escape(s: string | null | undefined): string {
@@ -94,6 +104,7 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
   const shareLabel = share_percentage
     ? `${share_percentage}% undivided interest`
     : share.label ?? share.kind
+  const rateCents = shareRateCents(share, animal)
 
   const sigSection = signature_url
     ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0 0;">
@@ -130,8 +141,8 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
       )}
       ${block(
         'Rate',
-        `<span style="font-size:22px;font-family:Georgia,serif;">${animal.rate_per_lb_hw_cents != null ? `$${(animal.rate_per_lb_hw_cents / 100).toFixed(2)} / lb` : '—'}</span><br>
-         <span style="font-size:12px;color:#6f655c;">Hanging weight, all-in. Includes the farm's cut and pass-through of the processor's cut &amp; wrap.</span>`,
+        `<span style="font-size:22px;font-family:Georgia,serif;">${rateCents != null ? `$${(rateCents / 100).toFixed(2)} / lb` : '—'}</span><br>
+         <span style="font-size:12px;color:#6f655c;">Per-pound rate for a ${escape(share.kind)} share, hanging weight, all-in. Includes the farm's cut and pass-through of the processor's cut &amp; wrap.</span>`,
       )}
       ${block(
         'Deposit (due at signing)',
@@ -145,7 +156,7 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
         const estHwHigh = lw ? Math.round(lw * 0.74) : null
         const shareLow = estHwLow ? (estHwLow * sharePct) / 100 : null
         const shareHigh = estHwHigh ? (estHwHigh * sharePct) / 100 : null
-        const rateStr = animal.rate_per_lb_hw_cents != null ? `$${(animal.rate_per_lb_hw_cents / 100).toFixed(2)}` : '$—'
+        const rateStr = rateCents != null ? `$${(rateCents / 100).toFixed(2)}` : '$—'
         return block(
           'Estimated total',
           `<p style="margin:0 0 6px 0;">Your share: <strong>${sharePct}%${shareLow && shareHigh ? ` × ~${estHwLow}–${estHwHigh} lb HW ≈ ${shareLow.toFixed(0)}–${shareHigh.toFixed(0)} lb HW` : ''}</strong></p>
