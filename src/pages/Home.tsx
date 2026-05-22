@@ -94,10 +94,9 @@ function SharesSummary({ animals, shares }: { animals: Animal[]; shares: ShareOp
         <ShareTile kind="quarter" name="Quarter" count={quarters.length} freezer="freezer drawer"  rate={rateFor(quarters)} price={priceFor(quarters)} />
       </div>
       <p className="mt-4 text-xs text-mud-600">
-        Rate shown is per pound of hanging weight, all-in — includes our cut and the processor's
-        cut &amp; wrap. Final price = your share % × actual hanging weight × the rate above;
-        locked at slaughter. Smaller shares cost a little more per pound to cover the extra
-        coordination — same heritage pork either way.
+        Rate is per pound of hanging weight; includes processing. Final price = your share % ×
+        actual hanging weight × the rate above; locked at slaughter. Smaller shares cost a little
+        more per pound to cover the extra coordination.
       </p>
     </div>
   )
