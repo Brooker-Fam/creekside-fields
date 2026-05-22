@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { usePostHog } from '@posthog/react'
 import { insforge, formatCents, priceRange } from '../../lib/insforge'
 import type { Animal, Processor, Reservation, ShareOption } from '../../lib/types'
 import BillOfSale from '../../components/BillOfSale'
@@ -12,6 +13,7 @@ const FARM_EMAIL = 'brookerhousehold@gmail.com'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
+  const posthog = usePostHog()
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null)
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
   const [tab, setTab] = useState<Tab>('reservations')
@@ -28,6 +30,7 @@ export default function AdminDashboard() {
         return
       }
       setUser({ id: data.user.id, email: data.user.email })
+      if (data.user.email) posthog?.identify(data.user.email, { email: data.user.email })
       // is_admin check: try to read from admin_users (RLS allows self-select)
       insforge.database
         .from('admin_users')
@@ -40,7 +43,7 @@ export default function AdminDashboard() {
           else setLoading(false)
         })
     })
-  }, [navigate])
+  }, [navigate, posthog])
 
   function refresh(showLoading = true) {
     if (showLoading) setLoading(true)
@@ -69,6 +72,8 @@ export default function AdminDashboard() {
 
   async function signOut() {
     await insforge.auth.signOut()
+    posthog?.capture('admin_logged_out')
+    posthog?.reset()
     navigate('/admin/login')
   }
 

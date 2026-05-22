@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { usePostHog } from '@posthog/react'
 import BillOfSale, { type BillOfSaleData } from '../components/BillOfSale'
 import SignaturePad, { type SignaturePadHandle } from '../components/SignaturePad'
 import { insforge } from '../lib/insforge'
@@ -10,6 +11,7 @@ type LocationState = (BillOfSaleData & { reservation_id?: string }) | null
 
 export default function ReserveConfirm() {
   const location = useLocation()
+  const posthog = usePostHog()
   const state = location.state as LocationState
   const [data, setData] = useState<BillOfSaleData | null>(state)
   const reservationId = state?.reservation_id
@@ -68,6 +70,10 @@ export default function ReserveConfirm() {
       .upload(path, file)
 
     if (uploadError || !uploaded) {
+      posthog?.captureException(uploadError ?? new Error('signature upload returned no data'), {
+        context: 'signature_upload',
+        reservation_id: reservationId,
+      })
       setError(uploadError?.message ?? 'Could not upload signature.')
       setSigning(false)
       return
@@ -84,6 +90,10 @@ export default function ReserveConfirm() {
     })
 
     if (updateError) {
+      posthog?.captureException(updateError, {
+        context: 'sign_reservation_rpc',
+        reservation_id: reservationId,
+      })
       setError(updateError.message ?? 'Could not save signature to reservation.')
       setSigning(false)
       return
@@ -97,20 +107,38 @@ export default function ReserveConfirm() {
     setData(nextData)
     setSigned(true)
     setSigning(false)
+    posthog?.capture('bill_of_sale_signed', {
+      reservation_id: reservationId,
+      share_kind: data.share.kind,
+      share_id: data.share.id,
+    })
 
     setEmailing(true)
     const resp = await fetch('/api/send-bill-of-sale', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-POSTHOG-DISTINCT-ID': posthog?.get_distinct_id() ?? '',
+        'X-POSTHOG-SESSION-ID': posthog?.get_session_id() ?? '',
+      },
       body: JSON.stringify({ data: nextData }),
     })
     setEmailing(false)
     if (!resp.ok) {
       const body = await resp.json().catch(() => ({}))
       const msg = (body as { error?: string; detail?: { message?: string } }).detail?.message ?? (body as { error?: string }).error ?? `HTTP ${resp.status}`
+      posthog?.capture('bill_of_sale_email_failed', {
+        reservation_id: reservationId,
+        status: resp.status,
+        reason: msg,
+      })
       setError(`Signature saved, but email failed: ${msg}`)
       return
     }
+    posthog?.capture('bill_of_sale_email_sent', {
+      reservation_id: reservationId,
+      share_kind: data.share.kind,
+    })
     setEmailSent(true)
   }
 

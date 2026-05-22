@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePostHog } from '@posthog/react'
 import { insforge } from '../../lib/insforge'
 
 type Mode = 'signin' | 'signup'
@@ -10,6 +11,7 @@ export default function AdminLogin() {
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
   const navigate = useNavigate()
+  const posthog = usePostHog()
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -22,10 +24,13 @@ export default function AdminLogin() {
     if (mode === 'signup') {
       const { error } = await insforge.auth.signUp({ email, password })
       if (error) {
+        posthog?.captureException(error, { context: 'admin_signup' })
         setError(error.message ?? 'Sign-up failed')
         setSubmitting(false)
         return
       }
+      posthog?.identify(email, { email })
+      posthog?.capture('admin_signed_up', { method: 'password' })
       setInfo('Check your inbox to verify your email, then sign in.')
       setMode('signin')
       setSubmitting(false)
@@ -33,14 +38,18 @@ export default function AdminLogin() {
     }
     const { error } = await insforge.auth.signInWithPassword({ email, password })
     if (error) {
+      posthog?.captureException(error, { context: 'admin_login' })
       setError(error.message ?? 'Login failed')
       setSubmitting(false)
       return
     }
+    posthog?.identify(email, { email })
+    posthog?.capture('admin_logged_in', { method: 'password' })
     navigate('/admin')
   }
 
   async function signInWithGoogle() {
+    posthog?.capture('admin_login_started', { method: 'google' })
     await insforge.auth.signInWithOAuth({ provider: 'google', redirectTo: window.location.origin + '/admin' })
   }
 

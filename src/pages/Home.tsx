@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { usePostHog } from '@posthog/react'
 import { insforge, priceRange } from '../lib/insforge'
 import type { Animal, ShareOption, ShareKind } from '../lib/types'
 import Spots from '../components/Spots'
@@ -122,6 +123,7 @@ function ShareTile({
   freezer: string
   price: string | null
 }) {
+  const posthog = usePostHog()
   const soldOut = count === 0
   const inner = (
     <>
@@ -141,7 +143,11 @@ function ShareTile({
   }`
   if (soldOut) return <div className={classes}>{inner}</div>
   return (
-    <Link to={`/reserve/${kind}`} className={classes}>
+    <Link
+      to={`/reserve/${kind}`}
+      className={classes}
+      onClick={() => posthog?.capture('share_size_selected', { share_kind: kind, available_count: count, source: 'home' })}
+    >
       {inner}
     </Link>
   )

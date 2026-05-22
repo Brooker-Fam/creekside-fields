@@ -44,11 +44,15 @@ pnpm dev               # http://localhost:5173
 ```
 VITE_INSFORGE_URL=https://umvug9f9.us-east.insforge.app
 VITE_INSFORGE_ANON_KEY=<grab from `npx @insforge/cli secrets get ANON_KEY`>
+VITE_PUBLIC_POSTHOG_KEY=<PostHog project token>
+VITE_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 `RESEND_API_KEY` is only needed server-side; pull it from Vercel with
 `vercel env pull .env.local` if you want to run the function locally
-with `vercel dev`.
+with `vercel dev`. The Vercel edge function also reads `POSTHOG_KEY` and
+`POSTHOG_HOST` (same project token, set in Vercel project env vars) so
+it can record bill-of-sale email sends/failures against the same user.
 
 ## Project layout
 

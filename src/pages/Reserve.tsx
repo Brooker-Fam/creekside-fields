@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { usePostHog } from '@posthog/react'
 import { insforge, formatCents, priceRange } from '../lib/insforge'
 import type { Animal, ShareOption } from '../lib/types'
 
@@ -39,6 +40,7 @@ const CUT_OPTIONS = {
 export default function Reserve() {
   const { shareId } = useParams()
   const navigate = useNavigate()
+  const posthog = usePostHog()
   const [share, setShare] = useState<ShareOption | null>(null)
   const [animal, setAnimal] = useState<Animal | null>(null)
   const [loading, setLoading] = useState(true)
@@ -121,10 +123,30 @@ export default function Reserve() {
       ])
 
     if (error) {
+      posthog?.captureException(error, { context: 'reservation_insert', share_kind: share.kind, share_id: share.id })
+      posthog?.capture('reservation_submit_failed', {
+        share_kind: share.kind,
+        share_id: share.id,
+        reason: error.message,
+      })
       setError(error.message ?? 'Something went sideways. Try again or email us.')
       setSubmitting(false)
       return
     }
+    posthog?.identify(customer_email, { email: customer_email, name: customer_name })
+    posthog?.capture('reservation_submitted', {
+      share_kind: share.kind,
+      share_id: share.id,
+      share_percentage: sharePct,
+      animal_id: share.animal_id,
+      deposit_cents: share.deposit_cents,
+      est_total_low_cents: share.est_total_low_cents,
+      est_total_high_cents: share.est_total_high_cents,
+      pickup_preference: pickupPreference,
+      has_phone: Boolean(customer_phone),
+      has_address: Boolean(customer_address),
+      has_notes: Boolean(reservationNotes),
+    })
     navigate(`/reserve/${share.id}/confirmed`, {
       state: {
         reservation_id: reservationId,

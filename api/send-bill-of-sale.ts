@@ -174,6 +174,31 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
   return shell(inner)
 }
 
+async function capturePostHog(
+  event: string,
+  distinctId: string,
+  properties: Record<string, unknown>,
+): Promise<void> {
+  const phKey = process.env.POSTHOG_KEY
+  if (!phKey || !distinctId) return
+  const host = process.env.POSTHOG_HOST ?? 'https://us.i.posthog.com'
+  try {
+    await fetch(`${host}/capture/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        api_key: phKey,
+        event,
+        distinct_id: distinctId,
+        properties: { $lib: 'server', source: 'send-bill-of-sale', ...properties },
+        timestamp: new Date().toISOString(),
+      }),
+    })
+  } catch {
+    // ignore analytics failures — don't break the email flow
+  }
+}
+
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -181,13 +206,16 @@ export default async function handler(req: Request): Promise<Response> {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': 'Content-Type, X-POSTHOG-DISTINCT-ID, X-POSTHOG-SESSION-ID',
       },
     })
   }
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405)
   }
+
+  const distinctId = req.headers.get('x-posthog-distinct-id') ?? ''
+  const sessionId = req.headers.get('x-posthog-session-id') ?? ''
 
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
@@ -225,9 +253,25 @@ export default async function handler(req: Request): Promise<Response> {
   })
 
   const respBody = (await resp.json().catch(() => ({}))) as Record<string, unknown>
+  const phProps: Record<string, unknown> = {
+    share_kind: data.share.kind,
+    share_id: data.share.id,
+    animal_id: data.animal.id,
+    customer_email: data.customer.email,
+    $session_id: sessionId || undefined,
+  }
   if (!resp.ok) {
+    await capturePostHog('bill_of_sale_email_send_failed', distinctId, {
+      ...phProps,
+      status: resp.status,
+      detail: respBody,
+    })
     return json({ error: 'Resend failed', detail: respBody }, 502)
   }
+  await capturePostHog('bill_of_sale_email_send_succeeded', distinctId, {
+    ...phProps,
+    resend_id: respBody.id,
+  })
   return json({ ok: true, id: respBody.id }, 200)
 }
 
