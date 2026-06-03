@@ -24,8 +24,14 @@ export default function AdminLogin() {
     if (mode === 'signup') {
       const { error } = await insforge.auth.signUp({ email, password })
       if (error) {
-        posthog?.captureException(error, { context: 'admin_signup' })
-        setError(error.message ?? 'Sign-up failed')
+        const errorObj = error as Error
+        const message = errorObj.message ?? 'Sign-up failed'
+        try {
+          posthog?.captureException(errorObj, { context: 'admin_signup' })
+        } catch {
+          // Ignore PostHog capture failures
+        }
+        setError(message)
         setSubmitting(false)
         return
       }
@@ -38,8 +44,14 @@ export default function AdminLogin() {
     }
     const { error } = await insforge.auth.signInWithPassword({ email, password })
     if (error) {
-      posthog?.captureException(error, { context: 'admin_login' })
-      setError(error.message ?? 'Login failed')
+      const errorObj = error as Error
+      const message = errorObj.message ?? 'Login failed'
+      try {
+        posthog?.captureException(errorObj, { context: 'admin_login' })
+      } catch {
+        // Ignore PostHog capture failures
+      }
+      setError(message)
       setSubmitting(false)
       return
     }
