@@ -19,33 +19,44 @@ export default function AdminLogin() {
     setError(null)
     setInfo(null)
     const fd = new FormData(e.currentTarget)
-    const email = String(fd.get('email'))
-    const password = String(fd.get('password'))
-    if (mode === 'signup') {
-      const { error } = await insforge.auth.signUp({ email, password })
-      if (error) {
-        posthog?.captureException(error, { context: 'admin_signup' })
-        setError(error.message ?? 'Sign-up failed')
+    const email = fd.get('email')
+    const password = fd.get('password')
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      setError('Please enter your email and password')
+      setSubmitting(false)
+      return
+    }
+    try {
+      if (mode === 'signup') {
+        const { error: signUpError } = await insforge.auth.signUp({ email, password })
+        if (signUpError) {
+          posthog?.captureException(signUpError, { context: 'admin_signup' })
+          setError(signUpError?.message ?? 'Sign-up failed')
+          setSubmitting(false)
+          return
+        }
+        posthog?.identify(email, { email })
+        posthog?.capture('admin_signed_up', { method: 'password' })
+        setInfo('Check your inbox to verify your email, then sign in.')
+        setMode('signin')
+        setSubmitting(false)
+        return
+      }
+      const { error: signInError } = await insforge.auth.signInWithPassword({ email, password })
+      if (signInError) {
+        posthog?.captureException(signInError, { context: 'admin_login' })
+        setError(signInError?.message ?? 'Login failed')
         setSubmitting(false)
         return
       }
       posthog?.identify(email, { email })
-      posthog?.capture('admin_signed_up', { method: 'password' })
-      setInfo('Check your inbox to verify your email, then sign in.')
-      setMode('signin')
+      posthog?.capture('admin_logged_in', { method: 'password' })
+      navigate('/admin')
+    } catch (err) {
+      posthog?.captureException(err, { context: mode === 'signup' ? 'admin_signup' : 'admin_login' })
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
       setSubmitting(false)
-      return
     }
-    const { error } = await insforge.auth.signInWithPassword({ email, password })
-    if (error) {
-      posthog?.captureException(error, { context: 'admin_login' })
-      setError(error.message ?? 'Login failed')
-      setSubmitting(false)
-      return
-    }
-    posthog?.identify(email, { email })
-    posthog?.capture('admin_logged_in', { method: 'password' })
-    navigate('/admin')
   }
 
   async function signInWithGoogle() {
