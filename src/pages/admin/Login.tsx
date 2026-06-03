@@ -19,13 +19,13 @@ export default function AdminLogin() {
     setError(null)
     setInfo(null)
     const fd = new FormData(e.currentTarget)
-    const email = String(fd.get('email'))
-    const password = String(fd.get('password'))
+    const email = String(fd.get('email') ?? '')
+    const password = String(fd.get('password') ?? '')
     if (mode === 'signup') {
-      const { error } = await insforge.auth.signUp({ email, password })
-      if (error) {
-        posthog?.captureException(error, { context: 'admin_signup' })
-        setError(error.message ?? 'Sign-up failed')
+      const result = await insforge.auth.signUp({ email, password })
+      if (result?.error) {
+        posthog?.captureException(result.error, { context: 'admin_signup' })
+        setError(result.error.message ?? 'Sign-up failed')
         setSubmitting(false)
         return
       }
@@ -36,10 +36,10 @@ export default function AdminLogin() {
       setSubmitting(false)
       return
     }
-    const { error } = await insforge.auth.signInWithPassword({ email, password })
-    if (error) {
-      posthog?.captureException(error, { context: 'admin_login' })
-      setError(error.message ?? 'Login failed')
+    const result = await insforge.auth.signInWithPassword({ email, password })
+    if (result?.error) {
+      posthog?.captureException(result.error, { context: 'admin_login' })
+      setError(result.error.message ?? 'Login failed')
       setSubmitting(false)
       return
     }
