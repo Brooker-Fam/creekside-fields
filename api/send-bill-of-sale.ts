@@ -179,7 +179,7 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
       </ol>
       ${sigSection}
       <p style="margin:22px 0 0 0;font-size:11px;color:#6f655c;border-top:1px solid #2a2522;padding-top:10px;">
-        Bill of sale ref: ${escape(animal.id.slice(0, 8))}/${escape(share.id.slice(0, 8))} · ${escape(FARM.name)} · ${escape(FARM.contact)}
+        Bill of sale ref: ${escape(String(animal.id ?? '').slice(0, 8))}/${escape(String(share.id ?? '').slice(0, 8))} · ${escape(FARM.name)} · ${escape(FARM.contact)}
       </p>
     </td></tr>`
   return shell(inner)
@@ -244,8 +244,20 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'Missing required fields' }, 400)
   }
 
-  const html = renderBillOfSaleEmail(data)
-  const subject = `Bill of sale — Creekside Fields — ${data.customer.name}`
+  let html: string
+  try {
+    html = renderBillOfSaleEmail(data)
+  } catch (e) {
+    await capturePostHog('bill_of_sale_render_failed', distinctId, {
+      share_id: data.share.id,
+      animal_id: data.animal.id,
+      customer_email: data.customer.email,
+      error: e instanceof Error ? e.message : String(e),
+      $session_id: sessionId || undefined,
+    })
+    return json({ error: 'Failed to render email template', detail: e instanceof Error ? e.message : String(e) }, 500)
+  }
+  const subject = `Bill of sale — Creekside Fields — ${data.customer.name ?? 'Customer'}`
 
   const resp = await fetch('https://api.resend.com/emails', {
     method: 'POST',
