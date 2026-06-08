@@ -113,30 +113,39 @@ export default function Reserve() {
     // policy on `reservations` to read the row back after insert. The customer
     // still gets a stable id for the signature step + admin lookup.
     const reservationId = crypto.randomUUID()
-    const { error } = await insforge.database
-      .from('reservations')
-      .insert([
-        {
-          id: reservationId,
-          share_option_id: share.id,
-          customer_name,
-          customer_email,
-          customer_phone,
-          customer_address,
-          share_percentage: sharePct,
-          cut_preferences: prefs,
-          notes: reservationNotes,
-        },
-      ])
+    let insertError: { message?: string } | null = null
+    try {
+      const { error: dbError } = await insforge.database
+        .from('reservations')
+        .insert([
+          {
+            id: reservationId,
+            share_option_id: share.id,
+            customer_name,
+            customer_email,
+            customer_phone,
+            customer_address,
+            share_percentage: sharePct,
+            cut_preferences: prefs,
+            notes: reservationNotes,
+          },
+        ])
+      insertError = dbError
+    } catch (err) {
+      posthog?.captureException(err, { context: 'reservation_insert_exception', share_kind: share.kind, share_id: share.id })
+      setError(err instanceof Error ? err.message : 'Something went sideways. Try again or email us.')
+      setSubmitting(false)
+      return
+    }
 
-    if (error) {
-      posthog?.captureException(error, { context: 'reservation_insert', share_kind: share.kind, share_id: share.id })
+    if (insertError) {
+      posthog?.captureException(insertError, { context: 'reservation_insert', share_kind: share.kind, share_id: share.id })
       posthog?.capture('reservation_submit_failed', {
         share_kind: share.kind,
         share_id: share.id,
-        reason: error.message,
+        reason: insertError.message,
       })
-      setError(error.message ?? 'Something went sideways. Try again or email us.')
+      setError(insertError.message ?? 'Something went sideways. Try again or email us.')
       setSubmitting(false)
       return
     }
