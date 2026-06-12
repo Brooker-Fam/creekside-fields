@@ -2,19 +2,19 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 
 function Header() {
   return (
-    <header className="border-b-2 border-mud-800 bg-cream-100">
+    <header className="sticky top-0 z-40 border-b border-sage-200/60 bg-cream-50/88 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link to="/" className="flex items-center gap-3">
           <Logo />
           <span className="flex flex-col leading-none">
-            <span className="hand text-3xl text-blush-500">Creekside</span>
-            <span className="font-display text-xl font-semibold tracking-tight">Fields</span>
+            <span className="font-display text-2xl font-semibold text-sage-700">Creekside Fields</span>
+            <span className="font-hand text-base italic leading-4 text-blush-500">pasture pork, gently raised</span>
           </span>
         </Link>
-        <nav className="flex items-center gap-6 text-sm font-semibold">
-          <NavLink to="/" end className={navClass}>The hogs</NavLink>
+        <nav className="hidden items-center gap-6 text-sm font-semibold sm:flex">
+          <NavLink to="/" end className={navClass}>Pig shares</NavLink>
           <NavLink to="/about" className={navClass}>How it works</NavLink>
-          <a href="mailto:brookerhousehold@gmail.com" className="hidden sm:inline">Get in touch</a>
+          <a href="mailto:brookerhousehold@gmail.com" className="hidden lg:inline">Get in touch</a>
         </nav>
       </div>
     </header>
@@ -22,14 +22,14 @@ function Header() {
 }
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
-  isActive ? 'text-blush-500 underline decoration-wavy underline-offset-4' : 'hover:text-blush-500'
+  isActive ? 'text-blush-500 underline decoration-blush-200 underline-offset-4' : 'text-sage-700/80 hover:text-blush-500'
 
 function Footer() {
   return (
-    <footer className="mt-24 border-t-2 border-mud-800 bg-sage-100">
+    <footer className="mt-24 border-t border-sage-200/70 bg-sage-100/70">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-3">
         <div>
-          <div className="hand text-3xl text-blush-500">Creekside Fields</div>
+          <div className="font-display text-3xl font-semibold text-sage-700">Creekside Fields</div>
           <p className="mt-2 text-sm text-mud-600">
             49 Clarks Mills Rd<br />Greenwich, NY 12834
           </p>
@@ -53,16 +53,10 @@ function Footer() {
 
 function Logo() {
   return (
-    <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden>
-      <circle cx="22" cy="22" r="20" fill="#fce4e0" stroke="#3f2c1d" strokeWidth="2" />
-      <circle cx="14" cy="18" r="3" fill="#3f2c1d" />
-      <circle cx="29" cy="14" r="2.4" fill="#3f2c1d" />
-      <circle cx="32" cy="27" r="3.6" fill="#3f2c1d" />
-      <circle cx="17" cy="30" r="2" fill="#3f2c1d" />
-      <ellipse cx="22" cy="28" rx="5" ry="3.5" fill="#eea29a" stroke="#3f2c1d" strokeWidth="1.5" />
-      <circle cx="20" cy="28" r="0.8" fill="#3f2c1d" />
-      <circle cx="24" cy="28" r="0.8" fill="#3f2c1d" />
-    </svg>
+    <span
+      aria-hidden
+      className="world-logo block h-12 w-12 rounded-full border-2 border-sage-300/70 shadow-soft"
+    />
   )
 }
 

@@ -25,23 +25,48 @@ const SHARE_KIND_TITLE: Record<string, string> = {
 }
 
 const SHARE_KIND_BLURB: Record<string, { meat: string; freezer: string }> = {
-  whole:   { meat: '~140–150 lb of cut & wrapped meat', freezer: 'fills a chest freezer' },
-  half:    { meat: '~70–75 lb of cut & wrapped meat',   freezer: 'fits an upright freezer' },
-  quarter: { meat: '~35–40 lb of cut & wrapped meat',   freezer: 'fits in a freezer drawer' },
+  whole:   { meat: '~195 lb of cut & wrapped meat at our planning weight', freezer: 'fills a chest freezer' },
+  half:    { meat: '~95–100 lb of cut & wrapped meat',   freezer: 'fits an upright freezer' },
+  quarter: { meat: '~45–50 lb of cut & wrapped meat',   freezer: 'fits in a freezer drawer' },
   eighth:  { meat: '~18–20 lb of cut & wrapped meat',   freezer: 'fits a freezer shelf' },
 }
 
 const CUT_OPTIONS = {
-  bacon: { label: 'Bacon thickness', choices: ['Thin', 'Standard', 'Thick'] },
-  chops: { label: 'Chop thickness', choices: ['3/4"', '1"', '1.5"'] },
-  hams: { label: 'Hams', choices: ['Fresh', 'Smoked/cured', 'Split between fresh & smoked'] },
-  shoulders: { label: 'Shoulders', choices: ['Whole roasts', 'Bone-out for pulled pork', 'Smoked'] },
-  sausage: {
-    label: 'Sausage style',
-    choices: ['Sweet Italian', 'Hot Italian', 'Breakfast', 'Bratwurst', 'Plain ground'],
+  shoulder: {
+    label: 'Shoulder',
+    choices: ['Picnic roasts', 'Boston butt roasts', 'Shoulder chops', 'Shoulder bacon', 'Ground pork'],
     multi: true,
   },
-  belly: { label: 'Belly', choices: ['All bacon', 'Some fresh slabs', 'Pancetta'] },
+  loin_rib: {
+    label: 'Loin & ribs',
+    choices: ['Tenderloin', 'Bone-in chops', 'Boneless chops', 'Loin roast', 'Canadian bacon', 'Country-style ribs', 'Baby back ribs', 'Spare ribs', 'St. Louis ribs', 'Stew or grind'],
+    multi: true,
+  },
+  sirloin: {
+    label: 'Sirloin',
+    choices: ['Fresh chops', 'Smoked chops', 'Sirloin cutlets', 'Roast', 'Boneless roast', 'Grind'],
+    multi: true,
+  },
+  hams: {
+    label: 'Hams',
+    choices: ['Fresh ham', 'Fresh ham steaks', 'Smoked ham', 'Smoked ham steaks', 'Sliced ham', 'Boneless ham', 'Cutlets or kabobs', 'Grind'],
+    multi: true,
+  },
+  belly: {
+    label: 'Bacon & belly',
+    choices: ['Regular smoked sliced bacon', 'No-nitrate smoked sliced bacon', 'Slab bacon', 'Fresh belly slabs', 'Fresh skin-on belly', 'Fresh skinless belly', 'Grind'],
+    multi: true,
+  },
+  sausage: {
+    label: 'Sausage',
+    choices: ['Breakfast bulk', 'Breakfast links', 'Sweet Italian bulk', 'Sweet Italian links', 'Hot Italian bulk', 'Hot Italian links', 'Chorizo bulk', 'Chorizo links', 'Bratwurst links', 'Maple breakfast', 'Andouille', 'Ground pork'],
+    multi: true,
+  },
+  extras: {
+    label: 'Bones, lard & offal',
+    choices: ['Soup bones', 'Neck bones', 'Hocks', 'Leaf lard', 'Fat back', 'Jowls', 'Heart/liver/tongue', 'Kidneys', 'Feet/trotters', 'Head', 'Ears', 'Skin'],
+    multi: true,
+  },
 } as const
 
 export default function Reserve() {
@@ -182,7 +207,7 @@ export default function Reserve() {
   if (!share || !animal) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <p className="hand text-3xl text-blush-500">Oh shoot.</p>
+        <p className="field-tag justify-center">Unavailable</p>
         <h1 className="mt-2 font-display text-4xl">That share isn't available.</h1>
         <p className="mt-4 text-mud-600">It may have just been claimed. Head back and pick another size.</p>
         <Link to="/" className="btn-secondary mt-6 inline-flex">Back to the farm</Link>
@@ -197,11 +222,11 @@ export default function Reserve() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <Link to="/" className="hand text-2xl text-blush-500 hover:underline">
+      <Link to="/" className="text-sm font-semibold text-blush-400 hover:underline">
         ← back to the shares
       </Link>
-      <p className="hand mt-4 text-3xl text-blush-500">Reserve your share</p>
-      <h1 className="font-display text-4xl">{kindTitle}</h1>
+      <p className="field-tag mt-6">Reserve your share</p>
+      <h1 className="mt-3 font-display text-5xl text-sage-700">{kindTitle}</h1>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
         <span>{animal.breed} gilt</span>
         <span>·</span>
@@ -222,7 +247,7 @@ export default function Reserve() {
         <img
           src={heroImage}
           alt="Pasture-raised Gloucestershire Old Spots"
-          className="h-28 w-full rounded-2xl border-2 border-mud-800 object-cover shadow-sketch sm:h-32"
+          className="h-28 w-full rounded-lg border border-sage-700/25 object-cover shadow-sketch sm:h-32"
         />
         <div>
           {blurb && (
@@ -233,7 +258,8 @@ export default function Reserve() {
           )}
           <p className="mt-2 text-sm text-mud-700">
             Heritage breed, pasture-raised in Greenwich, NY. Includes processing — one bundled
-            bill at pickup.
+            bill at pickup for base processing. Smoke, no-nitrate curing, links, and specialty
+            sausage may add pass-through butcher costs.
           </p>
           <p className="mt-2 text-sm">
             <Link to="/about" className="font-semibold text-blush-500 hover:underline">
@@ -265,7 +291,7 @@ export default function Reserve() {
           </p>
           <div className="mt-4 grid gap-3">
             {PICKUP_OPTIONS.map((opt) => (
-              <label key={opt.value} className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-mud-800 bg-cream-50 p-4 transition hover:bg-blush-100">
+              <label key={opt.value} className="flex cursor-pointer items-start gap-3 rounded-lg border border-sage-700/25 bg-cream-50/80 p-4 transition hover:bg-cream-50">
                 <input type="radio" name="pickup_preference" value={opt.value} required className="mt-1" />
                 <div>
                   <p className="font-semibold">{opt.label}</p>
@@ -292,7 +318,7 @@ export default function Reserve() {
                   <p className="label">{opt.label}</p>
                   <div className="flex flex-wrap gap-2">
                     {opt.choices.map((c) => (
-                      <label key={c} className="flex cursor-pointer items-center gap-2 rounded-full border-2 border-mud-800 bg-cream-50 px-4 py-1.5 text-sm hover:bg-blush-100">
+                      <label key={c} className="flex cursor-pointer items-center gap-2 rounded-full border border-sage-700/25 bg-cream-50/80 px-4 py-1.5 text-sm hover:bg-cream-50">
                         <input
                           type={multi ? 'checkbox' : 'radio'}
                           name={key}
@@ -313,7 +339,7 @@ export default function Reserve() {
                 name="extra"
                 rows={3}
                 className="input"
-                placeholder="Special requests, save organs/bones, etc."
+                placeholder="Chop thickness, package size, smoke/no-nitrate preferences, or anything you definitely do or do not want."
               />
             </div>
           </div>
@@ -330,7 +356,7 @@ export default function Reserve() {
         </section>
 
         {error && (
-          <p className="rounded-2xl border-2 border-blush-500 bg-blush-100 p-4 text-sm">{error}</p>
+          <p className="rounded-lg border border-blush-500 bg-blush-100 p-4 text-sm">{error}</p>
         )}
 
         <section className="card bg-cream-50">

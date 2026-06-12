@@ -28,20 +28,19 @@ export default function AnimalPage() {
 
   return (
     <article>
-      <section className="bg-cream-100 border-b-2 border-mud-800">
+      <section className="border-b border-sage-700/15 bg-cream-100/70">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:items-center">
           <div className="relative">
-            <div className="absolute -left-4 -top-4 h-12 w-12 rotate-12 rounded-full bg-blush-200" />
             <img
               src={animal.hero_image_url ?? ''}
               alt={animal.headline ?? 'pig'}
-              className="relative aspect-[4/3] w-full rounded-3xl border-2 border-mud-800 object-cover shadow-sketch"
+              className="relative aspect-[4/3] w-full rounded-lg border border-sage-700/25 object-cover shadow-sketch"
             />
           </div>
           <div>
-            <Link to="/" className="hand text-2xl text-blush-500 hover:underline">← back to the hogs</Link>
-            <h1 className="mt-2 font-display text-5xl leading-tight">{animal.breed}</h1>
-            {animal.headline && <p className="mt-1 hand text-2xl text-mud-600">{animal.headline}</p>}
+            <Link to="/" className="text-sm font-semibold text-blush-400 hover:underline">← back to the hogs</Link>
+            <h1 className="mt-4 font-display text-5xl leading-tight text-sage-700">{animal.breed}</h1>
+            {animal.headline && <p className="mt-2 text-lg text-mud-600">{animal.headline}</p>}
             <dl className="mt-6 grid grid-cols-3 gap-3 text-sm">
               <Fact label="Born" value={fmt(animal.dob)} />
               <Fact label="Ready by" value={fmt(animal.ready_by)} />
@@ -53,7 +52,7 @@ export default function AnimalPage() {
             {animal.tags?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {animal.tags.map((t) => (
-                  <span key={t} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1 text-xs font-semibold">
+                  <span key={t} className="rounded-full border border-sage-700/25 bg-cream-50/80 px-3 py-1 text-xs font-semibold">
                     {t}
                   </span>
                 ))}
@@ -65,16 +64,16 @@ export default function AnimalPage() {
 
       {animal.story && (
         <section className="mx-auto max-w-3xl px-4 py-12">
-          <p className="hand text-3xl text-blush-500">The story</p>
-          <p className="mt-2 text-lg leading-relaxed text-mud-800">{animal.story}</p>
+          <p className="field-tag">The story</p>
+          <p className="mt-4 text-lg leading-relaxed text-mud-800">{animal.story}</p>
         </section>
       )}
 
       <section className="mx-auto max-w-4xl px-4 pb-20">
-        <p className="hand text-3xl text-blush-500">Reserve a share</p>
-        <h2 className="font-display text-4xl">Pick your portion</h2>
+        <p className="field-tag">Reserve a share</p>
+        <h2 className="mt-3 font-display text-5xl text-sage-700">Pick your portion</h2>
         {animal.rate_per_lb_hw_cents != null && (
-          <div className="mt-4 inline-flex items-baseline gap-2 rounded-full border-2 border-mud-800 bg-cream-100 px-4 py-1.5 shadow-sketch">
+          <div className="mt-4 inline-flex items-baseline gap-2 rounded-full border border-sage-700/25 bg-cream-100/80 px-4 py-1.5 shadow-sketch">
             <span className="text-xs font-semibold uppercase tracking-wide text-mud-600">Rate</span>
             <span className="font-display text-xl">
               ${(animal.rate_per_lb_hw_cents / 100).toFixed(2)} / lb hanging weight
@@ -112,9 +111,9 @@ function fmt(iso: string | null) {
 }
 
 const SHARE_DESC: Record<string, { title: string; blurb: string; freezer: string }> = {
-  whole:   { title: 'Whole hog',    blurb: 'The whole animal, every cut. The best per-pound value.',         freezer: '~140–150 lb of pork · large chest freezer' },
-  half:    { title: 'Half hog',     blurb: 'Half the animal, half the freezer. Same cuts, halved.',         freezer: '~70–75 lb · upright freezer' },
-  quarter: { title: 'Quarter hog',  blurb: 'A quarter share. Great if it\'s your first time.',               freezer: '~35–40 lb · regular freezer drawer' },
+  whole:   { title: 'Whole hog',    blurb: 'The whole animal, every cut. The best per-pound value.',         freezer: '~195 lb of pork · large chest freezer' },
+  half:    { title: 'Half hog',     blurb: 'Half the animal, half the freezer. Same cuts, halved.',         freezer: '~95–100 lb · upright freezer' },
+  quarter: { title: 'Quarter hog',  blurb: 'A quarter share. Great if it\'s your first time.',               freezer: '~45–50 lb · regular freezer drawer' },
   eighth:  { title: 'Eighth hog',   blurb: 'A sampler share.',                                                freezer: '~18–20 lb' },
   dozen:   { title: 'Dozen',        blurb: '',                                                                freezer: '' },
   custom:  { title: 'Custom',       blurb: '',                                                                freezer: '' },
@@ -147,7 +146,7 @@ function ShareGroup({ kind, shares }: { kind: string; shares: ShareOption[] }) {
             Reserve →
           </Link>
         ) : (
-          <span className="rounded-full border-2 border-mud-800 bg-sage-200 px-4 py-2 text-sm font-semibold uppercase text-sage-700">
+          <span className="rounded-full border border-sage-700/25 bg-sage-200 px-4 py-2 text-sm font-semibold uppercase text-sage-700">
             Sold out
           </span>
         )}

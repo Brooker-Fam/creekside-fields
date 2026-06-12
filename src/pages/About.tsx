@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom'
 export default function About() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
-      <p className="hand text-3xl text-blush-500">How it works</p>
-      <h1 className="font-display text-5xl">From our patch to your freezer</h1>
+      <p className="field-tag">How it works</p>
+      <h1 className="mt-4 font-display text-6xl leading-tight text-sage-700">From our pasture to your freezer</h1>
 
       <Section title="The animals">
-        Two heritage Gloucestershire Old Spots gilts, born February 2025. They came to us at about
-        8 weeks old and have lived on our farm in Greenwich, NY ever since. Slow-grow breed, deeply
-        flavored pork. Their whole adult lives outdoors on pasture, rooting in the woods, and getting
-        fat on the local school's lunch leftovers.
+        Heritage Gloucestershire Old Spots, born February 2025. They came to us at about
+        8 weeks old and have lived on our farm in Greenwich, NY ever since. They are a slow-growing
+        pasture breed, raised outdoors with room to root, wander, rest, and settle into the rhythms
+        of the land.
       </Section>
 
       <Section title="What you're actually buying">
@@ -20,8 +20,9 @@ export default function About() {
       </Section>
 
       <Section title="The share size">
-        A whole hog is roughly 140–150 lb of cut &amp; wrapped meat — a chest-freezer's worth. A half is
-        70–75 lb, a quarter is 35–40 lb (fits in a regular freezer drawer).
+        A whole hog is roughly 195 lb of cut &amp; wrapped meat at our current 300 lb hanging-weight
+        planning assumption. A half is around 95-100 lb, and a quarter is around 45-50 lb. Actual
+        take-home weight depends on hanging weight and cut choices.
       </Section>
 
       <Section title="Processing">
@@ -31,15 +32,15 @@ export default function About() {
       </Section>
 
       <Section title="The price">
-        Hanging weight of your share × per-pound rate. Hanging weight is typically ~70% of live
-        weight. The per-pound rate is set per share size — smaller shares cost a little more per
-        pound, since each one takes the same coordination as a whole. We post an estimated price
-        range when you reserve and lock in the final number once we have the actual hanging weight.
-        Processing fees are baked into the rate.
+        Hanging weight of your share × per-pound rate. Whole hogs are priced at $7.75/lb hanging
+        weight, halves at $8.50/lb, and quarters at $9.25/lb. The rate includes base processing
+        using Eagle Bridge Custom Meat's current price sheet. Smoking, no-nitrate curing, links,
+        hot dogs, and specialty sausage may add pass-through butcher costs.
       </Section>
 
       <Section title="The cut sheet">
-        Bacon thick or thin, hams smoked or fresh, what kind of sausages, save the bones or no.
+        Bacon or fresh belly, smoked or fresh hams, bone-in chops or roasts, sausage flavors,
+        soup bones, leaf lard, hocks, and optional offal.
         <strong> If you reserve before we send the pigs to the processor</strong>, you fill out a
         cut sheet and we pass it along. Reserve after that and your share comes as our standard
         pre-cut packages.
@@ -60,7 +61,7 @@ export default function About() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-10">
-      <h2 className="font-display text-2xl">{title}</h2>
+      <h2 className="font-display text-3xl text-sage-700">{title}</h2>
       <p className="mt-2 text-lg leading-relaxed text-mud-700">{children}</p>
     </section>
   )
