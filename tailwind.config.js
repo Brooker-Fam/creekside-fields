@@ -49,6 +49,16 @@ export default {
           300: '#94c3c7',
           500: '#4d8588',
         },
+        peach: {
+          100: '#f9e4d4',
+          300: '#e8b896',
+          500: '#c97d52',
+        },
+        mushroom: {
+          200: '#d4c4b0',
+          400: '#9c8368',
+          600: '#6b5744',
+        },
       },
       fontFamily: {
         display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { insforge, formatCents, priceRange, getShareRateCents } from '../lib/insforge'
 import type { Animal, ShareOption } from '../lib/types'
+import { INQUIRY_PREFILL_KEY, type InquiryPrefill } from '../components/storybook/ContactInquiryForm'
 
 const PICKUP_OPTIONS = [
   { value: 'farm', label: 'Farm pickup', blurb: 'Drive out to us in Greenwich, NY.' },
@@ -69,6 +70,18 @@ const CUT_OPTIONS = {
   },
 } as const
 
+function readInquiryPrefill(): InquiryPrefill | null {
+  try {
+    const raw = sessionStorage.getItem(INQUIRY_PREFILL_KEY)
+    if (!raw) return null
+    sessionStorage.removeItem(INQUIRY_PREFILL_KEY)
+    return JSON.parse(raw) as InquiryPrefill
+  } catch {
+    sessionStorage.removeItem(INQUIRY_PREFILL_KEY)
+    return null
+  }
+}
+
 export default function Reserve() {
   const { shareId } = useParams()
   const navigate = useNavigate()
@@ -78,6 +91,7 @@ export default function Reserve() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [prefill] = useState(readInquiryPrefill)
 
   useEffect(() => {
     if (!shareId) return
@@ -203,12 +217,19 @@ export default function Reserve() {
     })
   }
 
-  if (loading) return <div className="mx-auto max-w-2xl px-4 py-20">Loading…</div>
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+        <p className="field-tag justify-center">Loading</p>
+        <p className="mt-4 text-mud-600">Gathering share details from the barn…</p>
+      </div>
+    )
+  }
   if (!share || !animal) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
         <p className="field-tag justify-center">Unavailable</p>
-        <h1 className="mt-2 font-display text-4xl">That share isn't available.</h1>
+        <h1 className="mt-2 font-display text-4xl text-sage-700">That share isn't available.</h1>
         <p className="mt-4 text-mud-600">It may have just been claimed. Head back and pick another size.</p>
         <Link to="/" className="btn-secondary mt-6 inline-flex">Back to the farm</Link>
       </div>
@@ -269,16 +290,16 @@ export default function Reserve() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-8">
+      <form id="reserve-form" onSubmit={handleSubmit} className="mt-8 space-y-8">
         <section className="card">
           <h2 className="font-display text-2xl">Your details</h2>
           <p className="mt-1 text-sm text-mud-600">
             We'll use this for the bill of sale and to reach you about pickup.
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field label="Full name" name="customer_name" required />
-            <Field label="Email" name="customer_email" type="email" required />
-            <Field label="Phone (optional)" name="customer_phone" type="tel" />
+            <Field label="Full name" name="customer_name" required defaultValue={prefill?.customer_name} />
+            <Field label="Email" name="customer_email" type="email" required defaultValue={prefill?.customer_email} />
+            <Field label="Phone (optional)" name="customer_phone" type="tel" defaultValue={prefill?.customer_phone} />
             <Field label="Mailing address (optional)" name="customer_address" placeholder="123 Main St, Town, NY 12345" />
           </div>
         </section>
@@ -352,6 +373,7 @@ export default function Reserve() {
             rows={3}
             className="input mt-3"
             placeholder="Anything we should know? Pickup timing, dietary stuff, questions…"
+            defaultValue={prefill?.notes}
           />
         </section>
 
@@ -389,17 +411,27 @@ function Field({
   type = 'text',
   required,
   placeholder,
+  defaultValue,
 }: {
   label: string
   name: string
   type?: string
   required?: boolean
   placeholder?: string
+  defaultValue?: string
 }) {
   return (
     <div>
       <label className="label" htmlFor={name}>{label}{required && <span className="text-blush-500"> *</span>}</label>
-      <input id={name} name={name} type={type} required={required} placeholder={placeholder} className="input" />
+      <input
+        id={name}
+        name={name}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+        className="input"
+      />
     </div>
   )
 }

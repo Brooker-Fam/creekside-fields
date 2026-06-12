@@ -1,62 +1,22 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { usePostHog } from '@posthog/react'
 import { insforge, priceRange, getShareRateCents } from '../lib/insforge'
-import type { Animal, ShareKind, ShareOption } from '../lib/types'
-
-type PigShareKind = Extract<ShareKind, 'whole' | 'half' | 'quarter' | 'eighth'>
-
-const SHARE_COPY: Record<PigShareKind, { title: string; freezer: string; meat: string; note: string }> = {
-  whole: {
-    title: 'Whole pig',
-    freezer: 'Best for a full chest freezer',
-    meat: 'About 195 lb cut and wrapped at our planning weight',
-    note: 'Most flexible cut sheet and the best value per pound.',
-  },
-  half: {
-    title: 'Half pig',
-    freezer: 'Fits many upright freezers',
-    meat: 'About 95-100 lb cut and wrapped',
-    note: 'A roomy family share with plenty of chops, roasts, bacon, sausage, and ground pork.',
-  },
-  quarter: {
-    title: 'Quarter pig',
-    freezer: 'Fits a freezer drawer or small chest freezer',
-    meat: 'About 45-50 lb cut and wrapped',
-    note: 'A friendly first share if you are new to buying meat this way.',
-  },
-  eighth: {
-    title: 'Eighth pig',
-    freezer: 'Fits a freezer shelf',
-    meat: 'About 18-20 lb cut and wrapped',
-    note: 'A small sampler share when available.',
-  },
-}
-
-const WORK_STEPS = [
-  ['1', 'Reserve your share', 'Choose whole, half, or quarter and place a deposit so we can hold your spot.'],
-  ['2', 'Choose cut preferences', 'Tell the butcher how you like your pork: chops, roasts, bacon, sausage, bones, lard, and extras.'],
-  ['3', 'We raise them on pasture', 'The pigs root, wander, rest in shade, and help us turn care for animals into care for land.'],
-  ['4', 'The processor prepares it', 'Eagle Bridge Custom Meat & Smokehouse handles slaughter, cut, wrap, smoking, and sausage options.'],
-  ['5', 'Fill your freezer', 'Pick up from the processor or the farm, then come home with pork that has a place and a story.'],
-]
-
-const VALUES = [
-  ['Rotational care', 'Pasture and wooded edges are part of the work: movement, rest, manure, roots, and regrowth.'],
-  ['Animal dignity', 'Clean water, shade, room to root, daily attention, and a slower heritage breed life.'],
-  ['Soil health', 'Regenerative farming starts underground, where living soil turns care into future abundance.'],
-  ['Family scale', 'Small batches, real names, muddy boots, kids underfoot, and no pretending we are a factory.'],
-]
-
-const FAQS = [
-  ['How much freezer space do I need?', 'Plan on a chest freezer for a whole share, an upright freezer for a half, and a roomy freezer drawer or small chest freezer for a quarter.'],
-  ['What cuts are included?', 'Expect a mix of chops, roasts, bacon or belly, hams, sausage or ground pork, ribs, bones, lard, and optional offal depending on your cut sheet.'],
-  ['How much meat will I get?', 'A whole pig is roughly 195 lb cut and wrapped at our current planning weight. A half is about 95-100 lb and a quarter about 45-50 lb.'],
-  ['Do I pay the processor separately?', 'Our current share pricing is designed to include base processing. Specialty smoking, no-nitrate curing, links, hot dogs, and specialty sausage may add pass-through costs.'],
-  ['Is the pork USDA processed?', 'The processor details will be confirmed before pickup. We will clearly explain whether a share is custom processed or USDA processed before final payment.'],
-  ['Can I split a share with a friend?', 'Yes. A half or whole share is often lovely to split. Choose one person to reserve and pay, then divide the boxes together.'],
-  ['When will it be ready?', 'We are planning for summer pickup. We will text reservation holders as soon as the processing date is locked in.'],
-]
+import type { Animal, ShareOption } from '../lib/types'
+import SectionIntro from '../components/storybook/SectionIntro'
+import SectionDivider from '../components/storybook/SectionDivider'
+import Fireflies from '../components/storybook/Fireflies'
+import FarmLandscape from '../components/storybook/FarmLandscape'
+import PigProfileCard from '../components/storybook/PigProfileCard'
+import ContactInquiryForm from '../components/storybook/ContactInquiryForm'
+import ShareTile from '../components/storybook/ShareTile'
+import {
+  WORK_STEPS,
+  VALUES,
+  FAQS,
+  FARM_PIGS,
+  PRICING_PLACEHOLDERS,
+  type PigShareKind,
+} from '../content/homeCopy'
 
 export default function Home() {
   const [animals, setAnimals] = useState<Animal[]>([])
@@ -77,11 +37,15 @@ export default function Home() {
   return (
     <div className="overflow-hidden">
       <Hero />
-      <FolkDivider />
+      <SectionDivider variant="creek" />
       <PigShares animals={animals} shares={shares} loading={loading} />
+      <SectionDivider variant="vines" className="bg-sage-100/40" />
       <HowItWorks />
+      <SectionDivider variant="mushrooms" />
       <WhyCreekside />
+      <SectionDivider variant="sunflowers" className="bg-cream-100/50" />
       <MeetTheFarm />
+      <SectionDivider variant="stars" />
       <Faq />
       <ReserveContact />
     </div>
@@ -90,27 +54,33 @@ export default function Home() {
 
 function Hero() {
   return (
-    <section className="relative bg-cream-50 px-4 py-16 sm:py-20">
-      <span className="firefly left-[8%] top-28" />
-      <span className="firefly right-[18%] top-24 opacity-70" />
-      <span className="firefly bottom-20 right-[9%] opacity-80" />
-      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_0.86fr] lg:items-center">
-        <div className="relative z-10 min-w-0">
+    <section className="relative overflow-hidden bg-cream-50 px-4 py-16 sm:py-24">
+      <FarmLandscape />
+      <Fireflies count={5} />
+      <div className="relative z-10 mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_0.86fr] lg:items-center">
+        <div className="min-w-0">
           <p className="field-tag text-blush-500">Greenwich, New York</p>
           <h1 className="mt-5 max-w-[21.5rem] break-words font-display text-3xl leading-[1.08] text-sage-700 sm:max-w-4xl sm:text-6xl lg:text-7xl">
-            Pasture-raised pork from a small farm with creekwater in its bones.
+            Pasture-raised pork from a regenerative family farm you can feel good about.
           </h1>
           <p className="mt-6 max-w-[21.5rem] text-base leading-7 text-mud-600 sm:max-w-2xl sm:text-lg sm:leading-8">
-            Creekside Fields is a regenerative family farm where Old Spot pigs root through
-            pasture, kids run barefoot, fireflies blink at dusk, and good food begins with care.
+            Creekside Fields is a cozy storybook corner of the world — Old Spot pigs, creek sounds,
+            barefoot mornings, fireflies at dusk, and pork raised with care for land, animals, and neighbors.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#pig-shares" className="btn-primary">Reserve a Pig Share <span aria-hidden>→</span></a>
-            <a href="#how-it-works" className="btn-secondary">How It Works</a>
+            <a href="#pig-shares" className="btn-primary">
+              Reserve a Pig Share <span aria-hidden>→</span>
+            </a>
+            <a href="#how-it-works" className="btn-secondary">
+              How It Works
+            </a>
           </div>
           <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
             {['Whole, half, quarter', 'Raised on pasture', 'Cut sheet guidance'].map((item) => (
-              <div key={item} className="rounded-full border border-sage-300/50 bg-cream-100/70 px-4 py-2 text-center text-sm font-semibold text-sage-700">
+              <div
+                key={item}
+                className="rounded-full border border-sage-300/50 bg-cream-100/80 px-4 py-2 text-center text-sm font-semibold text-sage-700 backdrop-blur-sm"
+              >
                 {item}
               </div>
             ))}
@@ -118,9 +88,11 @@ function Hero() {
         </div>
 
         <div className="storybook-panel relative mx-auto w-full max-w-[520px] p-5">
-          <div className="world-logo aspect-square rounded-[2rem] border-2 border-cream-50/80 shadow-glow" />
-          <div className="absolute -bottom-5 left-8 right-8 rounded-full border-2 border-mud-800/10 bg-cream-50 px-5 py-3 text-center shadow-soft">
-            <p className="font-hand text-2xl italic text-blush-500">a storybook farm, with real freezer pork</p>
+          <div className="world-logo aspect-square animate-gentle-sway rounded-[2rem] border-2 border-cream-50/80 shadow-glow" />
+          <div className="absolute -bottom-5 left-8 right-8 rounded-full border-2 border-mud-800/10 bg-cream-50/95 px-5 py-3 text-center shadow-soft backdrop-blur-sm">
+            <p className="font-hand text-xl italic text-blush-500 sm:text-2xl">
+              a storybook farm, with real freezer pork
+            </p>
           </div>
         </div>
       </div>
@@ -128,22 +100,25 @@ function Hero() {
   )
 }
 
-function PigShares({ animals, shares, loading }: { animals: Animal[]; shares: ShareOption[]; loading: boolean }) {
+function PigShares({
+  animals,
+  shares,
+  loading,
+}: {
+  animals: Animal[]
+  shares: ShareOption[]
+  loading: boolean
+}) {
   return (
     <section id="pig-shares" className="mx-auto max-w-6xl px-4 py-20">
       <SectionIntro
         kicker="Pig shares"
         title="A clear, cozy way to buy pork for your freezer."
-        body="A pig share means you reserve a portion of one animal before processing. You choose a share size, tell us your cut preferences, and receive a freezer full of pasture-raised pork once it is ready."
+        body="A pig share means you reserve a portion of one animal before processing. You choose a share size, tell us your cut preferences, and receive pasture-raised pork once it is ready — transparent, neighborly, and reassuring for first-time buyers."
       />
       {loading ? <SharesSkeleton /> : <SharesSummary animals={animals} shares={shares} />}
-      <div className="mt-8 grid gap-4 md:grid-cols-4">
-        {[
-          ['Price', 'Whole $7.75/lb HW, half $8.50/lb HW, quarter $9.25/lb HW.'],
-          ['Deposit', 'Deposit holds your share; final balance is based on actual hanging weight.'],
-          ['Processing', 'Base processing is included; specialty curing or links may add pass-through costs.'],
-          ['Pickup', 'Summer pickup from the processor or farm once everything is cut and wrapped.'],
-        ].map(([title, body]) => (
+      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {PRICING_PLACEHOLDERS.map(([title, body]) => (
           <div key={title} className="rounded-[1.25rem] border border-clay-300/35 bg-cream-100/70 p-4">
             <h3 className="font-display text-xl text-clay-500">{title}</h3>
             <p className="mt-2 text-sm leading-6 text-mud-600">{body}</p>
@@ -204,33 +179,6 @@ function SharesSummary({ animals, shares }: { animals: Animal[]; shares: ShareOp
   )
 }
 
-function ShareTile({ kind, count, rate, price }: { kind: PigShareKind; count: number; rate: string; price: string }) {
-  const posthog = usePostHog()
-  const soldOut = count === 0
-  const copy = SHARE_COPY[kind]
-
-  return (
-    <Link
-      to={soldOut ? '#pig-shares' : `/reserve/${kind}`}
-      onClick={() => posthog?.capture('share_size_selected', { share_kind: kind, available_count: count, source: 'home_storybook' })}
-      className={`group relative min-h-[17rem] rounded-[1.5rem] border-2 p-5 shadow-soft transition ${
-        soldOut
-          ? 'cursor-not-allowed border-mud-800/10 bg-cream-200/60 opacity-70'
-          : 'border-sage-300/45 bg-cream-50/90 hover:-translate-y-1 hover:border-marigold-300/70'
-      }`}
-    >
-      <span className="absolute right-5 top-5 text-3xl" aria-hidden>{kind === 'whole' ? '✦' : kind === 'half' ? '✧' : '•'}</span>
-      <p className="font-hand text-2xl italic text-blush-500">{copy.title}</p>
-      <p className="mt-3 font-display text-3xl text-sage-700">{soldOut ? 'Sold out' : `${count} available`}</p>
-      <p className="mt-3 text-sm font-semibold text-indigo-700">{rate}</p>
-      <p className="mt-1 text-sm text-mud-600">Est. {price || 'final total TBD'}</p>
-      <p className="mt-4 text-sm leading-6 text-mud-600">{copy.meat}. {copy.freezer}.</p>
-      <p className="mt-3 text-sm leading-6 text-mud-600">{copy.note}</p>
-      {!soldOut && <p className="mt-5 text-sm font-bold text-clay-500 group-hover:text-marigold-500">Reserve this share →</p>}
-    </Link>
-  )
-}
-
 function HowItWorks() {
   return (
     <section id="how-it-works" className="bg-sage-100/80 px-4 py-20">
@@ -258,7 +206,7 @@ function HowItWorks() {
 
 function WhyCreekside() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-20">
+    <section id="why" className="mx-auto max-w-6xl px-4 py-20">
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <SectionIntro
@@ -267,7 +215,9 @@ function WhyCreekside() {
             body="Our work is small and practical: care for the animals, move them with attention, feed the soil, waste less, and send families home with food they can feel good about."
           />
           <div className="mt-8 rounded-[2rem] border-2 border-indigo-100 bg-indigo-100/55 p-6">
-            <p className="font-hand text-3xl italic text-indigo-700">barefoot mornings, dirty hands, creek sounds, animals, kids, fireflies, good food</p>
+            <p className="font-hand text-2xl italic text-indigo-700 sm:text-3xl">
+              barefoot mornings, dirty hands, creek sounds, animals, kids, fireflies, good food
+            </p>
           </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -285,24 +235,37 @@ function WhyCreekside() {
 
 function MeetTheFarm() {
   return (
-    <section className="bg-cream-100/65 px-4 py-20">
-      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-        <div className="storybook-panel p-4">
-          <div className="hero-photo min-h-[420px] rounded-[1.6rem] border-2 border-cream-50/80" />
-        </div>
-        <div>
-          <SectionIntro
-            kicker="Meet the farm"
-            title="Sushi, Nori, and Carrot are the heart of this season."
-            body="The pigs are central here: expressive, curious, deeply food-motivated, and very good at reminding us that farming is daily relationship. Around them orbit dogs, cats, chickens, ducks, geese, guinea hens, garden plans, future stories, and a lot of mud."
-          />
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            {['Future photos', 'Animal stories', 'Farm notes'].map((item) => (
-              <div key={item} className="rounded-[1.25rem] border border-sage-300/45 bg-cream-50/80 p-4 text-center font-semibold text-sage-700">
-                {item}
-              </div>
-            ))}
+    <section id="meet-the-farm" className="bg-cream-100/65 px-4 py-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-start">
+          <div className="storybook-panel p-4">
+            <div className="hero-photo min-h-[360px] rounded-[1.6rem] border-2 border-cream-50/80 sm:min-h-[420px]" />
+            <p className="mt-4 text-center font-hand text-lg italic text-sage-500">
+              Room for future photos, barn notes, and seasonal stories
+            </p>
           </div>
+          <div>
+            <SectionIntro
+              kicker="Meet the farm"
+              title="Sushi, Nori, and Carrot are the heart of this season."
+              body="The pigs are central here: expressive, curious, deeply food-motivated, and very good at reminding us that farming is daily relationship. Around them orbit dogs, cats, chickens, ducks, geese, guinea hens, garden plans, and a lot of mud."
+            />
+          </div>
+        </div>
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          {FARM_PIGS.map((pig) => (
+            <PigProfileCard key={pig.name} {...pig} />
+          ))}
+        </div>
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          {['Future photos', 'Animal stories', 'Farm notes'].map((item) => (
+            <div
+              key={item}
+              className="rounded-[1.25rem] border border-sage-300/45 bg-cream-50/80 p-4 text-center font-semibold text-sage-700"
+            >
+              {item}
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -311,7 +274,7 @@ function MeetTheFarm() {
 
 function Faq() {
   return (
-    <section className="mx-auto max-w-5xl px-4 py-20">
+    <section id="faq" className="mx-auto max-w-5xl px-4 py-20">
       <SectionIntro
         kicker="Questions neighbors ask"
         title="Pig share FAQ"
@@ -322,7 +285,7 @@ function Faq() {
           <details key={q} className="card group">
             <summary className="cursor-pointer list-none font-display text-2xl text-sage-700">
               {q}
-              <span className="float-right text-marigold-500 group-open:rotate-45">+</span>
+              <span className="float-right text-marigold-500 transition-transform group-open:rotate-45">+</span>
             </summary>
             <p className="mt-3 leading-7 text-mud-600">{a}</p>
           </details>
@@ -336,48 +299,36 @@ function ReserveContact() {
   return (
     <section id="reserve" className="px-4 pb-24">
       <div className="storybook-panel relative mx-auto max-w-5xl overflow-hidden p-8 sm:p-10">
-        <span className="firefly right-12 top-10" />
-        <span className="firefly bottom-14 left-16 opacity-70" />
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+        <Fireflies count={2} />
+        <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-start">
           <div>
             <p className="field-tag text-blush-500">Ready to reserve?</p>
-            <h2 className="mt-4 font-display text-5xl leading-tight text-sage-700">Tell us which share feels right.</h2>
+            <h2 className="mt-4 font-display text-4xl leading-tight text-sage-700 sm:text-5xl">
+              Tell us which share feels right.
+            </h2>
             <p className="mt-4 leading-7 text-mud-600">
-              Use the share cards above to enter the reservation form, or email us with questions.
-              We will answer like real people, because we are.
+              Use the share cards above to jump straight into a reservation, or send us a note below.
+              We answer like real people, because we are.
             </p>
-          </div>
-          <div className="rounded-[1.5rem] border-2 border-sage-300/40 bg-cream-50/80 p-5">
-            <div className="grid gap-3">
-              <Link to="/reserve/quarter" className="btn-primary justify-center">Reserve a Quarter</Link>
-              <Link to="/reserve/half" className="btn-secondary justify-center">Reserve a Half</Link>
-              <Link to="/reserve/whole" className="btn-secondary justify-center">Reserve a Whole</Link>
-              <a href="mailto:brookerhousehold@gmail.com" className="btn-secondary justify-center">Ask a Question</a>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link to="/reserve/quarter" className="btn-primary">
+                Reserve a Quarter
+              </Link>
+              <Link to="/reserve/half" className="btn-secondary">
+                Reserve a Half
+              </Link>
+              <Link to="/reserve/whole" className="btn-secondary">
+                Reserve a Whole
+              </Link>
             </div>
-            <p className="mt-4 text-center text-sm leading-6 text-mud-600">
-              Confirmation copy: Thank you. We will tuck your name onto the list and follow up with timing, cut sheet details, and next steps.
+            <p className="mt-6 rounded-[1rem] border border-marigold-300/40 bg-marigold-100/40 p-4 text-sm leading-6 text-mud-600">
+              <strong className="text-sage-700">Confirmation copy:</strong> Thank you. We will tuck your
+              name onto the list and follow up with timing, cut sheet details, and next steps.
             </p>
           </div>
+          <ContactInquiryForm />
         </div>
       </div>
     </section>
-  )
-}
-
-function SectionIntro({ kicker, title, body }: { kicker: string; title: string; body: string }) {
-  return (
-    <div>
-      <p className="field-tag text-blush-500">{kicker}</p>
-      <h2 className="mt-4 max-w-3xl font-display text-4xl leading-tight text-sage-700 sm:text-5xl">{title}</h2>
-      <p className="mt-4 max-w-3xl text-lg leading-8 text-mud-600">{body}</p>
-    </div>
-  )
-}
-
-function FolkDivider() {
-  return (
-    <div className="bg-cream-50 px-4">
-      <div className="folk-border mx-auto max-w-6xl" />
-    </div>
   )
 }

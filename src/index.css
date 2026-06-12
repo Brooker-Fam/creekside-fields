@@ -117,3 +117,41 @@
     background-size: min(760px, 100%) 1px, min(640px, 86%) 20px;
   }
 }
+
+@layer utilities {
+  @keyframes firefly {
+    0%, 100% { opacity: 0.25; transform: translateY(0) scale(1); }
+    50% { opacity: 1; transform: translateY(-6px) scale(1.15); }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes gentle-sway {
+    0%, 100% { transform: rotate(-0.6deg); }
+    50% { transform: rotate(0.6deg); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .animate-firefly {
+    animation: firefly 3.2s ease-in-out infinite;
+  }
+
+  .animate-twinkle {
+    animation: twinkle 2.4s ease-in-out infinite;
+  }
+
+  .animate-gentle-sway {
+    animation: gentle-sway 6s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 5s ease-in-out infinite;
+  }
+}
