@@ -220,17 +220,17 @@ export default function Reserve() {
   if (loading) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <p className="field-tag justify-center">Loading</p>
-        <p className="mt-4 text-mud-600">Gathering share details from the barn…</p>
+        <p className="eyebrow">Loading</p>
+        <p className="mt-4 text-earth-600">Gathering share details…</p>
       </div>
     )
   }
   if (!share || !animal) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center">
-        <p className="field-tag justify-center">Unavailable</p>
-        <h1 className="mt-2 font-display text-4xl text-sage-700">That share isn't available.</h1>
-        <p className="mt-4 text-mud-600">It may have just been claimed. Head back and pick another size.</p>
+        <p className="eyebrow">Unavailable</p>
+        <h1 className="mt-2 font-display text-4xl text-forest-800">That share isn't available.</h1>
+        <p className="mt-4 text-earth-600">It may have just been claimed. Head back and pick another size.</p>
         <Link to="/" className="btn-secondary mt-6 inline-flex">Back to the farm</Link>
       </div>
     )
@@ -243,11 +243,11 @@ export default function Reserve() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <Link to="/" className="text-sm font-semibold text-blush-400 hover:underline">
-        ← back to the shares
+      <Link to="/" className="text-sm font-medium text-copper-500 hover:underline">
+        ← Back to shares
       </Link>
-      <p className="field-tag mt-6">Reserve your share</p>
-      <h1 className="mt-3 font-display text-5xl text-sage-700">{kindTitle}</h1>
+      <p className="eyebrow mt-8">Reserve</p>
+      <h1 className="mt-3 font-display text-4xl text-forest-800 sm:text-5xl">{kindTitle}</h1>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
         <span>{animal.breed} gilt</span>
         <span>·</span>

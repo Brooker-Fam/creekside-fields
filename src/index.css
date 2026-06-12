@@ -5,73 +5,48 @@
 @layer base {
   html {
     font-family: theme('fontFamily.body');
-    color: theme('colors.mud.800');
-    background-color: #fff9ee;
+    color: theme('colors.earth.800');
+    background-color: theme('colors.linen.50');
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3 {
     font-family: theme('fontFamily.display');
-    font-weight: 600;
-    letter-spacing: 0;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: theme('colors.forest.800');
   }
 
   body {
     overflow-x: hidden;
-    background-image:
-      radial-gradient(circle at 8% 18%, rgba(230, 185, 78, 0.12), transparent 24%),
-      radial-gradient(circle at 86% 8%, rgba(89, 104, 142, 0.1), transparent 22%),
-      radial-gradient(circle at 78% 84%, rgba(212, 146, 114, 0.12), transparent 24%),
-      linear-gradient(180deg, rgba(255, 249, 238, 0.98), rgba(246, 236, 216, 0.82) 48%, rgba(237, 243, 221, 0.84)),
-      repeating-linear-gradient(118deg, rgba(95, 120, 69, 0.055) 0 1px, transparent 1px 28px),
-      repeating-linear-gradient(24deg, rgba(217, 137, 127, 0.045) 0 1px, transparent 1px 34px);
-    background-attachment: fixed;
+    background-color: theme('colors.linen.50');
   }
 }
 
 @layer components {
-  .hand {
-    font-family: theme('fontFamily.hand');
-  }
-
-  @media print {
-    body { background: white; }
-    body * { visibility: hidden; }
-    .bos, .bos * { visibility: visible; }
-    .bos { position: absolute; inset: 0; margin: 0; padding: 0.4in; }
-  }
-
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-full border-2 border-mud-800/15 bg-marigold-300 px-6 py-3 font-semibold text-mud-800 shadow-soft transition-transform hover:-translate-y-0.5 hover:bg-marigold-100 active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-forest-700 px-6 py-3 text-sm font-semibold tracking-wide text-linen-50 shadow-soft transition hover:bg-forest-600 active:scale-[0.99];
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 rounded-full border-2 border-sage-300/50 bg-cream-50/90 px-6 py-3 font-semibold text-sage-700 shadow-soft transition-transform hover:-translate-y-0.5 hover:bg-sage-100 active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-linen-200 bg-linen-50 px-6 py-3 text-sm font-semibold text-forest-700 transition hover:border-sage-400 hover:bg-sage-100 active:scale-[0.99];
   }
 
   .card {
-    @apply rounded-[1.4rem] border-2 border-sage-300/35 bg-cream-50/90 p-6 shadow-soft backdrop-blur-sm;
-    background-image:
-      linear-gradient(145deg, rgba(255, 249, 238, 0.9), rgba(237, 243, 221, 0.66)),
-      repeating-linear-gradient(135deg, rgba(95, 120, 69, 0.04) 0 1px, transparent 1px 18px);
+    @apply rounded-lg border border-linen-200 bg-linen-50 p-6 shadow-card;
   }
 
   .label {
-    @apply mb-1 block text-sm font-semibold uppercase tracking-wide text-mud-600;
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-widest text-earth-500;
   }
 
   .input {
-    @apply w-full rounded-lg border border-sage-300/50 bg-cream-50/90 px-4 py-2.5 text-mud-800 placeholder-mud-400 focus:outline-none focus:ring-2 focus:ring-blush-200;
+    @apply w-full rounded-md border border-linen-200 bg-white px-4 py-2.5 text-earth-800 placeholder-earth-500/50 focus:border-sage-400 focus:outline-none focus:ring-2 focus:ring-sage-200;
   }
 
-  .field-tag {
-    @apply inline-flex items-center gap-3 font-hand text-xl italic text-sage-500;
-  }
-
-  .field-tag::before,
-  .field-tag::after {
-    content: '';
-    @apply h-px w-7 bg-current opacity-40;
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-copper-500;
   }
 
   .hero-photo {
@@ -86,72 +61,14 @@
     background-size: cover;
   }
 
-  .storybook-panel {
-    @apply rounded-[2rem] border-2 border-mud-800/10 bg-cream-50/90 shadow-sketch;
-    background-image:
-      radial-gradient(circle at 12% 18%, rgba(230, 185, 78, 0.16), transparent 24%),
-      radial-gradient(circle at 86% 22%, rgba(148, 195, 199, 0.18), transparent 26%),
-      linear-gradient(145deg, rgba(255, 249, 238, 0.94), rgba(246, 236, 216, 0.76));
+  .section-rule {
+    @apply mx-auto h-px w-full max-w-6xl bg-linen-200;
   }
 
-  .folk-border {
-    background-image:
-      repeating-linear-gradient(90deg, rgba(95, 120, 69, 0.34) 0 9px, transparent 9px 18px),
-      repeating-linear-gradient(90deg, transparent 0 13px, rgba(230, 185, 78, 0.44) 13px 18px, transparent 18px 31px);
-    background-repeat: repeat-x;
-    background-size: auto 2px, auto 2px;
-    height: 14px;
-  }
-
-  .firefly {
-    @apply absolute h-1.5 w-1.5 rounded-full bg-marigold-300 shadow-glow;
-  }
-
-  .root-divider {
-    height: 20px;
-    background-image:
-      linear-gradient(90deg, transparent, rgba(95, 120, 69, 0.22), transparent),
-      repeating-linear-gradient(112deg, transparent 0 18px, rgba(217, 137, 127, 0.22) 18px 19px, transparent 19px 34px);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: min(760px, 100%) 1px, min(640px, 86%) 20px;
-  }
-}
-
-@layer utilities {
-  @keyframes firefly {
-    0%, 100% { opacity: 0.25; transform: translateY(0) scale(1); }
-    50% { opacity: 1; transform: translateY(-6px) scale(1.15); }
-  }
-
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.35; }
-    50% { opacity: 1; }
-  }
-
-  @keyframes gentle-sway {
-    0%, 100% { transform: rotate(-0.6deg); }
-    50% { transform: rotate(0.6deg); }
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-
-  .animate-firefly {
-    animation: firefly 3.2s ease-in-out infinite;
-  }
-
-  .animate-twinkle {
-    animation: twinkle 2.4s ease-in-out infinite;
-  }
-
-  .animate-gentle-sway {
-    animation: gentle-sway 6s ease-in-out infinite;
-  }
-
-  .animate-float {
-    animation: float 5s ease-in-out infinite;
+  @media print {
+    body { background: white; }
+    body * { visibility: hidden; }
+    .bos, .bos * { visibility: visible; }
+    .bos { position: absolute; inset: 0; margin: 0; padding: 0.4in; }
   }
 }

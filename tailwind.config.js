@@ -4,74 +4,55 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: {
-          50: '#fff9ee',
-          100: '#f6ecd8',
-          200: '#e6d8b9',
+        linen: {
+          50: '#faf7f2',
+          100: '#f3ede4',
+          200: '#e8dfd2',
         },
-        blush: {
-          100: '#f7dedb',
-          200: '#efbfb8',
-          300: '#d9897f',
-          400: '#b7665d',
-          500: '#87483f',
+        forest: {
+          600: '#3d4f36',
+          700: '#2f3d2a',
+          800: '#243021',
         },
-        marigold: {
-          100: '#f8e9b7',
-          300: '#e6b94e',
-          500: '#a9761f',
+        earth: {
+          500: '#6b5a4a',
+          600: '#5c4e42',
+          800: '#2c241c',
         },
-        indigo: {
-          100: '#dfe4f1',
-          400: '#59688e',
-          700: '#26304f',
-        },
-        clay: {
-          100: '#efd7c7',
-          300: '#d49272',
-          500: '#995a43',
+        copper: {
+          500: '#a65d3f',
+          600: '#8f4e34',
         },
         sage: {
-          100: '#edf3dd',
-          200: '#d4e2b8',
-          300: '#abc17e',
-          400: '#7f9b5d',
-          500: '#5f7845',
-          700: '#34482d',
-        },
-        mud: {
-          400: '#9c8368',
-          600: '#705741',
-          800: '#3d3027',
+          100: '#eef2e8',
+          200: '#d8e2cc',
+          400: '#8fa07a',
+          500: '#6b8058',
         },
         creek: {
-          100: '#d9edf0',
-          300: '#94c3c7',
-          500: '#4d8588',
+          300: '#8fada8',
+          500: '#5f857d',
         },
-        peach: {
-          100: '#f9e4d4',
-          300: '#e8b896',
-          500: '#c97d52',
-        },
-        mushroom: {
-          200: '#d4c4b0',
-          400: '#9c8368',
-          600: '#6b5744',
-        },
+        // Legacy aliases used in admin/reserve flows
+        cream: { 50: '#faf7f2', 100: '#f3ede4', 200: '#e8dfd2' },
+        mud: { 400: '#8a7968', 600: '#5c4e42', 700: '#4a3f35', 800: '#2c241c' },
+        blush: { 400: '#b87a62', 500: '#a65d3f' },
+        marigold: { 100: '#f5ead8', 300: '#d4a96a' },
+        clay: { 300: '#c49a7a', 500: '#a65d3f' },
+        indigo: { 100: '#e8ebe4', 700: '#3d4f36' },
       },
       fontFamily: {
         display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
-        hand: ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
+        accent: ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
         body: ['"Source Sans 3"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        hand: ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
       },
       boxShadow: {
-        soft: '0 16px 42px -24px rgba(52, 72, 45, 0.28)',
-        sketch: '0 18px 48px -28px rgba(61, 48, 39, 0.34)',
-        glow: '0 0 42px rgba(230, 185, 78, 0.24)',
+        soft: '0 12px 40px -20px rgba(44, 36, 28, 0.18)',
+        card: '0 1px 3px rgba(44, 36, 28, 0.06), 0 8px 24px -12px rgba(44, 36, 28, 0.1)',
       },
-      borderRadius: {
-        blob: '60% 40% 50% 50% / 50% 60% 40% 50%',
+      maxWidth: {
+        prose: '42rem',
       },
     },
   },
