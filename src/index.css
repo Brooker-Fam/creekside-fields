@@ -13,8 +13,8 @@
 
   h1, h2, h3 {
     font-family: theme('fontFamily.display');
-    font-weight: 500;
-    letter-spacing: -0.02em;
+    font-weight: 400; /* Marcellus is single-weight */
+    letter-spacing: 0.005em; /* near-neutral, inscriptional */
     color: theme('colors.forest.800');
   }
 
@@ -38,7 +38,7 @@
   }
 
   .label {
-    @apply mb-1.5 block text-xs font-semibold uppercase tracking-widest text-earth-500;
+    @apply mb-1.5 block font-smallcaps text-[0.9375rem] font-normal tracking-[0.14em] text-earth-500;
   }
 
   .input {
@@ -46,7 +46,7 @@
   }
 
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.2em] text-copper-500;
+    @apply font-smallcaps text-[1.0625rem] font-normal tracking-[0.18em] text-copper-500;
   }
 
   .hero-photo {

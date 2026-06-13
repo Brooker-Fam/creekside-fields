@@ -30,7 +30,7 @@ export default function ShareCard({ kind, count, rate, price }: Props) {
           : 'border-linen-200 shadow-card hover:border-sage-400 hover:shadow-soft'
       }`}
     >
-      <p className="text-xs font-semibold uppercase tracking-widest text-copper-500">{copy.title}</p>
+      <p className="eyebrow">{copy.title}</p>
       <p className="mt-3 font-display text-2xl text-forest-800">
         {soldOut ? 'Sold out' : `${count} available`}
       </p>

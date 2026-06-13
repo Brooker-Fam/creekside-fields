@@ -42,10 +42,13 @@ export default {
         indigo: { 100: '#e8ebe4', 700: '#3d4f36' },
       },
       fontFamily: {
-        display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
-        accent: ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
-        body: ['"Source Sans 3"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        hand: ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
+        // Storybook serif system — Marcellus display, Marcellus SC small-caps,
+        // Spectral book serif for body/UI and italic accents.
+        display: ['"Marcellus"', 'ui-serif', 'Georgia', '"Times New Roman"', 'serif'],
+        smallcaps: ['"Marcellus SC"', '"Marcellus"', 'ui-serif', 'serif'],
+        accent: ['"Spectral"', 'ui-serif', 'Georgia', 'serif'],
+        body: ['"Spectral"', 'ui-serif', 'Georgia', 'serif'],
+        hand: ['"Spectral"', 'ui-serif', 'Georgia', 'serif'],
       },
       boxShadow: {
         soft: '0 12px 40px -20px rgba(44, 36, 28, 0.18)',

@@ -101,7 +101,7 @@ function Footer() {
           </p>
         </div>
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-widest text-earth-500">Explore</h4>
+          <h4 className="label">Explore</h4>
           <ul className="mt-4 space-y-2 text-sm">
             {SECTION_LINKS.map((link) => (
               <li key={link.href}>
@@ -113,7 +113,7 @@ function Footer() {
           </ul>
         </div>
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-widest text-earth-500">Contact</h4>
+          <h4 className="label">Contact</h4>
           <p className="mt-4 text-sm">
             <a className="text-earth-600 hover:text-copper-500" href="mailto:brookerhousehold@gmail.com">
               brookerhousehold@gmail.com
