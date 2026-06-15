@@ -21,10 +21,9 @@ function Logo({ size = 22 }: { size?: number }) {
       </span>
       <span
         className="font-accent italic text-copper-500"
-        style={{ fontSize: Math.round(size * 0.5), lineHeight: 1.15, marginTop: 2 }}
+        style={{ fontSize: Math.round(size * 0.5), lineHeight: 1.15, marginTop: 2, whiteSpace: 'nowrap' }}
       >
-        <span className="block">Pasture raised,</span>
-        <span className="block">family loved</span>
+        Pasture raised, family loved
       </span>
     </span>
   )
@@ -45,24 +44,26 @@ function Header() {
           <Logo />
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
-          {onHome ? (
-            SECTION_LINKS.map((link) => (
-              <a key={link.href} href={link.href} className="nav-link">
-                {link.label}
-              </a>
-            ))
-          ) : (
-            <>
-              <NavLink to="/" className="nav-link">
-                Home
-              </NavLink>
-              <NavLink to="/about" className="nav-link">
-                Details
-              </NavLink>
-            </>
-          )}
-          <a href="/#reserve" className="btn-primary px-4 py-2 text-xs">
+        <nav className="hidden items-center gap-8 md:flex">
+          <div className="flex items-center gap-[26px]">
+            {onHome ? (
+              SECTION_LINKS.map((link) => (
+                <a key={link.href} href={link.href} className="nav-link">
+                  {link.label}
+                </a>
+              ))
+            ) : (
+              <>
+                <NavLink to="/" className="nav-link">
+                  Home
+                </NavLink>
+                <NavLink to="/about" className="nav-link">
+                  Details
+                </NavLink>
+              </>
+            )}
+          </div>
+          <a href="/#shares" className="btn-primary px-4 py-2 text-xs">
             Reserve
           </a>
         </nav>
@@ -92,7 +93,7 @@ function Header() {
               </a>
             ))}
             <a
-              href="/#reserve"
+              href="/#shares"
               className="btn-primary mt-2 px-4 py-2 text-xs"
               onClick={() => setOpen(false)}
             >
