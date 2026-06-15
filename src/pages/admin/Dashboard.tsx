@@ -257,20 +257,15 @@ function ReservationRow({
       return
     }
     const calc = computeInvoice({ reservation: r, share, animal, processor })
-    if (!calc.canCompute || calc.shareHwLbs == null || calc.finalTotalCents == null || calc.balanceCents == null || calc.rate == null) {
-      setSendStatus({ kind: 'err', msg: 'Set hanging weight and rate on the animal first (Animals tab).' })
+    if (!calc.canCompute || calc.finalTotalCents == null || calc.balanceCents == null) {
+      setSendStatus({ kind: 'err', msg: 'Set the final price on this reservation first (the “Final $” field above).' })
       return
     }
     setSendingInvoice(true)
     setSendStatus(null)
     const html = renderInvoiceEmail({
       customer: { name: r.customer_name, email: r.customer_email },
-      animal: { breed: animal.breed },
       share: { label: share.label, kind: share.kind },
-      hangingWeight: calc.hangingWeight ?? 0,
-      sharePct: calc.sharePct,
-      shareHwLbs: calc.shareHwLbs,
-      rateCents: calc.rate,
       finalTotalCents: calc.finalTotalCents,
       depositPaidCents: r.total_paid_cents || 0,
       balanceCents: calc.balanceCents,
@@ -341,6 +336,13 @@ function ReservationRow({
             />
             Deposit paid
           </label>
+          <label className="flex items-center gap-2 text-sm">
+            Final $
+            <RateInput
+              cents={r.final_total_cents}
+              onSave={(cents) => update({ final_total_cents: cents })}
+            />
+          </label>
         </div>
       </div>
 
@@ -386,11 +388,11 @@ function ReservationRow({
             {r.acknowledged_at && <> · Acknowledged {new Date(r.acknowledged_at).toLocaleString()}</>}
           </p>
           {r.notes && <p className="mt-2"><strong>Notes:</strong> {r.notes}</p>}
-          {Object.keys(r.cut_preferences || {}).length > 0 && (
-            <details className="mt-2">
-              <summary className="cursor-pointer text-mud-600">Cut preferences (heads-up only)</summary>
-              <pre className="mt-1 overflow-x-auto text-xs">{JSON.stringify(r.cut_preferences, null, 2)}</pre>
-            </details>
+          {(r.cut_preferences as Record<string, unknown>)?.pickup_preference != null && (
+            <p className="mt-2">
+              <strong>Pickup preference:</strong>{' '}
+              {String((r.cut_preferences as Record<string, unknown>).pickup_preference)}
+            </p>
           )}
         </div>
       )}
@@ -466,7 +468,6 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
           <p className="text-sm text-mud-600">
             {animal.status} · {shareCount} shares
             {animal.hanging_weight_lbs ? ` · ${animal.hanging_weight_lbs} lb HW` : ''}
-            {animal.rate_per_lb_hw_cents ? ` · $${(animal.rate_per_lb_hw_cents / 100).toFixed(2)}/lb` : ''}
           </p>
         </div>
         <button onClick={() => setEditing((e) => !e)} className="btn-secondary py-2 text-sm">
@@ -485,12 +486,6 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
             value={form.estimated_live_weight_lbs?.toString() ?? ''}
             onChange={(v) => setForm({ ...form, estimated_live_weight_lbs: v ? parseInt(v) : null })}
           />
-          <TextField
-            label="Fallback rate ($/lb HW) — used only if a share has no rate set"
-            type="number"
-            value={form.rate_per_lb_hw_cents != null ? (form.rate_per_lb_hw_cents / 100).toString() : ''}
-            onChange={(v) => setForm({ ...form, rate_per_lb_hw_cents: v ? Math.round(parseFloat(v) * 100) : null })}
-          />
           <SelectField
             label="Status"
             value={form.status}
@@ -498,7 +493,7 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
             options={['available','reserved','sold','processed','retired']}
           />
           <div className="sm:col-span-2 mt-2 rounded-2xl border-2 border-mud-800 bg-sage-100 p-3">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-mud-600">After slaughter — drives final invoice math</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-mud-600">After slaughter — for your records (helps you set each share's flat price)</p>
             <div className="grid gap-3 sm:grid-cols-2">
               <TextField
                 label="Slaughter date"
@@ -573,10 +568,9 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
   return (
     <div className="space-y-2">
       <p className="text-sm text-mud-600">
-        Per-pound rate is set per share so smaller shares can carry a higher per-lb rate (more
-        coordination per share). Defaults from the migration: <strong>$7.50</strong> whole,
-        <strong> $8.00</strong> half, <strong>$8.50</strong> quarter. Edit any cell and tab out
-        to save.
+        Each share is a flat price. The estimated range and deposit shown here are what customers
+        see up front; you set each customer's final flat price on their reservation (the “Final $”
+        field on the Reservations tab) once the pig is processed.
       </p>
       {animals.map((a) => (
         <div key={a.id} className="card">
@@ -586,8 +580,7 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
               <tr className="text-left text-xs uppercase tracking-wide text-mud-600">
                 <th className="py-1">Label</th>
                 <th>Kind</th>
-                <th>Rate ($/lb HW)</th>
-                <th>Price range</th>
+                <th>Est. price range</th>
                 <th>Deposit</th>
                 <th>Status</th>
               </tr>
@@ -597,12 +590,6 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
                 <tr key={s.id} className="border-t border-mud-800/10">
                   <td className="py-2">{s.label}</td>
                   <td>{s.kind}</td>
-                  <td>
-                    <RateInput
-                      cents={s.rate_per_lb_hw_cents}
-                      onSave={(cents) => update(s.id, { rate_per_lb_hw_cents: cents })}
-                    />
-                  </td>
                   <td>{priceRange(s.est_total_low_cents, s.est_total_high_cents)}</td>
                   <td>{formatCents(s.deposit_cents)}</td>
                   <td>

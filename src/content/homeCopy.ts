@@ -3,11 +3,11 @@
 // farm-story content only.
 
 export const WORK_STEPS = [
-  ['I', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole hog for the season.'],
-  ['II', 'We deliver to the processor', 'When the pigs finish, we bring them to Eagle Bridge Custom Meat, our USDA processor.'],
-  ['III', 'Choose your cuts', 'The processor contacts you to talk through cuts, sausage, bacon, ham curing, and smoking.'],
-  ['IV', 'Final price by hanging weight', 'Your share price is set by the actual hanging weight of your pig — billed at $7.00 / lb.'],
-  ['V', 'Pay the processor & pick up', 'You settle processing directly with the processor and collect your pork when it is ready.'],
+  ['I', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole share for the season.'],
+  ['II', 'We raise and process', 'We raise your pig with care and deliver it to our USDA-certified processor when it finishes.'],
+  ['III', 'We handle the cuts', 'No cut sheets to fill out — we curate a balanced assortment of cuts for every share.'],
+  ['IV', 'We confirm your price', 'Once processing weights are known, we set your flat share price within the estimated range.'],
+  ['V', 'Pick up your pork', 'Collect your share from the farm or the processor and fill your freezer.'],
 ] as const
 
 export const VALUES = [
@@ -48,23 +48,23 @@ export const FARM_PIGS = [
 
 export const FAQS = [
   [
-    'What is hanging weight?',
-    'Hanging weight is what your pig weighs after slaughter, once the head, blood, and organs are removed — before it is cut, trimmed, and packaged. It is the standard, fair way to price a whole-animal share, and it is the number your $7.00 / lb is based on. You take home a bit less than the hanging weight once everything is boned out and trimmed.',
-  ],
-  [
-    'How much freezer space will I need?',
-    'A rough guide: a quarter fits in a freezer drawer or small chest, a half fills an upright freezer, and a whole hog fills a chest freezer. We are happy to help you plan before you reserve.',
-  ],
-  [
-    'How much meat will I actually take home?',
-    'Plan on roughly 60–70% of the hanging weight as packaged, take-home pork — so about 45–55 lb from a quarter, 90–105 lb from a half, and 180–210 lb from a whole. Choosing more boneless cuts lowers the poundage a little; bone-in cuts raise it.',
+    'What is a pork share?',
+    'A pork share is a portion of one of our pasture-raised pigs — a quarter, half, or whole — that comes to you as a curated assortment of cuts. You reserve it with a deposit and pick it up once your pig is processed.',
   ],
   [
     'Can I choose my cuts?',
-    'Yes — that is the best part. The processor walks you through your cut sheet: chop thickness, roasts, ribs, bacon and ham curing, smoking, sausage flavors, and what to grind. Easygoing? We can suggest a balanced standard order.',
+    'No cut sheet needed — we curate a balanced, versatile assortment for every share. The cuts we list are what we expect to include, but because these are real animals, the exact cuts and quantities can vary slightly from share to share.',
   ],
   [
-    'Why does processing cost vary?',
-    'Each pig finishes at a slightly different weight, and every family chooses different options. Basic cutting and wrapping is modest; curing, smoking, and sausage-making add per-pound costs. You pay the processor directly for exactly the options you pick.',
+    'How is my final price set?',
+    'Each share is a flat price. We list an estimated range up front, then confirm your final price once your pig is processed — based on the actual weight of the meat and the cuts included. The deposit is credited toward it; the balance is due at pickup.',
+  ],
+  [
+    'How much freezer space will I need?',
+    'A rough guide: a quarter fits in a freezer drawer or small chest, a half fills an upright freezer, and a whole share fills a chest freezer. We are happy to help you plan before you reserve.',
+  ],
+  [
+    'When will my pork be ready?',
+    'Our pigs are raised for more than a year, so shares are seasonal. Once your pig is processed, we confirm the pickup date and place and reach out to arrange it with you directly.',
   ],
 ] as const

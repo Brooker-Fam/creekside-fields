@@ -1,5 +1,5 @@
 import type { Animal, ShareOption } from '../lib/types'
-import { formatCents, priceRange, getShareRateCents } from '../lib/insforge'
+import { formatCents, priceRange } from '../lib/insforge'
 
 export interface BillOfSaleData {
   customer: { name: string; email: string; phone: string | null; address: string | null }
@@ -26,7 +26,6 @@ const FARM = {
 
 export default function BillOfSale({ data }: { data: BillOfSaleData }) {
   const { customer, share, animal, pickup_preference, share_percentage, date, signature_url, signed_at } = data
-  const rateCents = getShareRateCents(share, animal)
   const issued = new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -89,13 +88,14 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
       </section>
 
       <section className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Block label="Rate">
+        <Block label="Price">
           <p className="font-display text-2xl">
-            {rateCents != null ? `$${(rateCents / 100).toFixed(2)} / lb` : '—'}
+            {priceRange(share.est_total_low_cents, share.est_total_high_cents)}
           </p>
           <p className="mt-1 text-xs text-mud-600">
-            Hanging weight, all-in. Per-pound rate for a {share.kind} share. Includes the farm's
-            cut and our pass-through of the processor's cut &amp; wrap.
+            Estimated range for this {share.kind} share. Your final price is a single flat amount,
+            confirmed once the animal is processed — based on the actual weight of the meat and the
+            cuts included. Processing is included; no added nitrates on any cured or smoked product.
           </p>
         </Block>
         <Block label="Deposit (due at signing)">
@@ -103,41 +103,6 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
           <p className="mt-1 text-xs text-mud-600">
             Credited toward the final total. Balance due at pickup.
           </p>
-        </Block>
-      </section>
-
-      <section className="mt-4">
-        <Block label="Estimated total">
-          {(() => {
-            const lw = animal.estimated_live_weight_lbs
-            const sharePct = share_percentage ?? 0
-            const estHwLow = lw ? Math.round(lw * 0.66) : null
-            const estHwHigh = lw ? Math.round(lw * 0.74) : null
-            const shareHwLow = estHwLow ? (estHwLow * sharePct) / 100 : null
-            const shareHwHigh = estHwHigh ? (estHwHigh * sharePct) / 100 : null
-            return (
-              <>
-                <p className="text-sm">
-                  Your share:{' '}
-                  <strong>
-                    {sharePct}%
-                    {shareHwLow && shareHwHigh
-                      ? ` × ~${estHwLow}–${estHwHigh} lb HW ≈ ${shareHwLow.toFixed(0)}–${shareHwHigh.toFixed(0)} lb HW`
-                      : ''}
-                  </strong>
-                </p>
-                <p className="mt-1 text-sm">
-                  Estimated total: <strong>{priceRange(share.est_total_low_cents, share.est_total_high_cents)}</strong>
-                </p>
-                <p className="mt-2 text-xs text-mud-600">
-                  Final = (your share %) × (actual hanging weight) × ($
-                  {rateCents != null ? (rateCents / 100).toFixed(2) : '—'}
-                  /lb). Locked at slaughter; the range above is an estimate based on a typical hanging
-                  weight for this breed and size.
-                </p>
-              </>
-            )
-          })()}
         </Block>
       </section>
 

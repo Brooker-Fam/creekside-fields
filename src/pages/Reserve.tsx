@@ -1,7 +1,7 @@
 import { type FormEvent, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
-import { insforge, formatCents, priceRange, getShareRateCents } from '../lib/insforge'
+import { insforge, formatCents, priceRange } from '../lib/insforge'
 import type { Animal, ShareOption } from '../lib/types'
 import { INQUIRY_PREFILL_KEY, type InquiryPrefill } from '../components/storybook/ContactInquiryForm'
 
@@ -26,49 +26,11 @@ const SHARE_KIND_TITLE: Record<string, string> = {
 }
 
 const SHARE_KIND_BLURB: Record<string, { meat: string; freezer: string }> = {
-  whole:   { meat: '~195 lb of cut & wrapped meat at our planning weight', freezer: 'fills a chest freezer' },
-  half:    { meat: '~95–100 lb of cut & wrapped meat',   freezer: 'fits an upright freezer' },
-  quarter: { meat: '~45–50 lb of cut & wrapped meat',   freezer: 'fits in a freezer drawer' },
-  eighth:  { meat: '~18–20 lb of cut & wrapped meat',   freezer: 'fits a freezer shelf' },
+  whole:   { meat: '~180–240 lb of cut & wrapped pork', freezer: 'fills a chest freezer' },
+  half:    { meat: '~90–120 lb of cut & wrapped pork',  freezer: 'fits an upright freezer' },
+  quarter: { meat: '~45–60 lb of cut & wrapped pork',   freezer: 'fits in a freezer drawer' },
+  eighth:  { meat: '~18–20 lb of cut & wrapped pork',   freezer: 'fits a freezer shelf' },
 }
-
-const CUT_OPTIONS = {
-  shoulder: {
-    label: 'Shoulder',
-    choices: ['Picnic roasts', 'Boston butt roasts', 'Shoulder chops', 'Shoulder bacon', 'Ground pork'],
-    multi: true,
-  },
-  loin_rib: {
-    label: 'Loin & ribs',
-    choices: ['Tenderloin', 'Bone-in chops', 'Boneless chops', 'Loin roast', 'Canadian bacon', 'Country-style ribs', 'Baby back ribs', 'Spare ribs', 'St. Louis ribs', 'Stew or grind'],
-    multi: true,
-  },
-  sirloin: {
-    label: 'Sirloin',
-    choices: ['Fresh chops', 'Smoked chops', 'Sirloin cutlets', 'Roast', 'Boneless roast', 'Grind'],
-    multi: true,
-  },
-  hams: {
-    label: 'Hams',
-    choices: ['Fresh ham', 'Fresh ham steaks', 'Smoked ham', 'Smoked ham steaks', 'Sliced ham', 'Boneless ham', 'Cutlets or kabobs', 'Grind'],
-    multi: true,
-  },
-  belly: {
-    label: 'Bacon & belly',
-    choices: ['Regular smoked sliced bacon', 'No-nitrate smoked sliced bacon', 'Slab bacon', 'Fresh belly slabs', 'Fresh skin-on belly', 'Fresh skinless belly', 'Grind'],
-    multi: true,
-  },
-  sausage: {
-    label: 'Sausage',
-    choices: ['Breakfast bulk', 'Breakfast links', 'Sweet Italian bulk', 'Sweet Italian links', 'Hot Italian bulk', 'Hot Italian links', 'Chorizo bulk', 'Chorizo links', 'Bratwurst links', 'Maple breakfast', 'Andouille', 'Ground pork'],
-    multi: true,
-  },
-  extras: {
-    label: 'Bones, lard & offal',
-    choices: ['Soup bones', 'Neck bones', 'Hocks', 'Leaf lard', 'Fat back', 'Jowls', 'Heart/liver/tongue', 'Kidneys', 'Feet/trotters', 'Head', 'Ears', 'Skin'],
-    multi: true,
-  },
-} as const
 
 function readInquiryPrefill(): InquiryPrefill | null {
   try {
@@ -128,16 +90,9 @@ export default function Reserve() {
     setSubmitting(true)
     setError(null)
     const fd = new FormData(e.currentTarget)
+    // Curated shares — no cut sheet. We only stash the pickup preference here
+    // (the column is still named cut_preferences for backward compatibility).
     const prefs: Record<string, unknown> = {}
-    for (const key of Object.keys(CUT_OPTIONS)) {
-      const opt = CUT_OPTIONS[key as keyof typeof CUT_OPTIONS]
-      if ('multi' in opt && opt.multi) {
-        prefs[key] = fd.getAll(key)
-      } else {
-        prefs[key] = fd.get(key)
-      }
-    }
-    prefs.extra = fd.get('extra')
 
     const sharePct = SHARE_PCT[share.kind] ?? null
     const customer_name = String(fd.get('customer_name') ?? '').trim()
@@ -237,7 +192,6 @@ export default function Reserve() {
   }
 
   const kindTitle = SHARE_KIND_TITLE[share.kind] ?? share.label ?? share.kind
-  const rateCents = getShareRateCents(share, animal)
   const blurb = SHARE_KIND_BLURB[share.kind]
   const heroImage = animal.hero_image_url ?? '/farm-media/pig-grazing.jpg'
 
@@ -251,14 +205,6 @@ export default function Reserve() {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
         <span>{animal.breed} gilt</span>
         <span>·</span>
-        {rateCents != null && (
-          <>
-            <span>
-              <strong>${(rateCents / 100).toFixed(2)}/lb</strong> hanging weight
-            </span>
-            <span>·</span>
-          </>
-        )}
         <span>Est. {priceRange(share.est_total_low_cents, share.est_total_high_cents)}</span>
         <span>·</span>
         <span>Deposit {formatCents(share.deposit_cents)}</span>
@@ -278,9 +224,9 @@ export default function Reserve() {
             <p className="text-sm text-mud-600">{blurb.freezer}</p>
           )}
           <p className="mt-2 text-sm text-mud-700">
-            Heritage breed, pasture-raised in Greenwich, NY. Includes processing — one bundled
-            bill at pickup for base processing. Smoke, no-nitrate curing, links, and specialty
-            sausage may add pass-through butcher costs.
+            Heritage breed, pasture-raised in Greenwich, NY. Your share is a curated assortment of
+            cuts — no cut sheet to fill out. Processing is included; you pay one flat price for the
+            share, with no added nitrates on any cured or smoked product.
           </p>
           <p className="mt-2 text-sm">
             <Link to="/about" className="font-semibold text-blush-500 hover:underline">
@@ -323,47 +269,15 @@ export default function Reserve() {
           </div>
         </section>
 
-        <section className="card">
-          <h2 className="font-display text-2xl">Cut sheet (optional)</h2>
-          <p className="mt-1 text-sm text-mud-600">
-            <strong>If you reserve before we send the pigs to the processor</strong>, fill this out
-            and we'll pass it along. Reserve after that and your share comes as our standard
-            pre-cut packages. Skip anything you're easygoing about.
+        <section className="card bg-cream-50">
+          <h2 className="font-display text-2xl">What's included</h2>
+          <p className="mt-1 text-sm text-mud-700">
+            No cut sheet to fill out. Every share is a thoughtfully curated assortment — bacon, ham,
+            chops, tenderloin, roasts, ribs, bratwurst, breakfast sausage, and ground pork. These
+            are the cuts we expect to include, but because these are real animals, the exact cuts
+            and quantities vary slightly from share to share. Anything you definitely do or don't
+            want? Let us know in the notes below.
           </p>
-          <div className="mt-4 space-y-5">
-            {(Object.keys(CUT_OPTIONS) as Array<keyof typeof CUT_OPTIONS>).map((key) => {
-              const opt = CUT_OPTIONS[key]
-              const multi = 'multi' in opt && opt.multi
-              return (
-                <div key={key}>
-                  <p className="label">{opt.label}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {opt.choices.map((c) => (
-                      <label key={c} className="flex cursor-pointer items-center gap-2 rounded-full border border-sage-700/25 bg-cream-50/80 px-4 py-1.5 text-sm hover:bg-cream-50">
-                        <input
-                          type={multi ? 'checkbox' : 'radio'}
-                          name={key}
-                          value={c}
-                          className="accent-blush-400"
-                        />
-                        {c}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-            <div>
-              <label className="label" htmlFor="extra">Anything else?</label>
-              <textarea
-                id="extra"
-                name="extra"
-                rows={3}
-                className="input"
-                placeholder="Chop thickness, package size, smoke/no-nitrate preferences, or anything you definitely do or do not want."
-              />
-            </div>
-          </div>
         </section>
 
         <section className="card">
@@ -385,9 +299,9 @@ export default function Reserve() {
           <h2 className="font-display text-2xl">What happens next</h2>
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-mud-700">
             <li>We email you a one-page bill of sale to sign.</li>
-            <li>You pay the deposit to hold the share (the rest is due when the meat is ready).</li>
-            <li>Once we have a slaughter date, we'll text you. If you reserved early, that's also when we lock in your cut sheet.</li>
-            <li>When the meat is ready, you pick it up from the farm or the processor — whichever you chose — and pay the balance in one bill to us.</li>
+            <li>You pay the deposit to hold the share — it's credited toward your final price.</li>
+            <li>We raise and process your pig, then confirm your flat final price once the processing weights are known.</li>
+            <li>When it's ready, you pick it up from the farm or the processor — whichever you chose — and pay the balance in one bill to us.</li>
           </ol>
         </section>
 

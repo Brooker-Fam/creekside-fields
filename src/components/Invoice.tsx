@@ -1,5 +1,5 @@
 import type { Animal, Processor, Reservation, ShareOption } from '../lib/types'
-import { formatCents, getShareRateCents } from '../lib/insforge'
+import { formatCents } from '../lib/insforge'
 
 const FARM = {
   name: 'Creekside Fields',
@@ -16,24 +16,18 @@ export interface InvoiceData {
 }
 
 export function computeInvoice(data: InvoiceData) {
-  const { reservation, share, animal } = data
+  const { reservation, share } = data
   const sharePct = reservation.share_percentage ?? sharePctFromKind(share.kind)
-  const hangingWeight = animal.hanging_weight_lbs
-  const rate = getShareRateCents(share, animal)
-  const shareHwLbs = hangingWeight != null && sharePct != null ? (hangingWeight * sharePct) / 100 : null
-  const finalTotalCents =
-    shareHwLbs != null && rate != null ? Math.round(shareHwLbs * rate) : reservation.final_total_cents ?? null
+  // Flat price per share — set on the reservation once the pig is processed.
+  const finalTotalCents = reservation.final_total_cents ?? null
   const depositCents = share.deposit_cents
   const balanceCents = finalTotalCents != null ? Math.max(0, finalTotalCents - (reservation.total_paid_cents || 0)) : null
   return {
     sharePct,
-    hangingWeight,
-    rate,
-    shareHwLbs,
     finalTotalCents,
     depositCents,
     balanceCents,
-    canCompute: shareHwLbs != null && rate != null,
+    canCompute: finalTotalCents != null,
   }
 }
 
@@ -97,18 +91,15 @@ export default function Invoice({ data }: { data: InvoiceData }) {
           <Block label="Charges">
             <table className="w-full text-sm">
               <tbody>
-                <Row label="Animal hanging weight" value={`${calc.hangingWeight} lb`} />
-                <Row label="Your share" value={`${calc.sharePct}% × ${calc.hangingWeight} lb = ${calc.shareHwLbs?.toFixed(1)} lb HW`} />
-                <Row label="Rate" value={`$${((calc.rate ?? 0) / 100).toFixed(2)} / lb hanging weight`} />
-                <Row label="Subtotal" value={formatCents(calc.finalTotalCents)} bold />
+                <Row label="Your share total" value={formatCents(calc.finalTotalCents)} bold />
                 <Row label="Deposit paid" value={`− ${formatCents(reservation.total_paid_cents || 0)}`} />
                 <Row label="Balance due" value={formatCents(calc.balanceCents)} bold highlight />
               </tbody>
             </table>
             <p className="mt-3 text-xs text-mud-600">
-              Hanging weight is the dressed carcass weight; your share is your % of that weight × the
-              per-pound rate. Processing fees (kill, cut, wrap, smoking) are included in this total —
-              one bill, paid to us.
+              A single flat price for your {calc.sharePct}% share, set from the actual weight of the
+              meat and the cuts included. Processing (kill, cut, wrap, smoking) is included — one
+              bill, paid to us.
             </p>
           </Block>
         </section>
@@ -116,9 +107,8 @@ export default function Invoice({ data }: { data: InvoiceData }) {
         <section className="mt-6">
           <Block label="Charges">
             <p className="text-sm italic text-mud-600">
-              Hanging weight or per-lb rate not set yet — invoice cannot be finalized. Set the
-              hanging weight on the animal (Animals tab) and the rate on this share (Shares tab),
-              then refresh.
+              Final price not set yet — enter the flat share price on this reservation
+              (Reservations tab) to finalize the invoice.
             </p>
           </Block>
         </section>

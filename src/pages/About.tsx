@@ -8,23 +8,23 @@ const SECTIONS = [
   },
   {
     title: "What you're buying",
-    body: 'A whole, half, or quarter share of one animal. Sign a bill of sale, place a deposit, and pick up your pork when it is ready — one bundled bill at the end, base processing included.',
+    body: 'A whole, half, or quarter share of one animal, delivered as a curated assortment of cuts. Sign a bill of sale, place a deposit, and pick up your pork when it is ready — one flat price for the share, processing included.',
   },
   {
     title: 'Share sizes',
-    body: 'Roughly 195 lb cut and wrapped (whole), 95–100 lb (half), or 45–50 lb (quarter) at our current planning weight. Actual weight depends on hanging weight and cut choices.',
+    body: 'Roughly 180–240 lb of take-home pork (whole), 90–120 lb (half), or 45–60 lb (quarter). Final weight depends on the animal; we list estimated ranges and confirm once your pig is processed.',
   },
   {
     title: 'Processing',
-    body: 'Eagle Bridge Custom Meat & Smokehouse, about twelve miles from the farm. We will text reservation holders as soon as the slaughter date is set.',
+    body: 'Eagle Bridge Custom Meat & Smokehouse, about twelve miles from the farm. Every cured and smoked product is prepared with no added nitrates. We will text reservation holders as soon as the pickup date is set.',
   },
   {
     title: 'Pricing',
-    body: 'Hanging weight × per-pound rate: $7.75/lb (whole), $8.50/lb (half), $9.25/lb (quarter). Base processing included. Specialty smoking, curing, links, or sausage may add pass-through costs.',
+    body: 'Each share is a flat price, listed up front as an estimated range — about $650–$775 (quarter), $1,300–$1,550 (half), or $2,600–$3,100 (whole). We confirm your final price once your pig is processed, based on the actual weight of the meat and the cuts included.',
   },
   {
-    title: 'Cut sheet',
-    body: 'Reserve before processing and you choose your cuts. Reserve after and you receive our standard packages. Bacon, hams, chops, roasts, sausage, bones, lard, and optional offal.',
+    title: "What's included",
+    body: 'A thoughtfully curated assortment — bacon, ham, pork chops, tenderloin, roasts, ribs, bratwurst, breakfast sausage, and ground pork. These are the cuts we expect to include, but exact cuts and quantities vary slightly from animal to animal. There is no cut sheet to fill out.',
   },
   {
     title: 'Pickup',
@@ -49,10 +49,10 @@ export default function About() {
         ))}
       </div>
       <div className="mt-14 flex flex-wrap gap-3">
-        <Link to="/#pig-shares" className="btn-primary">
+        <Link to="/shares" className="btn-primary">
           See shares
         </Link>
-        <Link to="/#reserve" className="btn-secondary">
+        <Link to="/shares" className="btn-secondary">
           Reserve
         </Link>
       </div>

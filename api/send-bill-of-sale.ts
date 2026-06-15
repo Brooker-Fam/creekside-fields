@@ -41,15 +41,6 @@ interface BillOfSaleData {
   signature_url?: string | null
 }
 
-// Prefer the share-level rate (per-kind tier); fall back to the animal's
-// legacy single rate for pre-migration shares.
-function shareRateCents(
-  share: BillOfSaleData['share'],
-  animal: BillOfSaleData['animal'],
-): number | null {
-  return share.rate_per_lb_hw_cents ?? animal.rate_per_lb_hw_cents ?? null
-}
-
 function escape(s: string | null | undefined): string {
   if (s == null) return ''
   return String(s)
@@ -104,7 +95,6 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
   const shareLabel = share_percentage
     ? `${share_percentage}% undivided interest`
     : share.label ?? share.kind
-  const rateCents = shareRateCents(share, animal)
 
   const sigSection = signature_url
     ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0 0;">
@@ -140,30 +130,15 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
          </ul>`,
       )}
       ${block(
-        'Rate',
-        `<span style="font-size:22px;font-family:Georgia,serif;">${rateCents != null ? `$${(rateCents / 100).toFixed(2)} / lb` : '—'}</span><br>
-         <span style="font-size:12px;color:#6f655c;">Per-pound rate for a ${escape(share.kind)} share, hanging weight, all-in. Includes the farm's cut and pass-through of the processor's cut &amp; wrap.</span>`,
+        'Price',
+        `<span style="font-size:22px;font-family:Georgia,serif;">${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</span><br>
+         <span style="font-size:12px;color:#6f655c;">Estimated range for this ${escape(share.kind)} share. Your final price is a single flat amount, confirmed once the animal is processed — based on the actual weight of the meat and the cuts included. Processing included; no added nitrates.</span>`,
       )}
       ${block(
         'Deposit (due at signing)',
         `<span style="font-size:22px;font-family:Georgia,serif;">${escape(formatCents(share.deposit_cents))}</span><br>
          <span style="font-size:12px;color:#6f655c;">Credited toward the final total. Balance due at pickup.</span>`,
       )}
-      ${(() => {
-        const lw = animal.estimated_live_weight_lbs
-        const sharePct = share_percentage ?? 0
-        const estHwLow = lw ? Math.round(lw * 0.66) : null
-        const estHwHigh = lw ? Math.round(lw * 0.74) : null
-        const shareLow = estHwLow ? (estHwLow * sharePct) / 100 : null
-        const shareHigh = estHwHigh ? (estHwHigh * sharePct) / 100 : null
-        const rateStr = rateCents != null ? `$${(rateCents / 100).toFixed(2)}` : '$—'
-        return block(
-          'Estimated total',
-          `<p style="margin:0 0 6px 0;">Your share: <strong>${sharePct}%${shareLow && shareHigh ? ` × ~${estHwLow}–${estHwHigh} lb HW ≈ ${shareLow.toFixed(0)}–${shareHigh.toFixed(0)} lb HW` : ''}</strong></p>
-           <p style="margin:0;">Estimated total: <strong>${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong></p>
-           <p style="margin:6px 0 0 0;font-size:12px;color:#6f655c;">Final = (your share %) × (actual hanging weight) × ${rateStr}/lb. Locked at slaughter.</p>`,
-        )
-      })()}
       ${block(
         'Pickup preference',
         `<strong>${escape(pickup_preference ? PICKUP_LABELS[pickup_preference] ?? pickup_preference : 'To be confirmed')}</strong>`,

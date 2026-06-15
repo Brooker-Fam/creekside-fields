@@ -1,5 +1,5 @@
 import type { BillOfSaleData } from '../components/BillOfSale'
-import { formatCents, priceRange, getShareRateCents } from './insforge'
+import { formatCents, priceRange } from './insforge'
 
 const PICKUP_LABELS: Record<string, string> = {
   farm: 'Farm pickup (Greenwich, NY)',
@@ -56,8 +56,6 @@ export function renderBillOfSaleEmail(data: BillOfSaleData): string {
   const shareLabel = share_percentage
     ? `${share_percentage}% undivided interest`
     : share.label ?? share.kind
-  const rateCents = getShareRateCents(share, animal)
-  const rateStr = rateCents != null ? `$${(rateCents / 100).toFixed(2)} / lb HW` : null
 
   const sigSection = signature_url
     ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0 0;">
@@ -94,8 +92,8 @@ export function renderBillOfSaleEmail(data: BillOfSaleData): string {
       )}
       ${block(
         'Price',
-        `${rateStr ? `Rate: <strong>${escape(rateStr)}</strong> (per-pound for a ${escape(share.kind)} share)<br>` : ''}Estimated total: <strong>${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong><br>
-         Final = (your share %) × (actual hanging weight) × the rate above. Locked at slaughter.`,
+        `Estimated range: <strong>${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong><br>
+         Your final price is a single flat amount for this ${escape(share.kind)} share, confirmed once the animal is processed — based on the actual weight of the meat and the cuts included.`,
       )}
       ${block(
         'Deposit (due at signing)',
@@ -125,12 +123,7 @@ export function renderBillOfSaleEmail(data: BillOfSaleData): string {
 
 export interface InvoiceEmailData {
   customer: { name: string; email: string }
-  animal: { breed: string | null }
   share: { label: string | null; kind: string }
-  hangingWeight: number
-  sharePct: number
-  shareHwLbs: number
-  rateCents: number
   finalTotalCents: number
   depositPaidCents: number
   balanceCents: number
@@ -139,9 +132,8 @@ export interface InvoiceEmailData {
 
 export function renderInvoiceEmail(d: InvoiceEmailData): string {
   const dollar = (c: number) => `$${(c / 100).toFixed(0)}`
-  const rate = `$${(d.rateCents / 100).toFixed(2)}`
   const pickup = d.processor
-    ? `Pickup at <strong>${escape(d.processor.name)}</strong>${d.processor.address ? ` (${escape(d.processor.address)})` : ''}. Processing fees are already included in the total above — one bill, paid to us.`
+    ? `Pickup at <strong>${escape(d.processor.name)}</strong>${d.processor.address ? ` (${escape(d.processor.address)})` : ''}. Processing is already included in the total above — one bill, paid to us.`
     : 'Pickup details to follow.'
 
   const inner = `
@@ -150,15 +142,13 @@ export function renderInvoiceEmail(d: InvoiceEmailData): string {
       <p style="margin:6px 0 0 0;font-size:13px;color:#6f655c;">${escape(FARM.name)}</p>
     </td></tr>
     <tr><td style="padding-top:18px;">
-      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${escape(d.customer.name.split(' ')[0])}, your hog is processed and ready.</p>
+      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${escape(d.customer.name.split(' ')[0])}, your pork is processed and ready.</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1.5px solid #2a2522;border-radius:14px;padding:14px;font-size:14px;">
-        <tr><td>Hanging weight</td><td align="right">${d.hangingWeight} lb</td></tr>
-        <tr><td>Your share (${d.sharePct}%)</td><td align="right">${d.shareHwLbs.toFixed(1)} lb HW</td></tr>
-        <tr><td>Rate</td><td align="right">${rate}/lb HW</td></tr>
-        <tr><td style="padding-top:8px;border-top:1px solid #2a2522;"><strong>Subtotal</strong></td><td align="right" style="padding-top:8px;border-top:1px solid #2a2522;"><strong>${dollar(d.finalTotalCents)}</strong></td></tr>
+        <tr><td><strong>Your share total</strong></td><td align="right"><strong>${dollar(d.finalTotalCents)}</strong></td></tr>
         <tr><td>Less deposit paid</td><td align="right">− ${dollar(d.depositPaidCents)}</td></tr>
         <tr><td style="padding-top:8px;border-top:1px solid #2a2522;font-size:16px;"><strong>Balance due</strong></td><td align="right" style="padding-top:8px;border-top:1px solid #2a2522;font-size:16px;"><strong>${dollar(d.balanceCents)}</strong></td></tr>
       </table>
+      <p style="margin:12px 0 0 0;font-size:12px;color:#6f655c;">A single flat price for your share, set from the actual weight of the meat and the cuts included.</p>
       <p style="margin:16px 0 0 0;font-size:14px;">${pickup}</p>
       <p style="margin:14px 0 0 0;font-size:14px;">Payment: check (to ${escape(FARM.name)}), Venmo, or Zelle — reply for details.</p>
       <p style="margin:22px 0 0 0;font-size:14px;">Thanks,<br>Matt — Creekside Fields</p>

@@ -72,17 +72,10 @@ export default function AnimalPage() {
       <section className="mx-auto max-w-4xl px-4 pb-20">
         <p className="field-tag">Reserve a share</p>
         <h2 className="mt-3 font-display text-5xl text-sage-700">Pick your portion</h2>
-        {animal.rate_per_lb_hw_cents != null && (
-          <div className="mt-4 inline-flex items-baseline gap-2 rounded-full border border-sage-700/25 bg-cream-100/80 px-4 py-1.5 shadow-sketch">
-            <span className="text-xs font-semibold uppercase tracking-wide text-mud-600">Rate</span>
-            <span className="font-display text-xl">
-              ${(animal.rate_per_lb_hw_cents / 100).toFixed(2)} / lb hanging weight
-            </span>
-          </div>
-        )}
         <p className="mt-3 max-w-prose text-mud-600">
-          Final price is hanging weight × per-pound rate × your share, paid in one bill to us. The
-          deposit holds your share and counts toward your total.
+          Each share is a flat price — listed as an estimated range and confirmed once your pig is
+          processed, based on the actual weight of the meat and the cuts included. The deposit holds
+          your share and counts toward your total.
         </p>
         <div className="mt-8 space-y-6">
           {(['whole', 'half', 'quarter'] as const).map((kind) =>
@@ -111,9 +104,9 @@ function fmt(iso: string | null) {
 }
 
 const SHARE_DESC: Record<string, { title: string; blurb: string; freezer: string }> = {
-  whole:   { title: 'Whole hog',    blurb: 'The whole animal, every cut. The best per-pound value.',         freezer: '~195 lb of pork · large chest freezer' },
-  half:    { title: 'Half hog',     blurb: 'Half the animal, half the freezer. Same cuts, halved.',         freezer: '~95–100 lb · upright freezer' },
-  quarter: { title: 'Quarter hog',  blurb: 'A quarter share. Great if it\'s your first time.',               freezer: '~45–50 lb · regular freezer drawer' },
+  whole:   { title: 'Whole hog',    blurb: 'The whole animal, the fullest selection of cuts. The best value.', freezer: '~180–240 lb of pork · large chest freezer' },
+  half:    { title: 'Half hog',     blurb: 'Half the animal — a generous variety of cuts.',                  freezer: '~90–120 lb · upright freezer' },
+  quarter: { title: 'Quarter hog',  blurb: 'A quarter share. Great if it\'s your first time.',               freezer: '~45–60 lb · regular freezer drawer' },
   eighth:  { title: 'Eighth hog',   blurb: 'A sampler share.',                                                freezer: '~18–20 lb' },
   dozen:   { title: 'Dozen',        blurb: '',                                                                freezer: '' },
   custom:  { title: 'Custom',       blurb: '',                                                                freezer: '' },
