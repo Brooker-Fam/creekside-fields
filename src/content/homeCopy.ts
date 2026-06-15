@@ -1,47 +1,6 @@
-import type { ShareKind } from '../lib/types'
-
-export type PigShareKind = Extract<ShareKind, 'whole' | 'half' | 'quarter' | 'eighth'>
-
-/** Flat per-pound hanging-weight rate for every share. */
-export const RATE = '$7.00 / lb hanging weight'
-
-export const SHARE_COPY: Record<
-  PigShareKind,
-  { title: string; weight: string; price: string; meat: string; freezer: string; note: string }
-> = {
-  whole: {
-    title: 'Whole hog',
-    weight: '280–320 lb',
-    price: '$1,960–$2,240',
-    meat: '~180–210 lb of cut & wrapped pork',
-    freezer: 'Fills a chest freezer',
-    note: 'Best value per pound and the fullest say over your cut sheet.',
-  },
-  half: {
-    title: 'Half hog',
-    weight: '140–160 lb',
-    price: '$980–$1,120',
-    meat: '~90–105 lb of cut & wrapped pork',
-    freezer: 'Fills an upright freezer',
-    note: 'A generous family share — chops, roasts, bacon, sausage, and ground pork.',
-  },
-  quarter: {
-    title: 'Quarter hog',
-    weight: '70–80 lb',
-    price: '$490–$560',
-    meat: '~45–55 lb of cut & wrapped pork',
-    freezer: 'Fits a freezer drawer or small chest',
-    note: 'A wonderful place to start if this is your first hog share.',
-  },
-  eighth: {
-    title: 'Eighth hog',
-    weight: '35–40 lb',
-    price: '$245–$280',
-    meat: '~22–28 lb of cut & wrapped pork',
-    freezer: 'Fits a freezer shelf',
-    note: 'A small sampler when available.',
-  },
-}
+// Pork-share sizing, pricing, and cut copy now lives in `sharesCopy.ts`,
+// which backs the dedicated /shares page. This file holds the Home page's
+// farm-story content only.
 
 export const WORK_STEPS = [
   ['I', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole hog for the season.'],

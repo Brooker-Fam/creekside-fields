@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { SparkleField, WhimsyDivider } from './site/Whimsy'
 
 const SECTION_LINKS = [
-  { href: '/#shares', label: 'Shares' },
+  { href: '/shares', label: 'Shares' },
   { href: '/#how', label: 'How it works' },
   { href: '/#pigs', label: 'Our pigs' },
   { href: '/#farm', label: 'The farm' },
@@ -63,7 +63,7 @@ function Header() {
               </>
             )}
           </div>
-          <a href="/#shares" className="btn-primary px-4 py-2 text-xs">
+          <a href="/shares" className="btn-primary px-4 py-2 text-xs">
             Reserve
           </a>
         </nav>
@@ -93,7 +93,7 @@ function Header() {
               </a>
             ))}
             <a
-              href="/#shares"
+              href="/shares"
               className="btn-primary mt-2 px-4 py-2 text-xs"
               onClick={() => setOpen(false)}
             >

@@ -1,98 +1,52 @@
-import { useEffect, useState, type CSSProperties } from 'react'
-import { insforge } from '../lib/insforge'
-import type { ShareOption } from '../lib/types'
-import ShareCard from '../components/site/ShareCard'
+import { useState, type CSSProperties } from 'react'
+import { Link } from 'react-router-dom'
 import { WhimsyDivider } from '../components/site/Whimsy'
-import {
-  WORK_STEPS,
-  VALUES,
-  SEASONS,
-  FARM_PIGS,
-  FAQS,
-  type PigShareKind,
-} from '../content/homeCopy'
-
-type SoldOut = Record<PigShareKind, boolean>
+import { WORK_STEPS, VALUES, SEASONS, FARM_PIGS, FAQS } from '../content/homeCopy'
+import { SHARE_TIERS } from '../content/sharesCopy'
 
 export default function Home() {
-  const [soldOut, setSoldOut] = useState<SoldOut>({
-    whole: false,
-    half: false,
-    quarter: false,
-    eighth: false,
-  })
-
-  useEffect(() => {
-    insforge.database
-      .from('share_options')
-      .select('*')
-      .then(({ data }) => {
-        const rows = (data ?? []) as ShareOption[]
-        if (!rows.length) return
-        // A kind is sold out only when it has rows but none are available.
-        const next: SoldOut = { whole: false, half: false, quarter: false, eighth: false }
-        ;(['whole', 'half', 'quarter', 'eighth'] as PigShareKind[]).forEach((kind) => {
-          const forKind = rows.filter((s) => s.kind === kind)
-          if (forKind.length) next[kind] = !forKind.some((s) => s.status === 'available')
-        })
-        setSoldOut(next)
-      })
-  }, [])
-
   return (
     <div>
       <Hero />
       <WhimsyDivider />
 
-      {/* Shares */}
+      {/* Shares teaser */}
       <section id="shares" style={CONTAINER}>
         <StoryHeader
           align="center"
           eyebrow="Pork shares & pricing"
-          title="High quality pork from our family to yours."
-          lead="Shares are sold by hanging weight at $7.00 per pound. You also pay our USDA processor directly for cutting, wrapping, curing, smoking, and any sausage or specialty options you choose."
+          title="Stock your freezer with heritage pork."
+          lead="Quarter, half, and whole shares of our pasture-raised Gloucestershire Old Spot pork — a thoughtfully curated assortment of cuts, processed with no added nitrates, raised right here in Washington County."
         />
 
-        <div
-          className="card"
-          style={{
-            maxWidth: '46rem',
-            margin: '28px auto 0',
-            background: 'var(--sage-100)',
-            display: 'flex',
-            gap: 18,
-            alignItems: 'flex-start',
-          }}
-        >
-          <img
-            src="/brand/ornament-sprig.svg"
-            alt=""
-            aria-hidden
-            style={{ width: 28, marginTop: 2, flexShrink: 0 }}
-          />
-          <p className="text-[0.9375rem] leading-[1.7] text-earth-600">
-            <strong className="text-forest-800">What is hanging weight?</strong> It's what your pig
-            weighs after slaughter — once the head, blood, and organs are removed — but before it's
-            cut, trimmed, and packaged. It's the honest, whole-animal way to price a share, and the
-            number your $7.00 / lb is based on. You take home a bit less once everything is boned out
-            and trimmed.
-          </p>
-        </div>
-
         <div className="grid gap-6 md:grid-cols-3" style={{ marginTop: 40 }}>
-          <ShareCard kind="quarter" soldOut={soldOut.quarter} />
-          <ShareCard kind="half" soldOut={soldOut.half} />
-          <ShareCard kind="whole" soldOut={soldOut.whole} />
+          {SHARE_TIERS.map((s) => (
+            <Link
+              key={s.kind}
+              to="/shares"
+              className="group flex flex-col rounded-lg border border-linen-200 bg-white p-6 shadow-card transition hover:border-sage-400 hover:shadow-soft"
+            >
+              <p className="eyebrow">{s.title}</p>
+              <p className="mt-4 font-display text-[1.9rem] leading-none text-forest-800">
+                {s.takeHome}
+              </p>
+              <p className="mt-1 text-[0.9375rem] text-earth-500">est. take-home pork</p>
+              <p className="mt-4 border-t border-linen-200 pt-4 font-display text-[1.3rem] text-forest-700">
+                Est. {s.price}
+              </p>
+              <p className="mt-4 flex-1 text-[0.9375rem] leading-[1.7] text-earth-600">{s.bestFor}</p>
+              <p className="mt-5 text-[0.9375rem] font-semibold text-copper-500 group-hover:text-copper-600">
+                See details →
+              </p>
+            </Link>
+          ))}
         </div>
 
-        <p
-          className="text-center text-[0.9375rem] leading-[1.7] text-earth-500"
-          style={{ marginTop: 24, maxWidth: '46rem', marginInline: 'auto' }}
-        >
-          Weights are estimates and vary by animal — every pig finishes a little differently, and
-          each family chooses different processing. Your final share cost is settled on the actual
-          hanging weight of your pig.
-        </p>
+        <div className="text-center" style={{ marginTop: 32 }}>
+          <Link to="/shares" className="btn-primary">
+            View pork shares
+          </Link>
+        </div>
       </section>
 
       {/* How it works */}
