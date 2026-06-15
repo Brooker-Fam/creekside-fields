@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { insforge, formatCents, priceRange } from '../lib/insforge'
 import type { Animal, ShareOption } from '../lib/types'
+import { SHARE_PRICE_RANGE } from '../content/sharesCopy'
 import { INQUIRY_PREFILL_KEY, type InquiryPrefill } from '../components/storybook/ContactInquiryForm'
 
 const PICKUP_OPTIONS = [
@@ -205,7 +206,9 @@ export default function Reserve() {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
         <span>{animal.breed} gilt</span>
         <span>·</span>
-        <span>Est. {priceRange(share.est_total_low_cents, share.est_total_high_cents)}</span>
+        <span>
+          Est. {SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents)}
+        </span>
         <span>·</span>
         <span>Deposit {formatCents(share.deposit_cents)}</span>
       </div>

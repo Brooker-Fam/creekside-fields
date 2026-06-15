@@ -1,5 +1,6 @@
 import type { BillOfSaleData } from '../components/BillOfSale'
 import { formatCents, priceRange } from './insforge'
+import { SHARE_PRICE_RANGE } from '../content/sharesCopy'
 
 const PICKUP_LABELS: Record<string, string> = {
   farm: 'Farm pickup (Greenwich, NY)',
@@ -92,7 +93,7 @@ export function renderBillOfSaleEmail(data: BillOfSaleData): string {
       )}
       ${block(
         'Price',
-        `Estimated range: <strong>${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong><br>
+        `Estimated range: <strong>${escape(SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong><br>
          Your final price is a single flat amount for this ${escape(share.kind)} share, confirmed once the animal is processed — based on the actual weight of the meat and the cuts included.`,
       )}
       ${block(

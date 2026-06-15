@@ -1,5 +1,6 @@
 import type { Animal, ShareOption } from '../lib/types'
 import { formatCents, priceRange } from '../lib/insforge'
+import { SHARE_PRICE_RANGE } from '../content/sharesCopy'
 
 export interface BillOfSaleData {
   customer: { name: string; email: string; phone: string | null; address: string | null }
@@ -90,7 +91,7 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
       <section className="mt-6 grid gap-4 sm:grid-cols-2">
         <Block label="Price">
           <p className="font-display text-2xl">
-            {priceRange(share.est_total_low_cents, share.est_total_high_cents)}
+            {SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents)}
           </p>
           <p className="mt-1 text-xs text-mud-600">
             Estimated range for this {share.kind} share. Your final price is a single flat amount,

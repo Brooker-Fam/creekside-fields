@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { insforge, formatCents, priceRange } from '../../lib/insforge'
 import type { Animal, Processor, Reservation, ShareOption } from '../../lib/types'
+import { SHARE_PRICE_RANGE } from '../../content/sharesCopy'
 import BillOfSale from '../../components/BillOfSale'
 import Invoice, { computeInvoice, sharePctFromKind } from '../../components/Invoice'
 import { renderBillOfSaleEmail, renderInvoiceEmail } from '../../lib/emailTemplates'
@@ -312,7 +313,7 @@ function ReservationRow({
           {r.customer_address && <p className="text-xs text-mud-600">{r.customer_address}</p>}
           <p className="mt-1 text-sm">
             <strong>{sharePct}%</strong> · {animal?.breed}
-            {animal?.headline ? ` · "${animal.headline}"` : ''} · {priceRange(share?.est_total_low_cents, share?.est_total_high_cents)}
+            {animal?.headline ? ` · "${animal.headline}"` : ''} · {(share && SHARE_PRICE_RANGE[share.kind]) ?? priceRange(share?.est_total_low_cents, share?.est_total_high_cents)}
           </p>
           <p className="text-sm text-mud-600">
             Processor: {processor?.name ?? 'Not chosen yet'}
@@ -590,7 +591,7 @@ function Shares({ rows, animals, onChange }: { rows: ShareOption[]; animals: Ani
                 <tr key={s.id} className="border-t border-mud-800/10">
                   <td className="py-2">{s.label}</td>
                   <td>{s.kind}</td>
-                  <td>{priceRange(s.est_total_low_cents, s.est_total_high_cents)}</td>
+                  <td>{SHARE_PRICE_RANGE[s.kind] ?? priceRange(s.est_total_low_cents, s.est_total_high_cents)}</td>
                   <td>{formatCents(s.deposit_cents)}</td>
                   <td>
                     <select

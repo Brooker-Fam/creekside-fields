@@ -17,6 +17,14 @@ const PICKUP_LABELS: Record<string, string> = {
   either: 'Either — to be confirmed when slaughter is scheduled',
 }
 
+// Mirror of SHARE_PRICE_RANGE in src/content/sharesCopy.ts — kept in sync here
+// because this edge function is bundled separately and can't import from src.
+const SHARE_PRICE_RANGE: Record<string, string> = {
+  quarter: '$650–$775',
+  half: '$1,300–$1,550',
+  whole: '$2,600–$3,100',
+}
+
 interface BillOfSaleData {
   customer: { name: string; email: string; phone: string | null; address: string | null }
   share: {
@@ -131,7 +139,7 @@ function renderBillOfSaleEmail(data: BillOfSaleData): string {
       )}
       ${block(
         'Price',
-        `<span style="font-size:22px;font-family:Georgia,serif;">${escape(priceRange(share.est_total_low_cents, share.est_total_high_cents))}</span><br>
+        `<span style="font-size:22px;font-family:Georgia,serif;">${escape(SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents))}</span><br>
          <span style="font-size:12px;color:#6f655c;">Estimated range for this ${escape(share.kind)} share. Your final price is a single flat amount, confirmed once the animal is processed — based on the actual weight of the meat and the cuts included. Processing included; no added nitrates.</span>`,
       )}
       ${block(
