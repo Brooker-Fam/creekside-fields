@@ -129,7 +129,7 @@ export const SHARE_FAQS: ReadonlyArray<readonly [string, FaqAnswer]> = [
   ],
   [
     'Can I choose my cuts?',
-    'There is no cut sheet to fill out — we take care of all the processing decisions for you. Each share is a thoughtfully curated assortment chosen to give you a balanced, versatile variety. If you have a serious allergy or dietary need, just let us know and we will do our best to accommodate it.',
+    'We take care of all the processing decisions for you. Each share is a thoughtfully curated assortment chosen to give you a balanced, versatile variety. If you have a serious allergy or dietary need, just let us know and we will do our best to accommodate it.',
   ],
   [
     'Are all products nitrate-free?',

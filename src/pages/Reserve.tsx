@@ -91,7 +91,7 @@ export default function Reserve() {
     setSubmitting(true)
     setError(null)
     const fd = new FormData(e.currentTarget)
-    // Curated shares — no cut sheet. We only stash the pickup preference here
+    // Curated shares — customers don't pick cuts. We only stash the pickup preference here
     // (the column is still named cut_preferences for backward compatibility).
     const prefs: Record<string, unknown> = {}
 
@@ -228,8 +228,8 @@ export default function Reserve() {
           )}
           <p className="mt-2 text-sm text-mud-700">
             Heritage breed, pasture-raised in Greenwich, NY. Your share is a curated assortment of
-            cuts — no cut sheet to fill out. Processing is included; you pay one flat price for the
-            share, with no added nitrates on any cured or smoked product.
+            cuts we select for you. Processing is included; you pay one flat price for the share,
+            with no added nitrates on any cured or smoked product.
           </p>
           <p className="mt-2 text-sm">
             <Link to="/about" className="font-semibold text-blush-500 hover:underline">
@@ -275,11 +275,11 @@ export default function Reserve() {
         <section className="card bg-cream-50">
           <h2 className="font-display text-2xl">What's included</h2>
           <p className="mt-1 text-sm text-mud-700">
-            No cut sheet to fill out. Every share is a thoughtfully curated assortment — bacon, ham,
-            chops, tenderloin, roasts, ribs, bratwurst, breakfast sausage, and ground pork. These
-            are the cuts we expect to include, but because these are real animals, the exact cuts
-            and quantities vary slightly from share to share. Anything you definitely do or don't
-            want? Let us know in the notes below.
+            Every share is a thoughtfully curated assortment — bacon, ham, chops, tenderloin,
+            roasts, ribs, bratwurst, breakfast sausage, and ground pork. These are the cuts we
+            expect to include, but because these are real animals, the exact cuts and quantities
+            vary slightly from share to share. Anything you definitely do or don't want? Let us
+            know in the notes below.
           </p>
         </section>
 

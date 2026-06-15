@@ -5,7 +5,7 @@
 export const WORK_STEPS = [
   ['I', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole share for the season.'],
   ['II', 'We raise and process', 'We raise your pig with care and deliver it to our USDA-certified processor when it finishes.'],
-  ['III', 'We handle the cuts', 'No cut sheets to fill out — we curate a balanced assortment of cuts for every share.'],
+  ['III', 'We handle the cuts', 'We curate a balanced assortment of cuts for every share, so you do not have to.'],
   ['IV', 'We confirm your price', 'Once processing weights are known, we set your flat share price within the estimated range.'],
   ['V', 'Pick up your pork', 'Collect your share from the farm or the processor and fill your freezer.'],
 ] as const
@@ -53,7 +53,7 @@ export const FAQS = [
   ],
   [
     'Can I choose my cuts?',
-    'No cut sheet needed — we curate a balanced, versatile assortment for every share. The cuts we list are what we expect to include, but because these are real animals, the exact cuts and quantities can vary slightly from share to share.',
+    'We curate a balanced, versatile assortment for every share, so you do not have to pick individual cuts. The cuts we list are what we expect to include, but because these are real animals, the exact cuts and quantities can vary slightly from share to share.',
   ],
   [
     'How is my final price set?',

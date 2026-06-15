@@ -185,7 +185,7 @@ export default function Shares() {
             maxWidth="40rem"
             eyebrow="What’s included"
             title="A thoughtfully curated assortment."
-            lead="Every share is a balanced selection of cuts chosen by Creekside Fields. There are no cut sheets to fill out and no processing decisions to make — we take care of all of it, so you can simply enjoy the pork."
+            lead="Every share is a balanced selection of cuts chosen by Creekside Fields — no decisions to make on your end. We take care of all of it, so you can simply enjoy the pork."
           />
 
           <p
