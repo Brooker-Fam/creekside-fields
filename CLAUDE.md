@@ -21,7 +21,7 @@ The brand/design system lives in the "Creekside Fields Design System" skill
 - **Color:** linen creams (surfaces), forest greens (headings/primary), warm
   browns (body), a single copper accent, sage tints. No pure black.
 - **Storybook treatment:** framed photo "plates" with italic captions,
-  botanical sprig + gnome/toadstool ornament dividers, an ambient
+  botanical sprig + leaf/acorn ornament dividers, an ambient
   firefly/sparkle field, paper-grain background, gentle radii, two warm-brown
   shadows. Tokens live as CSS variables in `src/index.css`; the storybook
   layer (`.plate`, `.story-eyebrow`, `.numeral`, `.whimsy-*`, `.book`) is there

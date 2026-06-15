@@ -1,6 +1,6 @@
 // Whimsy layer — ambient fireflies/sparkles and a storybook divider with
-// sprig, toadstools, and a gnome. Enchanted-forest motifs that echo the
-// hand-painted Creekside world mark. Ported from the design system UI kit.
+// a botanical sprig, leaves, and acorns. Natural woodland motifs that echo
+// the hand-painted Creekside world mark. Ported from the design system UI kit.
 
 function Sparkle({
   size = 9,
@@ -27,41 +27,69 @@ function Sparkle({
   )
 }
 
-function Toadstool({ scale = 1, className = '' }: { scale?: number; className?: string }) {
+function Leaf({
+  scale = 1,
+  flip = false,
+  className = '',
+}: {
+  scale?: number
+  flip?: boolean
+  className?: string
+}) {
   return (
     <svg
-      width={18 * scale}
-      height={22 * scale}
-      viewBox="0 0 24 28"
+      width={22 * scale}
+      height={20 * scale}
+      viewBox="0 0 26 22"
+      fill="none"
+      className={className}
+      style={{ transform: flip ? 'translateY(1px) scaleX(-1)' : 'translateY(1px)' }}
+      aria-hidden
+    >
+      <path d="M2 20 C 2 9 11 2 24 2 C 24 13 15 20 2 20 Z" fill="#8fa07a" opacity="0.7" />
+      <path
+        d="M2 20 C 9 13 16 7 24 2"
+        stroke="#6b8058"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+        opacity="0.85"
+      />
+      <path
+        d="M9 14 C 11 13 13 11 14 9"
+        stroke="#6b8058"
+        strokeWidth="0.8"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+      <path
+        d="M14 12 C 16 11 18 9 19 7"
+        stroke="#6b8058"
+        strokeWidth="0.8"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+    </svg>
+  )
+}
+
+function Acorn({ scale = 1, className = '' }: { scale?: number; className?: string }) {
+  return (
+    <svg
+      width={13 * scale}
+      height={20 * scale}
+      viewBox="0 0 16 22"
       fill="none"
       className={className}
       style={{ transform: 'translateY(2px)' }}
       aria-hidden
     >
-      <rect x="9" y="16" width="6" height="12" rx="2" fill="#d8c2b0" opacity="0.7" />
-      <ellipse cx="12" cy="14" rx="12" ry="10" fill="#9b5a4a" opacity="0.58" />
-      <circle cx="7" cy="10" r="1.5" fill="#faf7f2" opacity="0.8" />
-      <circle cx="14" cy="8" r="1.2" fill="#faf7f2" opacity="0.8" />
-      <circle cx="17" cy="12" r="1" fill="#faf7f2" opacity="0.7" />
-    </svg>
-  )
-}
-
-function Gnome({ className = '' }: { className?: string }) {
-  return (
-    <svg
-      width="14"
-      height="22"
-      viewBox="0 0 14 22"
-      fill="none"
-      className={className}
-      style={{ transform: 'translateY(1px)' }}
-      aria-hidden
-    >
-      <polygon points="7,0 11,10 3,10" fill="#a65d3f" opacity="0.7" />
-      <circle cx="7" cy="12" r="3.5" fill="#2f3d2a" opacity="0.55" />
-      <ellipse cx="7" cy="18" rx="4.5" ry="4" fill="#2f3d2a" opacity="0.55" />
-      <ellipse cx="7" cy="15" rx="3" ry="3.5" fill="#faf7f2" opacity="0.5" />
+      <path d="M8 1 L8 4" stroke="#5c4e42" strokeWidth="1.2" strokeLinecap="round" opacity="0.7" />
+      <path d="M2.5 6 C 2.5 11 4.5 20 8 20 C 11.5 20 13.5 11 13.5 6 Z" fill="#b07f4e" opacity="0.62" />
+      <path
+        d="M1.5 6 C 1.5 4 4 3 8 3 C 12 3 14.5 4 14.5 6 C 14.5 7.5 11.5 8.5 8 8.5 C 4.5 8.5 1.5 7.5 1.5 6 Z"
+        fill="#5c4e42"
+        opacity="0.65"
+      />
     </svg>
   )
 }
@@ -71,10 +99,11 @@ export function WhimsyDivider() {
     <div className="whimsy-divider" aria-hidden>
       <span className="wd-line" />
       <Sparkle size={8} delay={0} className="wf-twinkle" />
-      <Toadstool scale={0.85} />
-      <Gnome className="float-slow" />
+      <Acorn scale={0.85} />
+      <Leaf scale={0.9} className="float-slow" />
       <img className="wd-sprig float" src="/brand/ornament-sprig.svg" alt="" />
-      <Toadstool />
+      <Leaf scale={0.9} flip className="float-slow" />
+      <Acorn scale={0.85} />
       <Sparkle size={10} delay={0.7} className="wf-twinkle" />
       <span className="wd-line" />
     </div>
