@@ -6,7 +6,6 @@ export type PorkShareKind = Extract<ShareKind, 'whole' | 'half' | 'quarter'>
 export interface ShareTier {
   kind: PorkShareKind
   title: string
-  hanging: string
   takeHome: string
   price: string
   bestFor: string
@@ -18,7 +17,6 @@ export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'quarter',
     title: 'Quarter pork share',
-    hanging: '70–80 pounds',
     takeHome: '45–60 pounds',
     price: '$650–$775',
     bestFor:
@@ -28,7 +26,6 @@ export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'half',
     title: 'Half pork share',
-    hanging: '140–160 pounds',
     takeHome: '90–120 pounds',
     price: '$1,300–$1,550',
     bestFor:
@@ -38,7 +35,6 @@ export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'whole',
     title: 'Whole pork share',
-    hanging: '280–320 pounds',
     takeHome: '180–240 pounds',
     price: '$2,600–$3,100',
     bestFor:

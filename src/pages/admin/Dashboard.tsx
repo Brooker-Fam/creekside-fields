@@ -448,8 +448,6 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
       sex: form.sex,
       dob: form.dob,
       estimated_live_weight_lbs: form.estimated_live_weight_lbs,
-      hanging_weight_lbs: form.hanging_weight_lbs,
-      rate_per_lb_hw_cents: form.rate_per_lb_hw_cents,
       slaughter_date: form.slaughter_date,
       status: form.status,
       ready_by: form.ready_by,
@@ -468,7 +466,6 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
           <p className="font-display text-xl">{animal.breed ?? '(no breed)'}{animal.headline ? ` — "${animal.headline}"` : ''}</p>
           <p className="text-sm text-mud-600">
             {animal.status} · {shareCount} shares
-            {animal.hanging_weight_lbs ? ` · ${animal.hanging_weight_lbs} lb HW` : ''}
           </p>
         </div>
         <button onClick={() => setEditing((e) => !e)} className="btn-secondary py-2 text-sm">
@@ -501,12 +498,6 @@ function AnimalEditor({ animal, shareCount, onChange }: { animal: Animal; shareC
                 type="date"
                 value={form.slaughter_date ?? ''}
                 onChange={(v) => setForm({ ...form, slaughter_date: v || null })}
-              />
-              <TextField
-                label="Hanging weight (lb)"
-                type="number"
-                value={form.hanging_weight_lbs?.toString() ?? ''}
-                onChange={(v) => setForm({ ...form, hanging_weight_lbs: v ? parseFloat(v) : null })}
               />
             </div>
           </div>

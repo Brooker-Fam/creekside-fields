@@ -132,7 +132,6 @@ export default function Shares() {
                   className="mt-5 space-y-3 border-t border-linen-200 pt-5 text-[0.9375rem]"
                   style={{ margin: '20px 0 0' }}
                 >
-                  <Row label="Est. hanging weight" value={s.hanging} />
                   <Row label="Est. take-home pork" value={s.takeHome} />
                   <div className="flex items-baseline justify-between gap-4 pt-1">
                     <dt className="text-earth-500">Est. price range</dt>
