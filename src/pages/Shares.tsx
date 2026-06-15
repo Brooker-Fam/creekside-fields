@@ -106,7 +106,7 @@ export default function Shares() {
           maxWidth="40rem"
           eyebrow="Choose your share"
           title="Three ways to bring the farm home."
-          lead="Pick the share that fits your household and your freezer. Each one is a curated selection of cuts from a single pasture-raised pig."
+          lead="Pick the share that fits your household and your freezer. Each one is a curated selection of cuts from our pasture-raised pigs."
         />
 
         <div className="grid gap-6 md:grid-cols-3" style={{ marginTop: 44 }}>
