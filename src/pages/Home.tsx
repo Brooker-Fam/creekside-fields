@@ -118,6 +118,14 @@ export default function Home() {
                 England, they thrive when given the room to root, graze, and explore — fresh air,
                 sunshine, and a slower, natural pace of growth.
               </p>
+              <p style={{ marginTop: 18 }}>
+                <Link
+                  to="/our-pigs"
+                  className="text-[0.9375rem] font-semibold text-copper-500 hover:text-copper-600"
+                >
+                  Read their story →
+                </Link>
+              </p>
             </div>
             <figure className="plate float-slow m-0">
               <img

@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Shares from './pages/Shares'
+import OurPigs from './pages/OurPigs'
 import AnimalPage from './pages/Animal'
 import Reserve from './pages/Reserve'
 import ReserveConfirm from './pages/ReserveConfirm'
@@ -16,6 +17,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/shares" element={<Shares />} />
+          <Route path="/our-pigs" element={<OurPigs />} />
           <Route path="/pig/:id" element={<AnimalPage />} />
           <Route path="/animal/:id" element={<AnimalPage />} />
           <Route path="/reserve/:shareId" element={<Reserve />} />

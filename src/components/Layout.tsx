@@ -5,7 +5,7 @@ import { SparkleField, WhimsyDivider } from './site/Whimsy'
 const SECTION_LINKS = [
   { href: '/shares', label: 'Shares' },
   { href: '/#how', label: 'How it works' },
-  { href: '/#pigs', label: 'Our pigs' },
+  { href: '/our-pigs', label: 'Our pigs' },
   { href: '/#farm', label: 'The farm' },
   { href: '/#faq', label: 'FAQ' },
 ] as const
