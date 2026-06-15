@@ -98,14 +98,38 @@ export const SHARE_STEPS: ReadonlyArray<readonly [string, string, string]> = [
   ],
 ] as const
 
-export const SHARE_FAQS: ReadonlyArray<readonly [string, string]> = [
+export interface FaqGroupAnswer {
+  intro?: string
+  items: { label: string; body: string }[]
+}
+
+/** A FAQ answer is either a paragraph or an intro + a labelled list. */
+export type FaqAnswer = string | FaqGroupAnswer
+
+export const SHARE_FAQS: ReadonlyArray<readonly [string, FaqAnswer]> = [
   [
     'Why are prices listed as a range?',
     'Our pigs are still growing, so we cannot know each animal’s exact finished weight until it is processed. The ranges give you a realistic window to plan around. Once processing weights are confirmed, we will share your final price before pickup — no surprises.',
   ],
   [
     'How much freezer space will I need?',
-    'As a rough guide: a quarter share fits in a freezer drawer or a small chest freezer, a half share fills a standard upright freezer, and a whole share fills a chest freezer. We are always happy to help you plan before you reserve.',
+    {
+      intro: 'As a general rule:',
+      items: [
+        {
+          label: 'Quarter share',
+          body: 'Approximately 1–2 cubic feet of freezer space. This will fit in the freezer compartment of many refrigerators — about the space of 2–3 grocery bags.',
+        },
+        {
+          label: 'Half share',
+          body: 'Approximately 3–4 cubic feet of freezer space. A small chest freezer, or a portion of a larger upright freezer, is usually enough — about the space of 4–6 grocery bags.',
+        },
+        {
+          label: 'Whole share',
+          body: 'Approximately 6–8 cubic feet of freezer space. Most customers store a whole share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
+        },
+      ],
+    },
   ],
   [
     'Can I choose my cuts?',
@@ -119,4 +143,4 @@ export const SHARE_FAQS: ReadonlyArray<readonly [string, string]> = [
     'When will pork be ready for pickup?',
     'Our pigs are raised for more than a year before harvest, so shares become available seasonally. Once your pig has been processed, we confirm the exact pickup date and place and reach out to you directly to arrange it.',
   ],
-] as const
+]

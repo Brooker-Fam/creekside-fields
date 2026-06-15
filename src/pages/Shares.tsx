@@ -9,6 +9,7 @@ import {
   POSSIBLE_CUTS,
   SHARE_STEPS,
   SHARE_FAQS,
+  type FaqAnswer,
   type PorkShareKind,
 } from '../content/sharesCopy'
 
@@ -408,7 +409,7 @@ function LeafMark() {
 
 /* ---------- faq accordion ---------- */
 
-function Faq({ q, a }: { q: string; a: string }) {
+function Faq({ q, a }: { q: string; a: FaqAnswer }) {
   const [open, setOpen] = useState(false)
   return (
     <div style={{ borderBottom: '1px solid var(--border)' }}>
@@ -426,11 +427,25 @@ function Faq({ q, a }: { q: string; a: string }) {
           +
         </span>
       </button>
-      {open && (
-        <p className="text-[1.0625rem] leading-[1.7] text-earth-600" style={{ margin: '0 0 22px' }}>
-          {a}
-        </p>
-      )}
+      {open &&
+        (typeof a === 'string' ? (
+          <p className="text-[1.0625rem] leading-[1.7] text-earth-600" style={{ margin: '0 0 22px' }}>
+            {a}
+          </p>
+        ) : (
+          <div style={{ margin: '0 0 22px' }}>
+            {a.intro && (
+              <p className="text-[1.0625rem] leading-[1.7] text-earth-600">{a.intro}</p>
+            )}
+            <ul className="mt-3 list-none space-y-3 p-0">
+              {a.items.map((it) => (
+                <li key={it.label} className="text-[1.0625rem] leading-[1.7] text-earth-600">
+                  <strong className="text-forest-800">{it.label}:</strong> {it.body}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
     </div>
   )
 }
