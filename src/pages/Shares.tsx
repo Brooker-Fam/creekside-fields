@@ -52,13 +52,6 @@ export default function Shares() {
               className="text-earth-600"
               style={{ marginTop: 20, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
             >
-              A pork share is the simplest way to stock your freezer with premium heritage pork,
-              raised with care from birth to harvest right here on our family farm.
-            </p>
-            <p
-              className="text-earth-600"
-              style={{ marginTop: 16, fontSize: 'var(--text-base)', lineHeight: 1.72 }}
-            >
               Every share comes from our Gloucestershire Old Spot pigs — a heritage breed prized for
               its exceptional flavor, beautiful marbling, and excellent foraging instincts. The
               result is pork with real depth of flavor that you simply cannot find at the grocery
