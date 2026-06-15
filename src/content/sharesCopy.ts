@@ -104,10 +104,6 @@ export const SHARE_FAQS: ReadonlyArray<readonly [string, string]> = [
     'Our pigs are still growing, so we cannot know each animal’s exact finished weight until it is processed. The ranges give you a realistic window to plan around. Once processing weights are confirmed, we will share your final price before pickup — no surprises.',
   ],
   [
-    'What is hanging weight?',
-    'Hanging weight is what a pig weighs after harvest — once the head, blood, and organs are removed — but before it is cut, trimmed, and packaged. It is the standard, honest way to measure a whole-animal share. Your take-home weight is a little less, since trimming and boning reduce the final packaged amount.',
-  ],
-  [
     'How much freezer space will I need?',
     'As a rough guide: a quarter share fits in a freezer drawer or a small chest freezer, a half share fills a standard upright freezer, and a whole share fills a chest freezer. We are always happy to help you plan before you reserve.',
   ],
