@@ -183,6 +183,33 @@ export default function Shares() {
             ))}
           </ul>
 
+          <p
+            className="text-center text-[0.9375rem] uppercase tracking-[0.16em] text-earth-500"
+            style={{ marginTop: 48 }}
+          >
+            Freezer space
+          </p>
+          <ul
+            className="mx-auto grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-3"
+            style={{ marginTop: 18, maxWidth: '46rem' }}
+          >
+            {SHARE_TIERS.map((s) => (
+              <li
+                key={s.kind}
+                className="rounded-md border border-linen-200 bg-surface px-4 py-4 text-center"
+              >
+                <p className="eyebrow">{s.title.replace(' pork share', '')}</p>
+                <p className="mt-2 text-[0.9375rem] leading-[1.6] text-earth-600">{s.freezer}</p>
+              </li>
+            ))}
+          </ul>
+          <p
+            className="mx-auto text-center text-[0.9375rem] text-earth-500"
+            style={{ marginTop: 16, maxWidth: '46rem' }}
+          >
+            We’re happy to help you plan the right freezer space before you reserve.
+          </p>
+
           <div
             className="card"
             style={{
