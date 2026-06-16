@@ -141,13 +141,10 @@ export default function ReservationForm({ kind }: { kind: string }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
         <h3 className="font-display text-[1.3rem] text-forest-800">Your details</h3>
-        <p className="mt-1 text-[0.9375rem] text-earth-500">
-          We’ll use this for the bill of sale and to reach you about pickup.
-        </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Field label="Full name" name="customer_name" required />
           <Field label="Email" name="customer_email" type="email" required />
-          <Field label="Phone (optional)" name="customer_phone" type="tel" />
+          <Field label="Phone" name="customer_phone" type="tel" required />
           <Field label="Mailing address (optional)" name="customer_address" placeholder="123 Main St, Town, NY 12345" />
         </div>
       </div>
