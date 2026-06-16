@@ -114,33 +114,7 @@ export default function OurPigs() {
 
       <WhimsyDivider />
 
-      {/* ---------- how it started ---------- */}
-      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '64px 24px 8px', textAlign: 'center' }}>
-        <p className="story-eyebrow justify-center">Their story</p>
-        <h2
-          className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
-          style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
-        >
-          How it started
-        </h2>
-        <p
-          className="text-earth-600"
-          style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
-        >
-          It started with three sisters. In March 2025 we brought them home at two months old —
-          riding in cat carriers in the back of our Subaru.
-        </p>
-        <p
-          className="mx-auto text-earth-600"
-          style={{ marginTop: 16, maxWidth: '40rem', fontSize: 'var(--text-base)', lineHeight: 1.72 }}
-        >
-          For their first month they stayed in the safety and warmth of the barn, until they were
-          big enough to move out onto pasture — in the good company of our chickens, ducks, and
-          geese, and watched over by our livestock guardian dogs, Bristol and Blanca.
-        </p>
-      </section>
-
-      {/* ---------- the story in pictures ---------- */}
+      {/* ---------- photos ---------- */}
       <section style={CONTAINER}>
         <div className="mx-auto [column-gap:2rem] [columns:1] sm:[columns:2]" style={{ maxWidth: '60rem' }}>
           {PHOTOS.map((photo) => (
@@ -149,16 +123,9 @@ export default function OurPigs() {
         </div>
       </section>
 
-      {/* ---------- closing ---------- */}
-      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '0 24px 96px', textAlign: 'center' }}>
-        <p
-          className="font-accent italic leading-[1.5] text-forest-800"
-          style={{ fontSize: 'clamp(1.4rem, 1rem + 1.4vw, 1.9rem)' }}
-        >
-          In October 2025 we processed one of the three sisters here on our own farm, for our
-          family — the honest end of raising an animal well, from the first day to the last.
-        </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
+      {/* ---------- closing cta ---------- */}
+      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '8px 24px 96px', textAlign: 'center' }}>
+        <div className="flex flex-wrap justify-center gap-3">
           <Link to="/shares" className="btn-primary">
             See our pork shares
           </Link>

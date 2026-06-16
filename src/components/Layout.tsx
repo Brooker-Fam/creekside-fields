@@ -4,7 +4,7 @@ import { SparkleField, WhimsyDivider } from './site/Whimsy'
 import { ThemeToggle } from './site/ThemeToggle'
 
 const SECTION_LINKS = [
-  { href: '/#shares', label: 'Shares' },
+  { href: '/shares', label: 'Shares' },
   { href: '/#how', label: 'How it works' },
   { href: '/our-pigs', label: 'Our pigs' },
   { href: '/#faq', label: 'FAQ' },
