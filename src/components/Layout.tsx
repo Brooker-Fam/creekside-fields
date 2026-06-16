@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 import { SparkleField, WhimsyDivider } from './site/Whimsy'
 import { ThemeToggle } from './site/ThemeToggle'
 
@@ -31,8 +31,6 @@ function Logo({ size = 22 }: { size?: number }) {
 
 function Header() {
   const [open, setOpen] = useState(false)
-  const location = useLocation()
-  const onHome = location.pathname === '/'
 
   return (
     <header
@@ -46,22 +44,11 @@ function Header() {
 
         <nav className="hidden items-center gap-8 md:flex">
           <div className="flex items-center gap-[26px]">
-            {onHome ? (
-              SECTION_LINKS.map((link) => (
-                <a key={link.href} href={link.href} className="nav-link">
-                  {link.label}
-                </a>
-              ))
-            ) : (
-              <>
-                <NavLink to="/" className="nav-link">
-                  Home
-                </NavLink>
-                <NavLink to="/about" className="nav-link">
-                  Details
-                </NavLink>
-              </>
-            )}
+            {SECTION_LINKS.map((link) => (
+              <a key={link.href} href={link.href} className="nav-link">
+                {link.label}
+              </a>
+            ))}
           </div>
           <a href="/shares" className="btn-primary px-4 py-2 text-xs">
             Reserve
