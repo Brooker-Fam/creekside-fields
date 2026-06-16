@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/brand/cf-monogram.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Apply the saved theme (or system preference) before first paint — no flash.
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme')
+          var t = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          var el = document.documentElement
+          el.setAttribute('data-theme', t)
+          el.style.backgroundColor = t === 'dark' ? '#181410' : '#faf7f2'
+        } catch (e) {}
+      })()
+    </script>
     <meta name="description" content="Creekside Fields — pasture-raised heritage pork from a regenerative family farm in Greenwich, NY. Reserve whole, half, or quarter hog shares." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

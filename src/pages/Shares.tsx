@@ -115,7 +115,7 @@ export default function Shares() {
             return (
               <div
                 key={s.kind}
-                className="flex flex-col rounded-lg bg-white p-7 shadow-card"
+                className="flex flex-col rounded-lg bg-surface p-7 shadow-card"
                 style={{
                   border: '1px solid var(--border)',
                   ...(s.featured ? { borderColor: 'var(--sage-400)', boxShadow: 'var(--shadow-soft)' } : null),
@@ -201,7 +201,7 @@ export default function Shares() {
             {POSSIBLE_CUTS.map((cut) => (
               <li
                 key={cut}
-                className="flex items-center gap-2.5 rounded-md border border-linen-200 bg-white px-4 py-3 text-[0.9375rem] text-earth-700"
+                className="flex items-center gap-2.5 rounded-md border border-linen-200 bg-surface px-4 py-3 text-[0.9375rem] text-earth-700"
               >
                 <LeafMark />
                 {cut}

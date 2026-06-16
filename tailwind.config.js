@@ -1,39 +1,44 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
+        // Themeable palette — resolves to CSS variables so it flips under
+        // [data-theme="dark"] (see :root / [data-theme="dark"] in index.css).
         linen: {
-          50: '#faf7f2',
-          100: '#f3ede4',
-          200: '#e8dfd2',
+          50: 'var(--linen-50)',
+          100: 'var(--linen-100)',
+          200: 'var(--linen-200)',
         },
         forest: {
-          600: '#3d4f36',
-          700: '#2f3d2a',
-          800: '#243021',
+          600: 'var(--forest-600)',
+          700: 'var(--forest-700)',
+          800: 'var(--forest-800)',
         },
         earth: {
-          500: '#6b5a4a',
-          600: '#5c4e42',
-          800: '#2c241c',
+          500: 'var(--earth-500)',
+          600: 'var(--earth-600)',
+          800: 'var(--earth-800)',
         },
         copper: {
-          500: '#a65d3f',
-          600: '#8f4e34',
+          500: 'var(--copper-500)',
+          600: 'var(--copper-600)',
         },
         sage: {
-          100: '#eef2e8',
-          200: '#d8e2cc',
-          400: '#8fa07a',
-          500: '#6b8058',
+          100: 'var(--sage-100)',
+          200: 'var(--sage-200)',
+          400: 'var(--sage-400)',
+          500: 'var(--sage-500)',
         },
         creek: {
-          300: '#8fada8',
-          500: '#5f857d',
+          300: 'var(--creek-300)',
+          500: 'var(--creek-500)',
         },
-        // Legacy aliases used in admin/reserve flows
+        // Raised card/input surface (white in light, warm charcoal in dark).
+        surface: 'var(--surface)',
+        // Legacy aliases used in admin/reserve/print flows — fixed, not themed.
         cream: { 50: '#faf7f2', 100: '#f3ede4', 200: '#e8dfd2' },
         mud: { 400: '#8a7968', 600: '#5c4e42', 700: '#4a3f35', 800: '#2c241c' },
         blush: { 400: '#b87a62', 500: '#a65d3f' },
@@ -51,8 +56,9 @@ export default {
         hand: ['"Spectral"', 'ui-serif', 'Georgia', 'serif'],
       },
       boxShadow: {
-        soft: '0 12px 40px -20px rgba(44, 36, 28, 0.18)',
-        card: '0 1px 3px rgba(44, 36, 28, 0.06), 0 8px 24px -12px rgba(44, 36, 28, 0.1)',
+        // Themeable — driven by --shadow-* so shadows deepen in dark mode.
+        soft: 'var(--shadow-soft)',
+        card: 'var(--shadow-card)',
       },
       maxWidth: {
         prose: '42rem',

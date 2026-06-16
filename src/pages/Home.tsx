@@ -24,7 +24,7 @@ export default function Home() {
             <Link
               key={s.kind}
               to="/shares"
-              className="group flex flex-col rounded-lg border border-linen-200 bg-white p-6 shadow-card transition hover:border-sage-400 hover:shadow-soft"
+              className="group flex flex-col rounded-lg border border-linen-200 bg-surface p-6 shadow-card transition hover:border-sage-400 hover:shadow-soft"
             >
               <p className="eyebrow">{s.title}</p>
               <p className="mt-4 font-display text-[1.9rem] leading-none text-forest-800">
@@ -140,7 +140,7 @@ export default function Home() {
 
           <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 48 }}>
             {SEASONS.map(([title, body]) => (
-              <div key={title} className="card" style={{ background: 'var(--white)' }}>
+              <div key={title} className="card" style={{ background: 'var(--surface)' }}>
                 <p className="story-eyebrow solo" style={{ fontSize: 'var(--text-sm)' }}>
                   {title}
                 </p>
@@ -194,7 +194,7 @@ export default function Home() {
             {FARM_PIGS.map((pig) => (
               <li
                 key={pig.name}
-                className="rounded-lg border border-linen-200 bg-white p-5 text-center"
+                className="rounded-lg border border-linen-200 bg-surface p-5 text-center"
               >
                 <p className="font-display text-[1.3rem] text-forest-800">{pig.name}</p>
                 <p className="mt-2 font-accent text-[0.9375rem] italic text-earth-500">{pig.note}</p>

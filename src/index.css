@@ -42,7 +42,10 @@
   }
 
   .input {
-    @apply w-full rounded-md border border-linen-200 bg-white px-4 py-2.5 text-earth-800 placeholder-earth-500/50 focus:border-sage-400 focus:outline-none focus:ring-2 focus:ring-sage-200;
+    @apply w-full rounded-md border border-linen-200 bg-surface px-4 py-2.5 text-earth-800 focus:border-sage-400 focus:outline-none focus:ring-2 focus:ring-sage-200;
+  }
+  .input::placeholder {
+    color: color-mix(in srgb, var(--earth-500) 55%, transparent);
   }
 
   .eyebrow {
@@ -84,6 +87,7 @@
   --linen-100: #f3ede4;
   --linen-200: #e8dfd2;
   --white: #ffffff;
+  --surface: #ffffff;     /* raised card / input fill */
   /* forest */
   --forest-600: #3d4f36;
   --forest-700: #2f3d2a;
@@ -220,7 +224,7 @@
 
 /* framed illustration plate */
 .plate {
-  background: #fff;
+  background: var(--surface);
   padding: 10px;
   border: 1px solid color-mix(in srgb, var(--earth-500) 42%, transparent);
   border-radius: 3px;
@@ -300,7 +304,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: var(--surface);
   font-family: var(--font-display);
   font-size: 1.3rem;
   color: var(--copper-500);
@@ -316,3 +320,63 @@
   transition: color 200ms var(--ease-standard);
 }
 .nav-link:hover { color: var(--copper-600); }
+
+/* ---------- sticky chrome (translucent, blurred over content) ---------- */
+.cf-header { background: color-mix(in srgb, var(--linen-50) 90%, transparent); }
+.cf-footer { background: color-mix(in srgb, var(--linen-100) 60%, transparent); }
+
+/* ============================================================
+   Dark theme. Flips the palette variables; the storybook layer,
+   inline var(--*) styles, and the tokenized Tailwind utilities all
+   follow automatically. A few component classes are tuned explicitly.
+   ============================================================ */
+[data-theme="dark"] {
+  --linen-50:  #181410;  /* page background */
+  --linen-100: #211c16;  /* warm tint band */
+  --linen-200: #3a322a;  /* hairline borders */
+  --surface:   #241e18;  /* raised cards / inputs */
+  --white:     #241e18;
+
+  --forest-600: #aebf98;
+  --forest-700: #c7d4b4;
+  --forest-800: #e7ece0;  /* headings */
+
+  --earth-500: #9c8f80;   /* muted text */
+  --earth-600: #c4bab0;   /* body text */
+  --earth-800: #e7dfd5;   /* strong text */
+
+  --copper-500: #cb8460;  /* accent */
+  --copper-600: #dd9d79;  /* accent hover */
+
+  --sage-100: #232a1f;    /* quiet section tint */
+  --sage-200: #3a4730;    /* focus ring */
+  --sage-400: #7e8f68;    /* hover border */
+  --sage-500: #92a675;
+
+  --creek-300: #7fa39c;
+  --creek-500: #9bbfb8;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 30px -14px rgba(0, 0, 0, 0.55);
+  --shadow-soft: 0 18px 50px -22px rgba(0, 0, 0, 0.7);
+
+  color-scheme: dark;
+}
+
+/* warm dark paper — colored glows, no light center wash */
+[data-theme="dark"] .book {
+  background-image:
+    radial-gradient(circle at 12% 16%, rgba(143, 160, 122, 0.10), transparent 42%),
+    radial-gradient(circle at 88% 12%, rgba(201, 162, 75, 0.08), transparent 45%),
+    radial-gradient(circle at 80% 82%, rgba(203, 132, 96, 0.09), transparent 46%),
+    radial-gradient(circle at 18% 86%, rgba(143, 173, 168, 0.07), transparent 46%),
+    radial-gradient(circle at 50% 48%, rgba(40, 52, 33, 0.35), transparent 60%);
+}
+/* lighten the paper grain so it reads on dark */
+[data-theme="dark"] .book::before { mix-blend-mode: soft-light; opacity: 0.07; }
+
+/* keep the primary button a forest-green fill (the forest ramp flips light) */
+[data-theme="dark"] .btn-primary { background-color: #3f5536; color: #eef1e8; }
+[data-theme="dark"] .btn-primary:hover { background-color: #4c6541; }
+
+/* lift cards above the page surface in dark */
+[data-theme="dark"] .card { background-color: var(--surface); }

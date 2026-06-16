@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { SparkleField, WhimsyDivider } from './site/Whimsy'
+import { ThemeToggle } from './site/ThemeToggle'
 
 const SECTION_LINKS = [
   { href: '/shares', label: 'Shares' },
@@ -36,7 +37,7 @@ function Header() {
 
   return (
     <header
-      className="cf-header border-b border-linen-200 bg-linen-50/90 backdrop-blur-md"
+      className="cf-header border-b border-linen-200 backdrop-blur-md"
       style={{ position: 'sticky', top: 0, zIndex: 50 }}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
@@ -66,17 +67,21 @@ function Header() {
           <a href="/shares" className="btn-primary px-4 py-2 text-xs">
             Reserve
           </a>
+          <ThemeToggle />
         </nav>
 
-        <button
-          type="button"
-          className="text-sm font-medium text-forest-800 md:hidden"
-          aria-expanded={open}
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? 'Close' : 'Menu'}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="text-sm font-medium text-forest-800"
+            aria-expanded={open}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? 'Close' : 'Menu'}
+          </button>
+        </div>
       </div>
 
       {open && (
@@ -108,7 +113,7 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="border-t border-linen-200 bg-linen-100/60">
+    <footer className="cf-footer border-t border-linen-200">
       <div className="pb-2 pt-10">
         <WhimsyDivider />
       </div>
