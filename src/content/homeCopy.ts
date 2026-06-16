@@ -3,11 +3,10 @@
 // farm-story content only.
 
 export const WORK_STEPS = [
-  ['I', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole share for the season.'],
-  ['II', 'We raise and process', 'We raise your pig with care and deliver it to our USDA-certified processor when it finishes.'],
-  ['III', 'We handle the cuts', 'We curate a balanced assortment of cuts for every share, so you do not have to.'],
-  ['IV', 'We confirm your price', 'Once processing weights are known, we set your flat share price within the estimated range.'],
-  ['V', 'Pick up your pork', 'Collect your share from the farm or the processor and fill your freezer.'],
+  ['1', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole share.'],
+  ['2', 'We raise and process', 'We raise our pigs with care and deliver them to our USDA-certified processor.'],
+  ['3', 'We confirm your price', 'Once processing weights are known, we will contact you with your final share price.'],
+  ['4', 'Pick up your pork', 'Pick up your share and fill your freezer.'],
 ] as const
 
 export const VALUES = [

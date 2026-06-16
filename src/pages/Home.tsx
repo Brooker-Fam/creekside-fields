@@ -57,10 +57,9 @@ export default function Home() {
             maxWidth="36rem"
             eyebrow="How it works"
             title="From pasture to pickup."
-            lead="Buying a hog share is simpler than it sounds. Here is the path, step by step."
           />
           <ol
-            className="grid list-none grid-cols-1 gap-7 p-0 sm:grid-cols-3 lg:grid-cols-5"
+            className="grid list-none grid-cols-1 gap-7 p-0 sm:grid-cols-2 lg:grid-cols-4"
             style={{ marginTop: 52 }}
           >
             {WORK_STEPS.map(([n, title, body]) => (
