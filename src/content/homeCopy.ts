@@ -32,9 +32,9 @@ export const SEASONS = [
 ] as const
 
 export const FARM_PIGS = [
-  { name: 'Sushi', note: 'Gloucestershire Old Spot gilt · born February 2025' },
-  { name: 'Nori', note: 'Gloucestershire Old Spot gilt · born February 2025' },
-  { name: 'Carrot', note: 'Gloucestershire Old Spot gilt · born February 2025' },
+  { name: 'Sushi', note: 'Gloucestershire Old Spot · born February 2025' },
+  { name: 'Nori', note: 'Gloucestershire Old Spot · born February 2025' },
+  { name: 'Carrot', note: 'Gloucestershire Old Spot · born February 2025' },
 ] as const
 
 export const FAQS = [

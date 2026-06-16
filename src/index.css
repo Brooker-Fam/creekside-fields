@@ -11,6 +11,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* anchored homepage sections clear the sticky header when scrolled to */
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
+
   h1, h2, h3 {
     font-family: theme('fontFamily.display');
     font-weight: 400; /* Marcellus is single-weight */

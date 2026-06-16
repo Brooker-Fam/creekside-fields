@@ -204,7 +204,7 @@ export default function Reserve() {
       <p className="eyebrow mt-8">Reserve</p>
       <h1 className="mt-3 font-display text-4xl text-forest-800 sm:text-5xl">{kindTitle}</h1>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-mud-600">
-        <span>{animal.breed} gilt</span>
+        <span>{animal.breed}</span>
         <span>·</span>
         <span>
           Est. {SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents)}
