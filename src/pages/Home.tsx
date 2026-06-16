@@ -16,7 +16,7 @@ export default function Home() {
           align="center"
           eyebrow="Pork shares & pricing"
           title="Stock your freezer with heritage pork."
-          lead="Quarter, half, and whole shares of our pasture-raised Gloucestershire Old Spot pork — a thoughtfully curated assortment of cuts, processed with no added nitrates, raised right here in Washington County."
+          lead="Quarter, half, and whole shares of our pasture-raised Gloucestershire Old Spot pork — a thoughtfully curated assortment of cuts, processed with no added nitrates, on our small family farm in Washington County."
         />
 
         <div className="grid gap-6 md:grid-cols-3" style={{ marginTop: 40 }}>
