@@ -135,7 +135,7 @@ export default function OurPigs() {
         >
           For their first month they stayed in the safety and warmth of the barn, until they were
           big enough to move out onto pasture — in the good company of our chickens, ducks, and
-          geese, and watched over by our livestock guardian dogs, Bristol and Blanca.
+          geese, watched over by our livestock guardian dogs, Bristol and Blanca.
         </p>
       </section>
 

@@ -192,7 +192,7 @@ export default function Reserve() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <Link to="/" className="text-sm font-medium text-copper-500 hover:underline">
+      <Link to="/shares" className="text-sm font-medium text-copper-500 hover:underline">
         ← Back to shares
       </Link>
       <p className="eyebrow mt-8">Reserve</p>
