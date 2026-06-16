@@ -91,12 +91,18 @@ export default function Shares() {
                 >
                   <div>
                     <p className="eyebrow">{s.title}</p>
-                    <p className="mt-2 font-display text-[1.7rem] leading-none text-forest-800">
-                      {out ? 'Reserved for the season' : s.takeHome}
-                    </p>
-                    {!out && (
-                      <p className="mt-1 text-[0.9375rem] text-earth-500">
-                        estimated take-home pork · {s.price}
+                    {out ? (
+                      <p className="mt-2 font-display text-[1.7rem] leading-none text-forest-800">
+                        Reserved for the season
+                      </p>
+                    ) : (
+                      <p className="mt-2 flex flex-wrap items-baseline gap-x-2.5">
+                        <span className="font-display text-[1.7rem] leading-none text-forest-800">
+                          {s.takeHome}
+                        </span>
+                        <span className="text-[0.9375rem] text-earth-500">
+                          estimated take-home pork · {s.price}
+                        </span>
                       </p>
                     )}
                   </div>
