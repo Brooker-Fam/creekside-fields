@@ -220,11 +220,6 @@ export default function Reserve() {
           {blurb && (
             <p className="text-sm text-mud-600">{blurb.freezer}</p>
           )}
-          <p className="mt-2 text-sm text-mud-700">
-            Heritage breed, pasture-raised in Greenwich, NY. Your share is a curated assortment of
-            cuts we select for you. Processing is included; you pay one flat price for the share,
-            with no added nitrates on any cured or smoked product.
-          </p>
           <p className="mt-2 text-sm">
             <Link to="/about" className="font-semibold text-blush-500 hover:underline">
               How it works <span aria-hidden>→</span>
