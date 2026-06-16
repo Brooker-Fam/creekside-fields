@@ -1,6 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { WhimsyDivider } from '../components/site/Whimsy'
+import { SEASONS } from '../content/homeCopy'
 
 const CONTAINER: CSSProperties = {
   maxWidth: 'var(--container)',
@@ -47,18 +48,84 @@ export default function OurPigs() {
 
   return (
     <div>
-      {/* ---------- intro ---------- */}
-      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '72px 24px 8px', textAlign: 'center' }}>
-        <p className="story-eyebrow justify-center">Our pigs · Greenwich, New York</p>
-        <h1
-          className="fairy-sparkle mt-4 inline-block font-display leading-[1.12] text-forest-800"
-          style={{ fontSize: 'clamp(2.4rem, 1.5rem + 3.4vw, 3.4rem)' }}
+      {/* ---------- our pigs: the breed ---------- */}
+      <section style={{ ...CONTAINER, padding: '64px 24px 8px' }}>
+        <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <p className="story-eyebrow solo">Our pigs · Greenwich, New York</p>
+            <h1
+              className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
+              style={{ fontSize: 'clamp(2.2rem, 1.4rem + 2.6vw, 3rem)' }}
+            >
+              The orchard pig of England.
+            </h1>
+            <p
+              className="text-earth-600"
+              style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
+            >
+              At Creekside Fields, our Gloucestershire Old Spot pigs are raised slowly and
+              thoughtfully over the course of more than a year.
+            </p>
+            <p
+              className="text-[1.0625rem] leading-[1.72] text-earth-600"
+              style={{ marginTop: 16, maxWidth: '42rem' }}
+            >
+              As a heritage breed, Old Spots are known for their gentle temperament, excellent
+              foraging instincts, and richly flavored pork. Often called the orchard pig of England,
+              they thrive when given the room to root, graze, and explore — fresh air, sunshine, and
+              a slower, natural pace of growth.
+            </p>
+          </div>
+          <figure className="plate float-slow m-0">
+            <img
+              className="plate-img"
+              src="/farm-media/pig-grazing.jpg"
+              alt="Old Spot pig foraging at pasture"
+              style={{ aspectRatio: '4 / 3', borderRadius: '10px 10px 3px 3px' }}
+            />
+          </figure>
+        </div>
+
+        <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 48 }}>
+          {SEASONS.map(([title, body]) => (
+            <div key={title} className="card" style={{ background: 'var(--surface)' }}>
+              <p className="story-eyebrow solo" style={{ fontSize: 'var(--text-sm)' }}>
+                {title}
+              </p>
+              <p className="mt-3 text-[0.9375rem] leading-[1.7] text-earth-600">{body}</p>
+            </div>
+          ))}
+        </div>
+
+        <blockquote className="text-center" style={{ margin: '52px auto 0', maxWidth: '44rem' }}>
+          <p
+            className="font-accent italic leading-[1.5] text-forest-800"
+            style={{ fontSize: 'clamp(1.4rem, 1rem + 1.4vw, 1.9rem)' }}
+          >
+            The active life of a pasture-raised pig builds strong muscle and beautiful marbling,
+            while a diverse diet and slow, heritage growth make pork that is tender, succulent, and
+            deeply flavorful.
+          </p>
+          <p className="story-eyebrow solo mt-[22px] justify-center">
+            Exceptional pork starts with exceptional care
+          </p>
+        </blockquote>
+      </section>
+
+      <WhimsyDivider />
+
+      {/* ---------- how it started ---------- */}
+      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '64px 24px 8px', textAlign: 'center' }}>
+        <p className="story-eyebrow justify-center">Their story</p>
+        <h2
+          className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
+          style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
         >
           How it started
-        </h1>
+        </h2>
         <p
           className="text-earth-600"
-          style={{ marginTop: 20, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
+          style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
         >
           It started with three sisters. In March 2025 we brought them home at two months old —
           riding in cat carriers in the back of our Subaru.
@@ -72,8 +139,6 @@ export default function OurPigs() {
           geese, and watched over by our livestock guardian dogs, Bristol and Blanca.
         </p>
       </section>
-
-      <WhimsyDivider />
 
       {/* ---------- the story in pictures ---------- */}
       <section style={CONTAINER}>

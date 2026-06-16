@@ -1,7 +1,7 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { WhimsyDivider } from '../components/site/Whimsy'
-import { WORK_STEPS, VALUES, SEASONS, FAQS } from '../content/homeCopy'
+import { WORK_STEPS, VALUES, FAQS } from '../content/homeCopy'
 import { SHARE_TIERS } from '../content/sharesCopy'
 
 export default function Home() {
@@ -91,74 +91,6 @@ export default function Home() {
               <p className="mt-2.5 text-[0.9375rem] leading-[1.65] text-earth-600">{body}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Our pigs */}
-      <section id="pigs" style={tint('--linen-100', 70)}>
-        <div style={CONTAINER}>
-          <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
-            <div>
-              <StoryHeader
-                eyebrow="Our pigs"
-                title="The orchard pig of England."
-                lead="At Creekside Fields, our Gloucestershire Old Spot pigs are raised slowly and thoughtfully over the course of more than a year."
-              />
-              <p
-                className="text-[1.0625rem] leading-[1.72] text-earth-600"
-                style={{ marginTop: 18, maxWidth: '42rem' }}
-              >
-                As a heritage breed, Old Spots are known for their gentle temperament, excellent
-                foraging instincts, and richly flavored pork. Often called the orchard pig of
-                England, they thrive when given the room to root, graze, and explore — fresh air,
-                sunshine, and a slower, natural pace of growth.
-              </p>
-              <p style={{ marginTop: 18 }}>
-                <Link
-                  to="/our-pigs"
-                  className="text-[0.9375rem] font-semibold text-copper-500 hover:text-copper-600"
-                >
-                  Read their story →
-                </Link>
-              </p>
-            </div>
-            <figure className="plate float-slow m-0">
-              <img
-                className="plate-img"
-                src="/farm-media/pig-grazing.jpg"
-                alt="Old Spot pig foraging at pasture"
-                style={{ aspectRatio: '4 / 3', borderRadius: '10px 10px 3px 3px' }}
-              />
-            </figure>
-          </div>
-
-          <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 48 }}>
-            {SEASONS.map(([title, body]) => (
-              <div key={title} className="card" style={{ background: 'var(--surface)' }}>
-                <p className="story-eyebrow solo" style={{ fontSize: 'var(--text-sm)' }}>
-                  {title}
-                </p>
-                <p className="mt-3 text-[0.9375rem] leading-[1.7] text-earth-600">{body}</p>
-              </div>
-            ))}
-          </div>
-
-          <blockquote
-            className="text-center"
-            style={{ margin: '52px auto 0', maxWidth: '44rem' }}
-          >
-            <p
-              className="font-accent italic leading-[1.5] text-forest-800"
-              style={{ fontSize: 'clamp(1.4rem, 1rem + 1.4vw, 1.9rem)' }}
-            >
-              The active life of a pasture-raised pig builds strong muscle and beautiful marbling,
-              while a diverse diet and slow, heritage growth make pork that is tender, succulent, and
-              deeply flavorful.
-            </p>
-            <p className="story-eyebrow solo mt-[22px] justify-center">
-              Exceptional pork starts with exceptional care
-            </p>
-          </blockquote>
         </div>
       </section>
 
