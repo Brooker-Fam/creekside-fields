@@ -116,9 +116,8 @@ export default function OurPigs() {
 
       {/* ---------- how it started ---------- */}
       <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '64px 24px 8px', textAlign: 'center' }}>
-        <p className="story-eyebrow justify-center">Their story</p>
         <h2
-          className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
+          className="fairy-sparkle inline-block font-display leading-[1.14] text-forest-800"
           style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
         >
           How it started
