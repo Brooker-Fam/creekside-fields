@@ -1,7 +1,7 @@
 import { useState, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { WhimsyDivider } from '../components/site/Whimsy'
-import { WORK_STEPS, VALUES, SEASONS, FARM_PIGS, FAQS } from '../content/homeCopy'
+import { WORK_STEPS, VALUES, SEASONS, FAQS } from '../content/homeCopy'
 import { SHARE_TIERS } from '../content/sharesCopy'
 
 export default function Home() {
@@ -160,42 +160,6 @@ export default function Home() {
               Exceptional pork starts with exceptional care
             </p>
           </blockquote>
-        </div>
-      </section>
-
-      {/* Meet the farm */}
-      <section id="farm" style={tint('--sage-100', 55)}>
-        <div style={CONTAINER}>
-          <div className="grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr]">
-            <figure className="plate m-0">
-              <img
-                className="plate-img"
-                src="/farm-media/pig-feast.jpg"
-                alt="Pigs at the trough"
-                style={{ aspectRatio: '4 / 3' }}
-              />
-              <figcaption className="plate-cap">Suppertime on the pasture</figcaption>
-            </figure>
-            <StoryHeader
-              eyebrow="Meet the farm"
-              title="Sushi, Nori, and Carrot."
-              lead="Three Gloucestershire Old Spot gilts, born February 2025 — the heart of this season's shares. Around them: dogs, chickens, creek water, kids, and the quiet work of a family farm."
-            />
-          </div>
-          <ul
-            className="grid list-none grid-cols-1 gap-[18px] p-0 sm:grid-cols-3"
-            style={{ marginTop: 44 }}
-          >
-            {FARM_PIGS.map((pig) => (
-              <li
-                key={pig.name}
-                className="rounded-lg border border-linen-200 bg-surface p-5 text-center"
-              >
-                <p className="font-display text-[1.3rem] text-forest-800">{pig.name}</p>
-                <p className="mt-2 font-accent text-[0.9375rem] italic text-earth-500">{pig.note}</p>
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 
