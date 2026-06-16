@@ -210,6 +210,8 @@
   height: 1px;
   background: color-mix(in srgb, var(--copper-500) 55%, transparent);
 }
+/* solo eyebrows sit on their own line above the heading (block-level flex) */
+.story-eyebrow.solo { display: flex; }
 .story-eyebrow.solo::before,
 .story-eyebrow.solo::after { display: none; }
 
