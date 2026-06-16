@@ -111,8 +111,8 @@ export default function Shares() {
                 {open && (
                   <div className="border-t border-linen-200 px-6 pb-6 pt-5">
                     <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
-                      A flat price of <strong className="text-forest-800">{s.price}</strong> for an
-                      estimated {s.takeHome} of curated cuts — see the full list below.
+                      An estimated flat price of <strong className="text-forest-800">{s.price}</strong> for{' '}
+                      {s.takeHome} of curated cuts — see the full list below.
                     </p>
                     <p className="mt-3 text-[0.9375rem] leading-[1.72] text-earth-600">
                       <strong className="text-forest-800">Freezer space:</strong> {s.freezer}
