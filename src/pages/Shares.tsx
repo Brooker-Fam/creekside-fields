@@ -121,25 +121,20 @@ export default function Shares() {
                   ...(s.featured ? { borderColor: 'var(--sage-400)', boxShadow: 'var(--shadow-soft)' } : null),
                 }}
               >
-                {s.featured && (
-                  <p className="story-eyebrow solo" style={{ fontSize: 'var(--text-sm)', marginBottom: 10 }}>
-                    Best value
-                  </p>
-                )}
                 <h2 className="font-display text-[1.65rem] leading-tight text-forest-800">{s.title}</h2>
 
                 <dl
                   className="mt-5 space-y-3 border-t border-linen-200 pt-5 text-[0.9375rem]"
                   style={{ margin: '20px 0 0' }}
                 >
-                  <Row label="Est. take-home pork" value={s.takeHome} />
+                  <Row label="Estimated take-home pork" value={s.takeHome} />
                   <div className="flex items-baseline justify-between gap-4 pt-1">
                     <dt className="text-earth-500">Est. price range</dt>
                     <dd className="font-display text-[1.2rem] text-forest-700">{s.price}</dd>
                   </div>
                 </dl>
 
-                <p className="mt-5 flex-1 text-[0.9375rem] leading-[1.7] text-earth-600">{s.bestFor}</p>
+                <div className="flex-1" />
 
                 {out ? (
                   <span

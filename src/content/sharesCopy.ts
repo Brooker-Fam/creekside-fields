@@ -8,7 +8,6 @@ export interface ShareTier {
   title: string
   takeHome: string
   price: string
-  bestFor: string
   cta: string
   featured?: boolean
 }
@@ -19,8 +18,6 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Quarter pork share',
     takeHome: '45–60 pounds',
     price: '$650–$775',
-    bestFor:
-      'Best for individuals, couples, or families wanting to try locally raised pork without filling an entire freezer.',
     cta: 'Reserve a quarter share',
   },
   {
@@ -28,8 +25,6 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Half pork share',
     takeHome: '90–120 pounds',
     price: '$1,300–$1,550',
-    bestFor:
-      'A great option for families who cook regularly and want a variety of premium pork cuts throughout the year.',
     cta: 'Reserve a half share',
   },
   {
@@ -37,8 +32,6 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Whole pork share',
     takeHome: '180–240 pounds',
     price: '$2,600–$3,100',
-    bestFor:
-      'The best value for families who eat a lot of pork or want to split a share with relatives or friends.',
     cta: 'Reserve a whole share',
     featured: true,
   },
