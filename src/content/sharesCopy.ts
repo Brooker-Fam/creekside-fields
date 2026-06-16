@@ -59,7 +59,8 @@ export const POSSIBLE_CUTS = [
   'Roasts',
   'Ribs',
   'Bratwurst links',
-  'Breakfast sausage patties',
+  'Ground breakfast sausage',
+  'Ground sweet Italian sausage',
   'Ground pork',
 ] as const
 
