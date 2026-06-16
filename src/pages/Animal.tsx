@@ -129,7 +129,7 @@ function ShareGroup({ kind, shares }: { kind: string; shares: ShareOption[] }) {
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-mud-800/20 pt-4">
         <div>
           <p className="text-sm text-mud-600">
-            Est. {SHARE_PRICE_RANGE[kind] ?? priceRange(ref.est_total_low_cents, ref.est_total_high_cents)} · deposit {formatCents(ref.deposit_cents)}
+            {SHARE_PRICE_RANGE[kind] ?? priceRange(ref.est_total_low_cents, ref.est_total_high_cents)} · deposit {formatCents(ref.deposit_cents)}
           </p>
           <p className="mt-1 text-sm font-semibold">
             {available.length > 0 ? `${available.length} available` : 'All sold'}

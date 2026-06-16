@@ -32,7 +32,7 @@ export default function Home() {
               </p>
               <p className="mt-1 text-[0.9375rem] text-earth-500">estimated take-home pork</p>
               <p className="mt-4 border-t border-linen-200 pt-4 font-display text-[1.3rem] text-forest-700">
-                Est. {s.price}
+                {s.price}
               </p>
               <div className="flex-1" />
               <p className="mt-5 text-[0.9375rem] font-semibold text-copper-500 group-hover:text-copper-600">

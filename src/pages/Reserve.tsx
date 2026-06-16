@@ -201,7 +201,7 @@ export default function Reserve() {
         <span>{animal.breed}</span>
         <span>·</span>
         <span>
-          Est. {SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents)}
+          {SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents)}
         </span>
         <span>·</span>
         <span>Deposit {formatCents(share.deposit_cents)}</span>

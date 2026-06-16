@@ -95,7 +95,7 @@ export default function Shares() {
                     </p>
                     {!out && (
                       <p className="mt-1 text-[0.9375rem] text-earth-500">
-                        estimated take-home pork · est. {s.price}
+                        estimated take-home pork · {s.price}
                       </p>
                     )}
                   </div>
