@@ -5,7 +5,7 @@ import { ThemeToggle } from './site/ThemeToggle'
 
 const SECTION_LINKS = [
   { href: '/shares', label: 'Shares' },
-  { href: '/#how', label: 'How it works' },
+  { href: '/how-it-works', label: 'How it works' },
   { href: '/our-pigs', label: 'Our pigs' },
   { href: '/#faq', label: 'FAQ' },
 ] as const
