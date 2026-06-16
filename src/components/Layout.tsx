@@ -73,7 +73,7 @@ function Header() {
             ))}
           </div>
           <a href="/shares" className="btn-primary px-4 py-2 text-xs">
-            Reserve
+            Reserve your share
           </a>
           <ThemeToggle />
         </nav>
@@ -113,7 +113,7 @@ function Header() {
               className="btn-primary mt-2 px-4 py-2 text-xs"
               onClick={() => setOpen(false)}
             >
-              Reserve
+              Reserve your share
             </a>
           </div>
         </nav>
