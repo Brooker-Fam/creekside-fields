@@ -66,7 +66,6 @@ export default function Shares() {
               alt="Gloucestershire Old Spot pigs foraging at pasture"
               style={{ aspectRatio: '4 / 3', borderRadius: '10px 10px 3px 3px' }}
             />
-            <figcaption className="plate-cap">Heritage Old Spots, raised slowly on pasture</figcaption>
           </figure>
         </div>
       </section>

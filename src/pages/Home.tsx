@@ -129,7 +129,6 @@ export default function Home() {
                 alt="Old Spot pig foraging at pasture"
                 style={{ aspectRatio: '4 / 3', borderRadius: '10px 10px 3px 3px' }}
               />
-              <figcaption className="plate-cap">Foraging the pasture, spring through fall</figcaption>
             </figure>
           </div>
 
