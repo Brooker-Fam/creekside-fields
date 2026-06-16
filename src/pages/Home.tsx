@@ -164,13 +164,7 @@ export default function Home() {
 
       {/* FAQ */}
       <section id="faq" style={{ ...CONTAINER, maxWidth: '46rem' }}>
-        <StoryHeader
-          align="center"
-          maxWidth="34rem"
-          eyebrow="Questions"
-          title="Questions we hear often."
-          lead="Straight answers for first-time share buyers."
-        />
+        <StoryHeader align="center" maxWidth="34rem" eyebrow="Questions" />
         <div style={{ marginTop: 44, borderTop: '1px solid var(--border)' }}>
           {FAQS.map(([q, a]) => (
             <Faq key={q} q={q} a={a} />
@@ -205,7 +199,7 @@ function StoryHeader({
   maxWidth = '42rem',
 }: {
   eyebrow: string
-  title: ReactNode
+  title?: ReactNode
   lead?: string
   align?: 'left' | 'center'
   maxWidth?: string
@@ -215,12 +209,14 @@ function StoryHeader({
       style={{ maxWidth, ...(align === 'center' ? { marginInline: 'auto', textAlign: 'center' } : null) }}
     >
       <p className={`story-eyebrow${align === 'center' ? '' : ' solo'}`}>{eyebrow}</p>
-      <h2
-        className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
-        style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
-      >
-        {title}
-      </h2>
+      {title && (
+        <h2
+          className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
+          style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
+        >
+          {title}
+        </h2>
+      )}
       {lead && (
         <p className="text-earth-600" style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}>
           {lead}

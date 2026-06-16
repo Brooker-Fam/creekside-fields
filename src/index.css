@@ -24,7 +24,8 @@
   }
 
   body {
-    overflow-x: hidden;
+    /* No overflow-x here: it makes <body> a scroll container and breaks the
+       sticky header. Horizontal overflow is already clipped on <html>. */
     background-color: theme('colors.linen.50');
   }
 }
