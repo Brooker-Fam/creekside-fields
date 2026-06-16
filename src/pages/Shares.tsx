@@ -1,5 +1,4 @@
 import { useEffect, useState, type CSSProperties } from 'react'
-import { Link } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { insforge } from '../lib/insforge'
 import type { ShareOption } from '../lib/types'
@@ -179,7 +178,7 @@ export default function Shares() {
             maxWidth="40rem"
             eyebrow="What’s included"
             title="Cuts we curate for you."
-            lead="Every share is a balanced selection of cuts chosen by us — no decisions to make on your end."
+            lead="Every share includes a balanced selection of cuts prepared by our USDA-certified processor."
           />
 
           <p
@@ -225,33 +224,6 @@ export default function Shares() {
         </div>
       </section>
 
-      {/* ---------- closing cta ---------- */}
-      <section style={{ ...CONTAINER, paddingTop: 72, paddingBottom: 96 }}>
-        <div className="text-center">
-          <p className="story-eyebrow justify-center">Reserve your share</p>
-          <h2
-            className="mt-4 font-display leading-[1.16] text-forest-800"
-            style={{ fontSize: 'clamp(1.8rem, 1.3rem + 2vw, 2.4rem)' }}
-          >
-            Ready to fill your freezer?
-          </h2>
-          <p
-            className="mx-auto text-earth-600"
-            style={{ marginTop: 16, maxWidth: '38rem', fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
-          >
-            Choose the share that fits your family.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            {SHARE_TIERS.map((s) =>
-              soldOut[s.kind] ? null : (
-                <Link key={s.kind} to={`/reserve/${s.kind}`} className="btn-secondary">
-                  {s.cta}
-                </Link>
-              ),
-            )}
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
