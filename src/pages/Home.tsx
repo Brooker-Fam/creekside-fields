@@ -75,19 +75,10 @@ export default function Home() {
 
       {/* Why */}
       <section id="why" style={CONTAINER}>
-        <div className="grid items-center gap-14 lg:grid-cols-2">
-          <StoryHeader
-            eyebrow="Why Creekside Fields"
-            title="Grounded food from a place that matters."
-            lead="We farm on a human scale — for the soil, for the animals, and for the families who eat from this land."
-          />
-          <blockquote style={{ borderLeft: '2px solid var(--copper-500)', paddingLeft: 26, margin: 0 }}>
-            <p className="font-accent text-[27px] italic leading-[1.5] text-earth-600">
-              Pasture raised with love — slow heritage pigs, daily care, and pork with a story worth
-              telling at the dinner table.
-            </p>
-          </blockquote>
-        </div>
+        <StoryHeader
+          eyebrow="Why Creekside Fields"
+          title="Pasture raised, family loved — pork with a story worth telling."
+        />
         <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 52 }}>
           {VALUES.map(([title, body]) => (
             <div key={title} className="card">
