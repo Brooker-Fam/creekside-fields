@@ -152,7 +152,7 @@ export default function OurPigs() {
       <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '8px 24px 96px', textAlign: 'center' }}>
         <div className="flex flex-wrap justify-center gap-3">
           <Link to="/shares" className="btn-primary">
-            See our pork shares
+            See our pig shares
           </Link>
           <Link to="/" className="btn-secondary">
             Back to the farm

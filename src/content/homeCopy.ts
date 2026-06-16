@@ -3,7 +3,7 @@
 // farm-story content only.
 
 export const WORK_STEPS = [
-  ['1', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole share.'],
+  ['1', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole pig share.'],
   ['2', 'We raise and process', 'We raise our pigs with care and deliver them to our USDA-certified processor.'],
   ['3', 'We confirm your price', 'Once processing weights are known, we will contact you with your final share price.'],
   ['4', 'Pick up your pork', 'Pick up your share and fill your freezer.'],
@@ -39,8 +39,8 @@ export const FARM_PIGS = [
 
 export const FAQS = [
   [
-    'What is a pork share?',
-    'A pork share is a portion of one of our pasture-raised pigs — a quarter, half, or whole — that comes to you as a curated assortment of cuts. You reserve it with a deposit and pick it up once your pig is processed.',
+    'What is a pig share?',
+    'It is exactly what it sounds like — you are buying a whole pig, or a half or quarter of one, raised right here on our farm. We take it to our processor, and it comes back to you as a curated assortment of cuts — a freezer’s worth of pork. You reserve it with a deposit and pick it up once your pig is processed.',
   ],
   [
     'Can I choose my cuts?',
@@ -52,7 +52,7 @@ export const FAQS = [
   ],
   [
     'How much freezer space will I need?',
-    'A rough guide: a quarter fits in a freezer drawer or small chest, a half fills an upright freezer, and a whole share fills a chest freezer. We are happy to help you plan before you reserve.',
+    'A rough guide: a quarter fits in a freezer drawer or small chest, a half fills an upright freezer, and a whole pig share fills a chest freezer. We are happy to help you plan before you reserve.',
   ],
   [
     'When will my pork be ready?',

@@ -16,30 +16,30 @@ export interface ShareTier {
 export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'quarter',
-    title: 'Quarter pork share',
+    title: 'Quarter pig share',
     takeHome: '45–60 pounds',
     price: '$650–$775',
     freezer:
       'Approximately 1–2 cubic feet of freezer space. This will fit in the freezer compartment of many refrigerators — about the space of 2–3 grocery bags.',
-    cta: 'Reserve a quarter share',
+    cta: 'Reserve a quarter pig share',
   },
   {
     kind: 'half',
-    title: 'Half pork share',
+    title: 'Half pig share',
     takeHome: '90–120 pounds',
     price: '$1,300–$1,550',
     freezer:
       'Approximately 3–4 cubic feet of freezer space. A small chest freezer, or a portion of a larger upright freezer, is usually enough — about the space of 4–6 grocery bags.',
-    cta: 'Reserve a half share',
+    cta: 'Reserve a half pig share',
   },
   {
     kind: 'whole',
-    title: 'Whole pork share',
+    title: 'Whole pig share',
     takeHome: '180–240 pounds',
     price: '$2,600–$3,100',
     freezer:
-      'Approximately 6–8 cubic feet of freezer space. Most customers store a whole share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
-    cta: 'Reserve a whole share',
+      'Approximately 6–8 cubic feet of freezer space. Most customers store a whole pig share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
+    cta: 'Reserve a whole pig share',
     featured: true,
   },
 ]
@@ -71,7 +71,7 @@ export const SHARE_STEPS: ReadonlyArray<readonly [string, string, string]> = [
   [
     '1',
     'Choose your share size',
-    'Pick the quarter, half, or whole share that best fits your household and your freezer.',
+    'Pick the quarter, half, or whole pig share that best fits your household and your freezer.',
   ],
   [
     '2',
@@ -90,7 +90,7 @@ export const SHARE_STEPS: ReadonlyArray<readonly [string, string, string]> = [
   ],
   [
     '5',
-    'Pick up your pork share',
+    'Pick up your pig share',
     'Collect your share and enjoy premium pasture-raised pork raised right here in Washington County.',
   ],
 ] as const
@@ -114,16 +114,16 @@ export const SHARE_FAQS: ReadonlyArray<readonly [string, FaqAnswer]> = [
       intro: 'As a general rule:',
       items: [
         {
-          label: 'Quarter share',
+          label: 'Quarter pig share',
           body: 'Approximately 1–2 cubic feet of freezer space. This will fit in the freezer compartment of many refrigerators — about the space of 2–3 grocery bags.',
         },
         {
-          label: 'Half share',
+          label: 'Half pig share',
           body: 'Approximately 3–4 cubic feet of freezer space. A small chest freezer, or a portion of a larger upright freezer, is usually enough — about the space of 4–6 grocery bags.',
         },
         {
-          label: 'Whole share',
-          body: 'Approximately 6–8 cubic feet of freezer space. Most customers store a whole share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
+          label: 'Whole pig share',
+          body: 'Approximately 6–8 cubic feet of freezer space. Most customers store a whole pig share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
         },
       ],
     },

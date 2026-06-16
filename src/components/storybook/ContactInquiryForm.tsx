@@ -3,9 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 
 const SHARE_OPTIONS = [
   { value: '', label: 'Not sure yet' },
-  { value: 'quarter', label: 'Quarter share' },
-  { value: 'half', label: 'Half share' },
-  { value: 'whole', label: 'Whole share' },
+  { value: 'quarter', label: 'Quarter pig share' },
+  { value: 'half', label: 'Half pig share' },
+  { value: 'whole', label: 'Whole pig share' },
 ] as const
 
 export const INQUIRY_PREFILL_KEY = 'creekside_inquiry_prefill'

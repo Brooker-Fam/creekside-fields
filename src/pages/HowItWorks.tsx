@@ -26,7 +26,7 @@ const STEPS = [
   [
     '4',
     'Pick up your pork',
-    'When your share is ready, you’ll pick it up from us right here at the farm in Greenwich, NY — we’ll text you to set up a time. Bring a cooler or a few boxes, take your pork home, and fill your freezer. A quarter fits a freezer drawer or small chest, a half fills an upright, and a whole share fills a chest freezer.',
+    'When your share is ready, you’ll pick it up from us right here at the farm in Greenwich, NY — we’ll text you to set up a time. Bring a cooler or a few boxes, take your pork home, and fill your freezer. A quarter fits a freezer drawer or small chest, a half fills an upright, and a whole pig share fills a chest freezer.',
   ],
 ] as const
 
@@ -54,7 +54,7 @@ export default function HowItWorks() {
           className="mx-auto text-earth-600"
           style={{ marginTop: 18, maxWidth: '40rem', fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
         >
-          Buying a hog share is simpler than it sounds. Here is the whole path, step by step.
+          Buying a pig share is simpler than it sounds. Here is the whole path, step by step.
         </p>
       </section>
 
@@ -90,7 +90,7 @@ export default function HowItWorks() {
         </h2>
         <div className="mt-8 flex justify-center">
           <Link to="/shares" className="btn-primary">
-            View pork shares
+            View pig shares
           </Link>
         </div>
       </section>

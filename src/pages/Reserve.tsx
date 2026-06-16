@@ -14,10 +14,10 @@ const SHARE_PCT: Record<string, number> = {
 }
 
 const SHARE_KIND_TITLE: Record<string, string> = {
-  whole: 'Whole hog',
-  half: 'Half hog',
-  quarter: 'Quarter hog',
-  eighth: 'Eighth hog',
+  whole: 'Whole pig share',
+  half: 'Half pig share',
+  quarter: 'Quarter pig share',
+  eighth: 'Eighth pig share',
 }
 
 const SHARE_KIND_BLURB: Record<string, { meat: string; freezer: string }> = {

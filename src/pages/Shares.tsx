@@ -4,6 +4,7 @@ import { usePostHog } from '@posthog/react'
 import { insforge } from '../lib/insforge'
 import type { ShareOption } from '../lib/types'
 import { WhimsyDivider } from '../components/site/Whimsy'
+import ReservationForm from '../components/site/ReservationForm'
 import { SHARE_TIERS, POSSIBLE_CUTS, type PorkShareKind } from '../content/sharesCopy'
 
 type SoldOut = Record<PorkShareKind, boolean>
@@ -12,6 +13,7 @@ export default function Shares() {
   const posthog = usePostHog()
   const [soldOut, setSoldOut] = useState<SoldOut>({ whole: false, half: false, quarter: false })
   const [openKinds, setOpenKinds] = useState<Set<PorkShareKind>>(() => new Set())
+  const [reservingKind, setReservingKind] = useState<PorkShareKind | null>(null)
 
   function toggle(kind: PorkShareKind) {
     setOpenKinds((prev) => {
@@ -23,7 +25,7 @@ export default function Shares() {
   }
 
   useEffect(() => {
-    document.title = 'Pasture-raised pork shares · Creekside Fields'
+    document.title = 'Pasture-raised pig shares · Creekside Fields'
     insforge.database
       .from('share_options')
       .select('*')
@@ -44,20 +46,20 @@ export default function Shares() {
       {/* ---------- header ---------- */}
       <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '76px 24px 0', textAlign: 'center' }}>
         <p className="story-eyebrow" style={{ display: 'flex', justifyContent: 'center' }}>
-          Pork shares
+          Pig shares
         </p>
         <h1
           className="fairy-sparkle mt-4 inline-block font-display leading-[1.12] text-forest-800"
           style={{ fontSize: 'clamp(2.4rem, 1.5rem + 3.4vw, 3.4rem)' }}
         >
-          Choose your share.
+          Choose your pig share.
         </h1>
         <p
           className="mx-auto text-earth-600"
           style={{ marginTop: 18, maxWidth: '40rem', fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
         >
-          Quarter, half, or whole — each a curated assortment of cuts from our pasture-raised
-          Gloucestershire Old Spot pigs, at one flat price.
+          A pig share is just that — you are buying a whole pig, or a half or quarter of one, raised
+          by us and delivered as a curated assortment of cuts at one flat price.
         </p>
       </section>
 
@@ -123,19 +125,28 @@ export default function Shares() {
                         Reserved for the season
                       </span>
                     ) : (
-                      <Link
-                        to={`/reserve/${s.kind}`}
-                        className="btn-primary mt-5 inline-flex"
-                        onClick={() =>
-                          posthog?.capture('share_size_selected', {
-                            share_kind: s.kind,
-                            sold_out: false,
-                            source: 'shares',
-                          })
-                        }
-                      >
-                        {s.cta}
-                      </Link>
+                      <>
+                        <button
+                          type="button"
+                          className="btn-primary mt-5 inline-flex"
+                          aria-expanded={reservingKind === s.kind}
+                          onClick={() => {
+                            setReservingKind((cur) => (cur === s.kind ? null : s.kind))
+                            posthog?.capture('share_size_selected', {
+                              share_kind: s.kind,
+                              sold_out: false,
+                              source: 'shares',
+                            })
+                          }}
+                        >
+                          {reservingKind === s.kind ? 'Close' : s.cta}
+                        </button>
+                        {reservingKind === s.kind && (
+                          <div className="mt-6 border-t border-linen-200 pt-6">
+                            <ReservationForm kind={s.kind} />
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}
@@ -199,7 +210,7 @@ export default function Shares() {
           >
             <img src="/brand/ornament-sprig.svg" alt="" aria-hidden style={{ width: 28, flexShrink: 0, marginTop: 2 }} />
             <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
-              <strong className="text-forest-800">All pork shares are processed with no added nitrates.</strong>{' '}
+              <strong className="text-forest-800">All pig shares are processed with no added nitrates.</strong>{' '}
               Because these are real animals, exact weights and cut quantities vary slightly from
               share to share — we divide every share fairly and thoughtfully.
             </p>
