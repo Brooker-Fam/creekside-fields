@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { WhimsyDivider } from '../components/site/Whimsy'
 import { WORK_STEPS, VALUES, SEASONS, FARM_PIGS, FAQS } from '../content/homeCopy'
@@ -77,7 +77,12 @@ export default function Home() {
       <section id="why" style={CONTAINER}>
         <StoryHeader
           eyebrow="Why Creekside Fields"
-          title="Pasture raised, family loved — pork with a story worth telling."
+          title={
+            <>
+              Pasture raised, family loved —<br />
+              pork with a story worth telling.
+            </>
+          }
         />
         <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 52 }}>
           {VALUES.map(([title, body]) => (
@@ -237,7 +242,7 @@ function StoryHeader({
   maxWidth = '42rem',
 }: {
   eyebrow: string
-  title: string
+  title: ReactNode
   lead?: string
   align?: 'left' | 'center'
   maxWidth?: string
