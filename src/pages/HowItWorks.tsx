@@ -95,11 +95,8 @@ export default function HowItWorks() {
       <section
         style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '0 24px 96px', textAlign: 'center' }}
       >
-        <p className="story-eyebrow" style={{ display: 'flex', justifyContent: 'center' }}>
-          Reserve your share
-        </p>
         <h2
-          className="mt-4 font-display leading-[1.16] text-forest-800"
+          className="font-display leading-[1.16] text-forest-800"
           style={{ fontSize: 'clamp(1.8rem, 1.3rem + 2vw, 2.4rem)' }}
         >
           Ready to choose your share?
