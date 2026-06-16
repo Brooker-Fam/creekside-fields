@@ -8,6 +8,7 @@ export interface ShareTier {
   title: string
   takeHome: string
   price: string
+  freezer: string
   cta: string
   featured?: boolean
 }
@@ -18,6 +19,7 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Quarter pork share',
     takeHome: '45–60 pounds',
     price: '$650–$775',
+    freezer: 'Fits a freezer drawer or a small chest freezer.',
     cta: 'Reserve a quarter share',
   },
   {
@@ -25,6 +27,7 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Half pork share',
     takeHome: '90–120 pounds',
     price: '$1,300–$1,550',
+    freezer: 'Fills a standard upright freezer.',
     cta: 'Reserve a half share',
   },
   {
@@ -32,6 +35,7 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Whole pork share',
     takeHome: '180–240 pounds',
     price: '$2,600–$3,100',
+    freezer: 'Fills a chest freezer.',
     cta: 'Reserve a whole share',
     featured: true,
   },

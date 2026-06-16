@@ -11,6 +11,16 @@ type SoldOut = Record<PorkShareKind, boolean>
 export default function Shares() {
   const posthog = usePostHog()
   const [soldOut, setSoldOut] = useState<SoldOut>({ whole: false, half: false, quarter: false })
+  const [openKinds, setOpenKinds] = useState<Set<PorkShareKind>>(() => new Set())
+
+  function toggle(kind: PorkShareKind) {
+    setOpenKinds((prev) => {
+      const next = new Set(prev)
+      if (next.has(kind)) next.delete(kind)
+      else next.add(kind)
+      return next
+    })
+  }
 
   useEffect(() => {
     document.title = 'Pasture-raised pork shares · Creekside Fields'
@@ -57,49 +67,75 @@ export default function Shares() {
 
       {/* ---------- the three options ---------- */}
       <section id="share-options" style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '48px 24px 88px' }}>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="mx-auto grid gap-4" style={{ maxWidth: '46rem' }}>
           {SHARE_TIERS.map((s) => {
             const out = soldOut[s.kind]
+            const open = openKinds.has(s.kind)
             return (
               <div
                 key={s.kind}
-                className="flex flex-col rounded-lg bg-surface p-7 shadow-card"
+                className="overflow-hidden rounded-lg bg-surface shadow-card"
                 style={{
                   border: '1px solid var(--border)',
-                  ...(s.featured ? { borderColor: 'var(--sage-400)', boxShadow: 'var(--shadow-soft)' } : null),
+                  ...(s.featured ? { borderColor: 'var(--sage-400)' } : null),
                 }}
               >
-                <p className="eyebrow">{s.title}</p>
-                <p className="mt-4 font-display text-[2rem] leading-none text-forest-800">
-                  {out ? 'Reserved' : s.takeHome}
-                </p>
-                <p className="mt-1 text-[0.9375rem] text-earth-500">estimated take-home pork</p>
-
-                <div className="mt-5 border-t border-linen-200 pt-5">
-                  <p className="font-display text-[1.4rem] text-forest-700">Est. {s.price}</p>
-                  <p className="mt-1 text-[0.9375rem] text-copper-600">flat price · processing included</p>
-                </div>
-
-                <div className="flex-1" style={{ minHeight: 16 }} />
-
-                {out ? (
-                  <span className="btn-secondary mt-6 cursor-not-allowed opacity-60" aria-disabled="true">
-                    Reserved for the season
-                  </span>
-                ) : (
-                  <Link
-                    to={`/reserve/${s.kind}`}
-                    className="btn-primary mt-6"
-                    onClick={() =>
-                      posthog?.capture('share_size_selected', {
-                        share_kind: s.kind,
-                        sold_out: false,
-                        source: 'shares',
-                      })
-                    }
+                <button
+                  type="button"
+                  onClick={() => toggle(s.kind)}
+                  aria-expanded={open}
+                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition hover:bg-sage-100"
+                >
+                  <div>
+                    <p className="eyebrow">{s.title}</p>
+                    <p className="mt-2 font-display text-[1.7rem] leading-none text-forest-800">
+                      {out ? 'Reserved for the season' : s.takeHome}
+                    </p>
+                    {!out && (
+                      <p className="mt-1 text-[0.9375rem] text-earth-500">
+                        estimated take-home pork · est. {s.price}
+                      </p>
+                    )}
+                  </div>
+                  <span
+                    className="shrink-0 font-display text-3xl text-copper-500"
+                    style={{ transition: 'transform 200ms', transform: open ? 'rotate(45deg)' : 'none' }}
+                    aria-hidden
                   >
-                    {s.cta}
-                  </Link>
+                    +
+                  </span>
+                </button>
+
+                {open && (
+                  <div className="border-t border-linen-200 px-6 pb-6 pt-5">
+                    <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
+                      A flat price of <strong className="text-forest-800">{s.price}</strong>,
+                      processing included — no per-pound surprises. {s.freezer} Every share is a
+                      curated assortment of cuts (see the full list below).
+                    </p>
+                    {out ? (
+                      <span
+                        className="btn-secondary mt-5 inline-flex cursor-not-allowed opacity-60"
+                        aria-disabled="true"
+                      >
+                        Reserved for the season
+                      </span>
+                    ) : (
+                      <Link
+                        to={`/reserve/${s.kind}`}
+                        className="btn-primary mt-5 inline-flex"
+                        onClick={() =>
+                          posthog?.capture('share_size_selected', {
+                            share_kind: s.kind,
+                            sold_out: false,
+                            source: 'shares',
+                          })
+                        }
+                      >
+                        {s.cta}
+                      </Link>
+                    )}
+                  </div>
                 )}
               </div>
             )
