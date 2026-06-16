@@ -58,8 +58,9 @@ export default function Shares() {
           className="mx-auto text-earth-600"
           style={{ marginTop: 18, maxWidth: '40rem', fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
         >
-          A pig share is just that — you are buying a whole pig, or a half or quarter of one, raised
-          by us and delivered as a curated assortment of cuts at one flat price.
+          A pig share is just that — you are buying a whole pig, a half or a quarter of one of our
+          two pigs, raised by our family and delivered as a curated assortment of cuts at one flat
+          price.
         </p>
       </section>
 
