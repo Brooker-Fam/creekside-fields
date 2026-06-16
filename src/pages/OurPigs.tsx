@@ -126,8 +126,8 @@ export default function OurPigs() {
           className="text-earth-600"
           style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
         >
-          It started with three sisters. In March 2025 we brought them home at two months old —
-          riding in cat carriers in the back of our Subaru.
+          The story of our three little pigs began in March 2025, when we brought them home in cat
+          carriers in the back of our Subaru.
         </p>
         <p
           className="mx-auto text-earth-600"
