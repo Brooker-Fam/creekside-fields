@@ -33,7 +33,9 @@ export default function Shares() {
     <div>
       {/* ---------- header ---------- */}
       <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '76px 24px 0', textAlign: 'center' }}>
-        <p className="story-eyebrow">Pork shares</p>
+        <p className="story-eyebrow" style={{ display: 'flex', justifyContent: 'center' }}>
+          Pork shares
+        </p>
         <h1
           className="fairy-sparkle mt-4 inline-block font-display leading-[1.12] text-forest-800"
           style={{ fontSize: 'clamp(2.4rem, 1.5rem + 3.4vw, 3.4rem)' }}
@@ -229,7 +231,12 @@ function StoryHeader({
 }) {
   return (
     <header style={{ maxWidth, ...(align === 'center' ? { marginInline: 'auto', textAlign: 'center' } : null) }}>
-      <p className={`story-eyebrow${align === 'center' ? '' : ' solo'}`}>{eyebrow}</p>
+      <p
+        className={`story-eyebrow${align === 'center' ? '' : ' solo'}`}
+        style={align === 'center' ? { display: 'flex', justifyContent: 'center' } : undefined}
+      >
+        {eyebrow}
+      </p>
       <h2
         className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
         style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
