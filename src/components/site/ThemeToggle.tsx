@@ -1,14 +1,24 @@
 import { useEffect, useState } from 'react'
 
-type Theme = 'light' | 'dark'
+type Theme = 'light' | 'medium' | 'dark'
+
+// Click cycles through the three themes in this order.
+const ORDER: Theme[] = ['light', 'medium', 'dark']
+
+// Keep these in sync with the no-flash script in index.html and the theme
+// blocks in index.css.
+const BG: Record<Theme, string> = {
+  light: '#faf7f2',
+  medium: '#ddcfb4',
+  dark: '#181410',
+}
 
 // The no-flash script in index.html sets data-theme on <html> before paint,
 // so we initialize from whatever it chose (stored choice or system preference).
 function currentTheme(): Theme {
-  if (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark') {
-    return 'dark'
-  }
-  return 'light'
+  if (typeof document === 'undefined') return 'light'
+  const t = document.documentElement.getAttribute('data-theme')
+  return t === 'dark' || t === 'medium' ? t : 'light'
 }
 
 export function ThemeToggle({ className = '' }: { className?: string }) {
@@ -18,7 +28,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     const root = document.documentElement
     root.setAttribute('data-theme', theme)
     // Keep the <html> background (set inline by the no-flash script) in sync.
-    root.style.backgroundColor = theme === 'dark' ? '#181410' : '#faf7f2'
+    root.style.backgroundColor = BG[theme]
     try {
       localStorage.setItem('theme', theme)
     } catch {
@@ -26,18 +36,29 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     }
   }, [theme])
 
-  const isDark = theme === 'dark'
+  const next = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length]
+  const label = `Theme: ${theme}. Switch to ${next} mode.`
+  const Icon = theme === 'dark' ? MoonIcon : theme === 'medium' ? HalfIcon : SunIcon
 
   return (
     <button
       type="button"
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      onClick={() => setTheme(next)}
+      aria-label={label}
+      title={label}
       className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-linen-200 text-copper-500 transition hover:border-sage-400 hover:text-copper-600 ${className}`}
     >
-      {isDark ? <SunIcon /> : <MoonIcon />}
+      <Icon />
     </button>
+  )
+}
+
+function HalfIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="8.4" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M12 3.6 A8.4 8.4 0 0 0 12 20.4 Z" fill="currentColor" />
+    </svg>
   )
 }
 

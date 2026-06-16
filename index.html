@@ -13,7 +13,7 @@
           var t = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           var el = document.documentElement
           el.setAttribute('data-theme', t)
-          el.style.backgroundColor = t === 'dark' ? '#181410' : '#faf7f2'
+          el.style.backgroundColor = t === 'dark' ? '#181410' : t === 'medium' ? '#ddcfb4' : '#faf7f2'
         } catch (e) {}
       })()
     </script>

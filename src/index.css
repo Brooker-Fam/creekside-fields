@@ -388,3 +388,27 @@
 
 /* lift cards above the page surface in dark */
 [data-theme="dark"] .card { background-color: var(--surface); }
+
+/* ============================================================
+   Medium theme — warm parchment, dimmer than light but not dark.
+   Only the surface/background tones change; the dark forest/earth/
+   copper text ramps stay (inherited from :root) for easy reading.
+   ============================================================ */
+[data-theme="medium"] {
+  --linen-50:  #ddcfb4;  /* page background — warm parchment */
+  --linen-100: #d3c4a6;  /* warm tint band */
+  --linen-200: #c2b290;  /* hairline borders */
+  --surface:   #ece2cd;  /* raised cards / inputs — lifts above the page */
+  --white:     #ece2cd;
+  color-scheme: light;
+}
+
+/* a touch less center wash so the parchment tone reads through */
+[data-theme="medium"] .book {
+  background-image:
+    radial-gradient(circle at 12% 16%, rgba(107, 128, 88, 0.10), transparent 42%),
+    radial-gradient(circle at 88% 12%, rgba(201, 162, 75, 0.10), transparent 45%),
+    radial-gradient(circle at 80% 82%, rgba(166, 93, 63, 0.07), transparent 46%),
+    radial-gradient(circle at 18% 86%, rgba(143, 173, 168, 0.08), transparent 46%),
+    radial-gradient(circle at 50% 48%, rgba(236, 226, 205, 0.5), transparent 60%);
+}
