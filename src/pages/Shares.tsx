@@ -246,7 +246,7 @@ export default function Shares() {
             className="mx-auto text-earth-600"
             style={{ marginTop: 16, maxWidth: '38rem', fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
           >
-            Choose the share that fits your family — a deposit holds it for the season.
+            Choose the share that fits your family.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             {SHARE_TIERS.map((s) =>
