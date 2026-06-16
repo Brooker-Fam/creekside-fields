@@ -6,12 +6,6 @@ import type { Animal, ShareOption } from '../lib/types'
 import { SHARE_PRICE_RANGE } from '../content/sharesCopy'
 import { INQUIRY_PREFILL_KEY, type InquiryPrefill } from '../components/storybook/ContactInquiryForm'
 
-const PICKUP_OPTIONS = [
-  { value: 'farm', label: 'Farm pickup', blurb: 'Drive out to us in Greenwich, NY.' },
-  { value: 'processor', label: 'Processor pickup', blurb: 'Pick up directly from the processor — we\'ll text the address once it\'s scheduled.' },
-  { value: 'either', label: 'Either works', blurb: 'We\'ll figure it out together once we know the pickup date.' },
-] as const
-
 const SHARE_PCT: Record<string, number> = {
   whole: 100,
   half: 50,
@@ -100,7 +94,7 @@ export default function Reserve() {
     const customer_email = String(fd.get('customer_email') ?? '').trim()
     const customer_phone = String(fd.get('customer_phone') ?? '').trim() || null
     const customer_address = String(fd.get('customer_address') ?? '').trim() || null
-    const pickupPreference = String(fd.get('pickup_preference') ?? '').trim() || null
+    const pickupPreference = 'farm' // everyone picks up from the farm once the share is ready
     const reservationNotes = String(fd.get('notes') ?? '').trim() || null
     if (pickupPreference) prefs.pickup_preference = pickupPreference
 
@@ -256,20 +250,9 @@ export default function Reserve() {
         <section className="card">
           <h2 className="font-display text-2xl">Pickup</h2>
           <p className="mt-1 text-sm text-mud-600">
-            Once the meat's ready you can grab it from the processor or from us at the farm.
-            Slaughter date isn't scheduled yet — we'll text you with details when it is.
+            You'll pick up your share from us at the farm in Greenwich, NY once it's ready. The
+            slaughter date isn't scheduled yet — we'll text you with the details when it is.
           </p>
-          <div className="mt-4 grid gap-3">
-            {PICKUP_OPTIONS.map((opt) => (
-              <label key={opt.value} className="flex cursor-pointer items-start gap-3 rounded-lg border border-sage-700/25 bg-cream-50/80 p-4 transition hover:bg-cream-50">
-                <input type="radio" name="pickup_preference" value={opt.value} required className="mt-1" />
-                <div>
-                  <p className="font-semibold">{opt.label}</p>
-                  <p className="text-sm text-mud-600">{opt.blurb}</p>
-                </div>
-              </label>
-            ))}
-          </div>
         </section>
 
         <section className="card bg-cream-50">
