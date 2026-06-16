@@ -76,7 +76,7 @@ export default function Home() {
       {/* Why */}
       <section id="why" style={CONTAINER}>
         <StoryHeader
-          eyebrow="Why Creekside Fields"
+          eyebrow="Our farm"
           title={
             <>
               Pasture raised, family loved —<br />
