@@ -80,7 +80,7 @@ export default function BillOfSale({ data }: { data: BillOfSaleData }) {
             <li>Breed: <strong>{animalIdLine || animal.breed || '—'}</strong></li>
             <li>Date of birth: <strong>{dob}</strong></li>
             {animal.estimated_live_weight_lbs && (
-              <li>Estimated live weight at signing: <strong>~{animal.estimated_live_weight_lbs} lb</strong></li>
+              <li>Estimated live weight at signing: <strong>{animal.estimated_live_weight_lbs} lb</strong></li>
             )}
             <li>Internal animal ID: <strong>{animal.id}</strong></li>
             {animal.headline && <li>Common reference: "{animal.headline}"</li>}

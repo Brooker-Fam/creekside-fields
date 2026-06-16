@@ -87,7 +87,7 @@ export function renderBillOfSaleEmail(data: BillOfSaleData): string {
          <ul style="margin:6px 0 0 18px;padding:0;">
            <li>Breed: <strong>${escape(animal.breed)}</strong></li>
            <li>Date of birth: <strong>${escape(fmtMonth(animal.dob))}</strong></li>
-           ${animal.estimated_live_weight_lbs ? `<li>Est. live weight: <strong>~${animal.estimated_live_weight_lbs} lb</strong></li>` : ''}
+           ${animal.estimated_live_weight_lbs ? `<li>Est. live weight: <strong>${animal.estimated_live_weight_lbs} lb</strong></li>` : ''}
            <li>Animal ID: <strong>${escape(animal.id)}</strong></li>
          </ul>`,
       )}
