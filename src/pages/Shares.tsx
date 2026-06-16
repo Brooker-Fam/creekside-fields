@@ -109,9 +109,11 @@ export default function Shares() {
                 {open && (
                   <div className="border-t border-linen-200 px-6 pb-6 pt-5">
                     <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
-                      A flat price of <strong className="text-forest-800">{s.price}</strong>.{' '}
-                      {s.freezer} Every share is a curated assortment of cuts (see the full list
-                      below).
+                      A flat price of <strong className="text-forest-800">{s.price}</strong> for an
+                      estimated {s.takeHome} of curated cuts — see the full list below.
+                    </p>
+                    <p className="mt-3 text-[0.9375rem] leading-[1.72] text-earth-600">
+                      <strong className="text-forest-800">Freezer space:</strong> {s.freezer}
                     </p>
                     {out ? (
                       <span
@@ -182,33 +184,6 @@ export default function Shares() {
               </li>
             ))}
           </ul>
-
-          <p
-            className="text-center text-[0.9375rem] uppercase tracking-[0.16em] text-earth-500"
-            style={{ marginTop: 48 }}
-          >
-            Freezer space
-          </p>
-          <ul
-            className="mx-auto grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-3"
-            style={{ marginTop: 18, maxWidth: '46rem' }}
-          >
-            {SHARE_TIERS.map((s) => (
-              <li
-                key={s.kind}
-                className="rounded-md border border-linen-200 bg-surface px-4 py-4 text-center"
-              >
-                <p className="eyebrow">{s.title.replace(' pork share', '')}</p>
-                <p className="mt-2 text-[0.9375rem] leading-[1.6] text-earth-600">{s.freezer}</p>
-              </li>
-            ))}
-          </ul>
-          <p
-            className="mx-auto text-center text-[0.9375rem] text-earth-500"
-            style={{ marginTop: 16, maxWidth: '46rem' }}
-          >
-            We’re happy to help you plan the right freezer space before you reserve.
-          </p>
 
           <div
             className="card"

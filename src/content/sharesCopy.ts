@@ -19,7 +19,8 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Quarter pork share',
     takeHome: '45–60 pounds',
     price: '$650–$775',
-    freezer: 'Fits a freezer drawer or a small chest freezer.',
+    freezer:
+      'Approximately 1–2 cubic feet of freezer space. This will fit in the freezer compartment of many refrigerators — about the space of 2–3 grocery bags.',
     cta: 'Reserve a quarter share',
   },
   {
@@ -27,7 +28,8 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Half pork share',
     takeHome: '90–120 pounds',
     price: '$1,300–$1,550',
-    freezer: 'Fills a standard upright freezer.',
+    freezer:
+      'Approximately 3–4 cubic feet of freezer space. A small chest freezer, or a portion of a larger upright freezer, is usually enough — about the space of 4–6 grocery bags.',
     cta: 'Reserve a half share',
   },
   {
@@ -35,7 +37,8 @@ export const SHARE_TIERS: ShareTier[] = [
     title: 'Whole pork share',
     takeHome: '180–240 pounds',
     price: '$2,600–$3,100',
-    freezer: 'Fills a chest freezer.',
+    freezer:
+      'Approximately 6–8 cubic feet of freezer space. Most customers store a whole share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
     cta: 'Reserve a whole share',
     featured: true,
   },
