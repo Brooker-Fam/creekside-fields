@@ -15,8 +15,8 @@ export const VALUES = [
     'Our pigs spend their days on pasture, where they naturally forage for grasses, roots, insects, acorns, and other seasonal treats they discover while exploring. Their diet is supplemented with locally grown, freshly milled feed and nutritious recovered foods from a nearby school cafeteria that would otherwise go to waste.',
   ],
   [
-    'Raised with love',
-    'Small batches, daily attention, and a slower heritage breed life. We know each animal by name.',
+    'Family loved',
+    "Our pigs have been part of our family's daily life since we brought them home as piglets in the back of our Subaru. Raised on pasture with fresh air, sunshine, and attentive care from every member of our family, they reflect our commitment to giving animals the best life possible while they are in our care.",
   ],
   [
     'Regenerative care',
