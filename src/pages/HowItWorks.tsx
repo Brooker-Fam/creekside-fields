@@ -32,7 +32,7 @@ const STEPS: ReadonlyArray<readonly [string, string, readonly string[]]> = [
       'Because every pig finishes at a slightly different weight, your final price will be set once processing is complete.',
       'We estimate the best we can up front, then reach out with your confirmed price once we hear from the processor.',
       'The final price is based on the actual weight of the meat and the cuts included.',
-      'Your deposit is credited toward it, and the balance is due at pickup.',
+      'Your deposit is credited toward the final price, and the remaining balance is due at pickup.',
     ],
   ],
   [

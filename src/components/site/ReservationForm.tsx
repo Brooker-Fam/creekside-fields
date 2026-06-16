@@ -166,9 +166,8 @@ export default function ReservationForm({ kind }: { kind: string }) {
       </div>
 
       <p className="text-[0.9375rem] leading-[1.7] text-earth-600">
-        You’ll pick up your share from us at the farm in Greenwich, NY once it’s ready — we’ll text
-        you with the details. Submitting holds the share; we’ll follow up within a day with the bill
-        of sale and deposit details.
+        Shares will be available for pickup from our farm in Greenwich, NY — we’ll text you with the
+        details once it’s ready.
       </p>
 
       {error && (
@@ -178,6 +177,11 @@ export default function ReservationForm({ kind }: { kind: string }) {
       <button type="submit" disabled={submitting} className="btn-primary disabled:opacity-60">
         {submitting ? 'Reserving your share…' : 'Reserve this share'}
       </button>
+
+      <p className="text-[0.8125rem] leading-[1.6] text-earth-500">
+        Reserve your share now, then we’ll follow up within a day with the bill of sale and deposit
+        details.
+      </p>
     </form>
   )
 }
