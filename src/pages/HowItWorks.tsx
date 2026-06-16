@@ -39,8 +39,9 @@ const STEPS: ReadonlyArray<readonly [string, string, readonly string[]]> = [
     '4',
     'Pick up your pork',
     [
-      'When your share is ready, you’ll pick it up from our farm in Greenwich, NY. We’ll text you to set up a time.',
-      'Bring a cooler or a few boxes, take your pork home, and fill your freezer.',
+      'When your share is ready, you’ll pick it up from our farm in Greenwich, NY.',
+      'We’ll text you with details once it’s ready.',
+      'Bring coolers or a few boxes, take your pork home, and fill your freezer.',
     ],
   ],
 ]
