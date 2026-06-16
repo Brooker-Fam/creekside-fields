@@ -18,14 +18,6 @@ export const VALUES = [
     'Family loved',
     "Our pigs have been part of our family's daily life since we brought them home as piglets in the back of our Subaru. Raised on pasture with fresh air, sunshine, and attentive care from every member of our family, they reflect our commitment to giving animals the best life possible while they are in our care.",
   ],
-  [
-    'Regenerative care',
-    'Movement, rest, and rooting that feeds the soil — farming as relationship, not extraction.',
-  ],
-  [
-    'A family farm',
-    'Kids, dogs, creek water, muddy boots. Real people you can text with questions.',
-  ],
 ] as const
 
 export const SEASONS = [
