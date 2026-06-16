@@ -109,9 +109,9 @@ export default function Shares() {
                 {open && (
                   <div className="border-t border-linen-200 px-6 pb-6 pt-5">
                     <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
-                      A flat price of <strong className="text-forest-800">{s.price}</strong>,
-                      processing included — no per-pound surprises. {s.freezer} Every share is a
-                      curated assortment of cuts (see the full list below).
+                      A flat price of <strong className="text-forest-800">{s.price}</strong>.{' '}
+                      {s.freezer} Every share is a curated assortment of cuts (see the full list
+                      below).
                     </p>
                     {out ? (
                       <span
