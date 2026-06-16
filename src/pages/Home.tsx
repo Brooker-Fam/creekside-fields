@@ -250,8 +250,8 @@ function Hero() {
             className="font-accent italic text-earth-600"
             style={{ marginTop: 20, fontSize: 'var(--text-lead)', lineHeight: 1.6 }}
           >
-            Heritage Gloucestershire Old Spot pigs, raised slowly on pasture over more than a year —
-            for pork that’s tender, deeply flavorful, and a difference you can taste in every bite.
+            Heritage Gloucestershire Old Spot pigs, raised slowly on pasture for pork that’s tender
+            and deeply flavorful.
           </p>
           <div className="flex flex-wrap gap-3" style={{ marginTop: 30 }}>
             <a href="#shares" className="btn-primary">
