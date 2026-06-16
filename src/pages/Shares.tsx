@@ -69,32 +69,6 @@ export default function Shares() {
             <figcaption className="plate-cap">Heritage Old Spots, raised slowly on pasture</figcaption>
           </figure>
         </div>
-
-        {/* nitrate note — prominent, near the top */}
-        <div
-          className="card"
-          style={{
-            background: 'var(--sage-100)',
-            borderLeft: '3px solid var(--copper-500)',
-            display: 'flex',
-            gap: 18,
-            alignItems: 'flex-start',
-            maxWidth: '52rem',
-            margin: '44px auto 0',
-          }}
-        >
-          <img
-            src="/brand/ornament-sprig.svg"
-            alt=""
-            aria-hidden
-            style={{ width: 30, flexShrink: 0, marginTop: 2 }}
-          />
-          <p className="text-[1.0625rem] leading-[1.72] text-forest-800">
-            <strong>All pork shares are processed with no added nitrates.</strong> We believe great
-            pork doesn’t need unnecessary additives, so every cured and smoked product in our shares
-            is prepared without added nitrates.
-          </p>
-        </div>
       </section>
 
       <WhimsyDivider />
@@ -236,6 +210,33 @@ export default function Shares() {
               </strong>{' '}
               exact weights, package counts, and cut quantities will vary slightly from share to
               share. We do our best to divide shares fairly and thoughtfully.
+            </p>
+          </div>
+
+          <div
+            className="card"
+            style={{
+              background: 'var(--white)',
+              borderLeft: '3px solid var(--copper-500)',
+              maxWidth: '48rem',
+              margin: '20px auto 0',
+              display: 'flex',
+              gap: 18,
+              alignItems: 'flex-start',
+            }}
+          >
+            <img
+              src="/brand/ornament-sprig.svg"
+              alt=""
+              aria-hidden
+              style={{ width: 28, flexShrink: 0, marginTop: 2 }}
+            />
+            <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
+              <strong className="text-forest-800">
+                All pork shares are processed with no added nitrates.
+              </strong>{' '}
+              We believe great pork doesn’t need unnecessary additives, so every cured and smoked
+              product in our shares is prepared without added nitrates.
             </p>
           </div>
         </div>
