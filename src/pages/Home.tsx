@@ -162,42 +162,30 @@ function StoryHeader({
 
 function Hero() {
   return (
-    <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '72px 24px 64px' }}>
-      <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-        <div>
-          <p className="story-eyebrow">Greenwich, New York</p>
-          <h1
-            className="fairy-sparkle inline-block font-display leading-[1.12] text-forest-800"
-            style={{ marginTop: 18, fontSize: 'clamp(2.4rem, 1.5rem + 3.4vw, 3.4rem)' }}
-          >
-            Pasture Raised,
-            <br />
-            Family Loved
-          </h1>
-          <p
-            className="font-accent italic text-earth-600"
-            style={{ marginTop: 20, fontSize: 'var(--text-lead)', lineHeight: 1.6 }}
-          >
-            Heritage Gloucestershire Old Spot pigs, raised slowly on pasture for pork that’s tender
-            and deeply flavorful.
-          </p>
-          <div className="flex flex-wrap gap-3" style={{ marginTop: 30 }}>
-            <a href="#shares" className="btn-primary">
-              Reserve a share
-            </a>
-            <a href="#how" className="btn-secondary">
-              How it works
-            </a>
-          </div>
-        </div>
-        <figure className="plate float-slow m-0 hidden lg:block">
-          <img
-            className="plate-img"
-            src="/farm-media/pig-grazing.jpg"
-            alt="Old Spot pigs grazing at pasture"
-            style={{ borderRadius: '10px 10px 3px 3px' }}
-          />
-        </figure>
+    <section
+      style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '60px 24px 52px', textAlign: 'center' }}
+    >
+      <h1 className="sr-only">Creekside Fields — pasture-raised heritage pork in Greenwich, NY</h1>
+      <img
+        src="/brand/creekside-crest.webp"
+        alt="Creekside Fields — pasture raised, family loved — Greenwich, NY"
+        className="mx-auto block"
+        style={{ width: 'min(420px, 80vw)', height: 'auto', borderRadius: 16 }}
+      />
+      <p
+        className="mx-auto font-accent italic text-earth-600"
+        style={{ marginTop: 8, maxWidth: '40rem', fontSize: 'var(--text-lead)', lineHeight: 1.6 }}
+      >
+        Heritage Gloucestershire Old Spot pigs, raised slowly on pasture for pork that’s tender and
+        deeply flavorful.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="#shares" className="btn-primary">
+          Reserve a share
+        </a>
+        <a href="#how" className="btn-secondary">
+          How it works
+        </a>
       </div>
     </section>
   )
