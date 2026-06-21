@@ -163,66 +163,57 @@ function StoryHeader({
 
 function Hero() {
   return (
-    <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '60px 24px 56px' }}>
+    <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '56px 24px 56px' }}>
       <h1 className="sr-only">Creekside Fields — pasture-raised heritage pork in Greenwich, NY</h1>
-      <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
-        {/* The offer */}
-        <div>
-          <img
-            src="/brand/creekside-crest.webp"
-            alt="Creekside Fields crest"
-            className="mb-6 block"
-            style={{ width: 96, height: 'auto', borderRadius: 12 }}
-          />
-          <p className="story-eyebrow solo">Pasture-raised heritage pork</p>
-          <h2
-            className="fairy-sparkle mt-4 inline-block font-display leading-[1.1] text-forest-800"
-            style={{ fontSize: 'clamp(2.1rem, 1.4rem + 3vw, 2.9rem)' }}
-          >
-            Stock your freezer with heritage pork.
-          </h2>
-          <p
-            className="font-accent italic text-earth-600"
-            style={{ marginTop: 16, maxWidth: '34rem', fontSize: 'var(--text-lead)', lineHeight: 1.6 }}
-          >
-            Heritage Gloucestershire Old Spot pigs, raised slowly on pasture for pork that’s tender
-            and deeply flavorful.
-          </p>
 
-          <div className="mt-7 flex items-baseline gap-2.5">
-            <span className="font-display leading-none text-forest-800" style={{ fontSize: '2.6rem' }}>
-              $14.44
-            </span>
-            <span className="text-earth-500" style={{ fontSize: 'var(--text-lead)' }}>
-              per pound
-            </span>
-          </div>
-          <p className="mt-1.5 text-[0.9375rem] text-earth-500">
-            Whole, half, and quarter pig shares.
-          </p>
+      {/* The picture */}
+      <figure className="plate float-slow mx-auto" style={{ maxWidth: 880, margin: '0 auto' }}>
+        <img
+          className="plate-img"
+          src="/brand/creekside-hero.png"
+          alt="Gloucestershire Old Spot pigs out on pasture at Creekside Fields"
+          style={{ aspectRatio: '3 / 2', borderRadius: '10px 10px 3px 3px' }}
+        />
+        <figcaption className="plate-cap">Greenwich, NY · pasture raised, family loved</figcaption>
+      </figure>
 
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#shares" className="btn-primary">
-              Reserve a share
-            </a>
-            <a href="#how" className="btn-secondary">
-              How it works
-            </a>
-          </div>
+      {/* The offer */}
+      <div className="mx-auto text-center" style={{ maxWidth: '40rem', marginTop: 44 }}>
+        <p className="story-eyebrow">Pasture-raised heritage pork</p>
+        <h2
+          className="fairy-sparkle mt-4 inline-block font-display leading-[1.1] text-forest-800"
+          style={{ fontSize: 'clamp(2.1rem, 1.4rem + 3vw, 2.9rem)' }}
+        >
+          Stock your freezer with heritage pork.
+        </h2>
+        <p
+          className="mx-auto font-accent italic text-earth-600"
+          style={{ marginTop: 16, maxWidth: '34rem', fontSize: 'var(--text-lead)', lineHeight: 1.6 }}
+        >
+          Heritage Gloucestershire Old Spot pigs, raised slowly on pasture for pork that’s tender and
+          deeply flavorful.
+        </p>
+
+        <div className="mt-7 flex items-baseline justify-center gap-2.5">
+          <span className="font-display leading-none text-forest-800" style={{ fontSize: '2.6rem' }}>
+            $14.44
+          </span>
+          <span className="text-earth-500" style={{ fontSize: 'var(--text-lead)' }}>
+            per pound
+          </span>
         </div>
+        <p className="mt-1.5 text-[0.9375rem] text-earth-500">
+          Whole, half, and quarter pig shares.
+        </p>
 
-        {/* The picture */}
-        <figure className="plate float-slow m-0">
-          <img
-            className="plate-img"
-            src="/brand/creekside-hero.png"
-            alt="Gloucestershire Old Spot pigs out on pasture at Creekside Fields"
-            style={{ aspectRatio: '3 / 2', borderRadius: '10px 10px 3px 3px' }}
-          />
-          <figcaption className="plate-cap">
-            Greenwich, NY · pasture raised, family loved
-          </figcaption>
-        </figure>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <a href="#shares" className="btn-primary">
+            Reserve a share
+          </a>
+          <a href="#how" className="btn-secondary">
+            How it works
+          </a>
+        </div>
       </div>
     </section>
   )
