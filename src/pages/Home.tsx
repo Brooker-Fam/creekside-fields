@@ -177,19 +177,8 @@ function Hero() {
     <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '56px 24px 56px' }}>
       <h1 className="sr-only">Creekside Fields — pasture-raised heritage pork in Greenwich, NY</h1>
 
-      {/* The picture */}
-      <figure className="plate float-slow mx-auto" style={{ maxWidth: 520, margin: '0 auto' }}>
-        <img
-          className="plate-img"
-          src="/farm-media/pigs/02-guardian.jpg"
-          alt="A farm dog keeping watch over two spotted Gloucestershire Old Spot piglets in the barn"
-          style={{ aspectRatio: '3 / 4', borderRadius: '10px 10px 3px 3px' }}
-        />
-        <figcaption className="plate-cap">Greenwich, NY · pasture raised, family loved</figcaption>
-      </figure>
-
       {/* The offer */}
-      <div className="mx-auto text-center" style={{ maxWidth: '40rem', marginTop: 44 }}>
+      <div className="mx-auto text-center" style={{ maxWidth: '40rem' }}>
         <p className="story-eyebrow">Pasture-raised heritage pork</p>
         <h2
           className="fairy-sparkle mt-4 inline-block font-display leading-[1.1] text-forest-800"
