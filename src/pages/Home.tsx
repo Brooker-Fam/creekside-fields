@@ -7,9 +7,6 @@ import { SHARE_TIERS } from '../content/sharesCopy'
 export default function Home() {
   return (
     <div>
-      <Hero />
-      <WhimsyDivider />
-
       {/* Shares teaser */}
       <section id="shares" style={CONTAINER}>
         <StoryHeader
@@ -48,6 +45,9 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      <WhimsyDivider />
+      <Hero />
 
       {/* How it works */}
       <section id="how" style={tint('--sage-100', 60)}>
