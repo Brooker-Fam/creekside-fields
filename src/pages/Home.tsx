@@ -7,6 +7,8 @@ import { SHARE_TIERS } from '../content/sharesCopy'
 export default function Home() {
   return (
     <div>
+      <Hero />
+
       {/* Shares teaser */}
       <section id="shares" style={CONTAINER}>
         <StoryHeader
@@ -15,6 +17,13 @@ export default function Home() {
           title="Stock your freezer with heritage pork."
           lead="Quarter, half, and whole pig shares of our pasture-raised Gloucestershire Old Spot pigs — a thoughtfully curated assortment of cuts, processed with no added nitrates, on our small family farm in Washington County."
         />
+
+        <p
+          className="text-center font-display text-[1.5rem] text-forest-700"
+          style={{ marginTop: 24 }}
+        >
+          $14.44 per pound
+        </p>
 
         <div className="grid gap-6 md:grid-cols-3" style={{ marginTop: 40 }}>
           {SHARE_TIERS.map((s) => (
@@ -47,7 +56,6 @@ export default function Home() {
       </section>
 
       <WhimsyDivider />
-      <Hero />
 
       {/* How it works */}
       <section id="how" style={tint('--sage-100', 60)}>
