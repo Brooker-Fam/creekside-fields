@@ -85,6 +85,17 @@ export default function Home() {
             </>
           }
         />
+        <figure className="plate float-slow mx-auto" style={{ marginTop: 40, maxWidth: 760 }}>
+          <img
+            className="plate-img"
+            src="/farm-media/pig-grazing.jpg"
+            alt="A large spotted Gloucestershire Old Spot pig grazing on open pasture under a blue sky"
+            style={{ aspectRatio: '16 / 9', borderRadius: '10px 10px 3px 3px' }}
+          />
+          <figcaption className="plate-cap">
+            A Gloucestershire Old Spot foraging on open pasture
+          </figcaption>
+        </figure>
         <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 52 }}>
           {VALUES.map(([title, body]) => (
             <div key={title} className="card">
