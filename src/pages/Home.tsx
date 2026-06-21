@@ -85,17 +85,6 @@ export default function Home() {
             </>
           }
         />
-        <figure className="plate float-slow mx-auto" style={{ marginTop: 40, maxWidth: 760 }}>
-          <img
-            className="plate-img"
-            src="/farm-media/pig-grazing.jpg"
-            alt="A large spotted Gloucestershire Old Spot pig grazing on open pasture under a blue sky"
-            style={{ aspectRatio: '16 / 9', borderRadius: '10px 10px 3px 3px' }}
-          />
-          <figcaption className="plate-cap">
-            A Gloucestershire Old Spot foraging on open pasture
-          </figcaption>
-        </figure>
         <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 52 }}>
           {VALUES.map(([title, body]) => (
             <div key={title} className="card">
@@ -177,8 +166,19 @@ function Hero() {
     <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '56px 24px 56px' }}>
       <h1 className="sr-only">Creekside Fields — pasture-raised heritage pork in Greenwich, NY</h1>
 
+      {/* The picture */}
+      <figure className="plate float-slow mx-auto" style={{ maxWidth: 880, margin: '0 auto' }}>
+        <img
+          className="plate-img"
+          src="/farm-media/pig-grazing.jpg"
+          alt="A large spotted Gloucestershire Old Spot pig grazing on open pasture under a blue sky"
+          style={{ aspectRatio: '16 / 9', borderRadius: '10px 10px 3px 3px' }}
+        />
+        <figcaption className="plate-cap">A Gloucestershire Old Spot foraging on open pasture</figcaption>
+      </figure>
+
       {/* The offer */}
-      <div className="mx-auto text-center" style={{ maxWidth: '40rem' }}>
+      <div className="mx-auto text-center" style={{ maxWidth: '40rem', marginTop: 44 }}>
         <p className="story-eyebrow">Pasture-raised heritage pork</p>
         <h2
           className="fairy-sparkle mt-4 inline-block font-display leading-[1.1] text-forest-800"
