@@ -38,10 +38,25 @@ export default {
         },
         // Raised card/input surface (white in light, warm charcoal in dark).
         surface: 'var(--surface)',
-        // Legacy aliases used in admin/reserve/print flows — fixed, not themed.
-        cream: { 50: '#faf7f2', 100: '#f3ede4', 200: '#e8dfd2' },
-        mud: { 400: '#8a7968', 600: '#5c4e42', 700: '#4a3f35', 800: '#2c241c' },
-        blush: { 400: '#b87a62', 500: '#a65d3f' },
+        // Legacy aliases used in admin/reserve/print flows. Now themeable —
+        // resolve to RGB-channel CSS vars (see :root / [data-theme=*] in
+        // index.css) so cream surfaces, mud text/borders, and the blush accent
+        // flip in dark/medium mode and stay legible.
+        cream: {
+          50: 'rgb(var(--cream-50) / <alpha-value>)',
+          100: 'rgb(var(--cream-100) / <alpha-value>)',
+          200: 'rgb(var(--cream-200) / <alpha-value>)',
+        },
+        mud: {
+          400: 'rgb(var(--mud-400) / <alpha-value>)',
+          600: 'rgb(var(--mud-600) / <alpha-value>)',
+          700: 'rgb(var(--mud-700) / <alpha-value>)',
+          800: 'rgb(var(--mud-800) / <alpha-value>)',
+        },
+        blush: {
+          400: 'rgb(var(--blush-400) / <alpha-value>)',
+          500: 'rgb(var(--blush-500) / <alpha-value>)',
+        },
         marigold: { 100: '#f5ead8', 300: '#d4a96a' },
         clay: { 300: '#c49a7a', 500: '#a65d3f' },
         indigo: { 100: '#e8ebe4', 700: '#3d4f36' },
