@@ -15,7 +15,7 @@ export default function Home() {
           align="center"
           eyebrow="Pig shares & pricing"
           title="Choose your share size."
-          lead="Quarter, half, and whole pig shares of our pasture-raised Gloucestershire Old Spot pigs — a thoughtfully curated assortment of cuts, processed with no added nitrates, on our small family farm in Washington County. Every share is $14.44 per pound."
+          lead="Quarter, half, and whole pig shares of our pasture-raised Gloucestershire Old Spot pigs — a thoughtfully curated assortment of cuts, processed with no added nitrates, on our small family farm in Washington County. Every share is $10 per pound."
         />
 
         <div className="grid gap-6 md:grid-cols-3" style={{ marginTop: 40 }}>
@@ -196,7 +196,7 @@ function Hero() {
 
         <div className="mt-7 flex items-baseline justify-center gap-2.5">
           <span className="font-display leading-none text-forest-800" style={{ fontSize: '2.6rem' }}>
-            $14.44
+            $10
           </span>
           <span className="text-earth-500" style={{ fontSize: 'var(--text-lead)' }}>
             per pound

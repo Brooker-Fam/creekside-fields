@@ -20,9 +20,9 @@ const PICKUP_LABELS: Record<string, string> = {
 // Mirror of SHARE_PRICE_RANGE in src/content/sharesCopy.ts — kept in sync here
 // because this edge function is bundled separately and can't import from src.
 const SHARE_PRICE_RANGE: Record<string, string> = {
-  quarter: '$650–$775',
-  half: '$1,300–$1,550',
-  whole: '$2,600–$3,100',
+  quarter: '$680–$770',
+  half: '$1,370–$1,540',
+  whole: '$2,730–$3,080',
 }
 
 interface BillOfSaleData {

@@ -12,7 +12,7 @@ const SECTIONS = [
   },
   {
     title: 'Share sizes',
-    body: 'Roughly 180–240 lb of take-home pork (whole), 90–120 lb (half), or 45–60 lb (quarter). Final weight depends on the animal; we list estimated ranges and confirm once your pig is processed.',
+    body: 'Roughly 273–308 lb of take-home pork (whole), 137–154 lb (half), or 68–77 lb (quarter). Final weight depends on the animal; we list estimated ranges and confirm once your pig is processed.',
   },
   {
     title: 'Processing',
@@ -20,7 +20,7 @@ const SECTIONS = [
   },
   {
     title: 'Pricing',
-    body: 'Each share is a flat price, listed up front as an estimated range — about $650–$775 (quarter), $1,300–$1,550 (half), or $2,600–$3,100 (whole). We confirm your final price once your pig is processed, based on the actual weight of the meat and the cuts included.',
+    body: 'Each share is a flat price of $10 per pound, listed up front as an estimated range — about $680–$770 (quarter), $1,370–$1,540 (half), or $2,730–$3,080 (whole). We confirm your final price once your pig is processed, based on the actual weight of the meat and the cuts included.',
   },
   {
     title: "What's included",

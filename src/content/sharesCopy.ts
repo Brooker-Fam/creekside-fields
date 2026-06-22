@@ -17,8 +17,8 @@ export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'quarter',
     title: 'Quarter pig share',
-    takeHome: '45–60 pounds',
-    price: '$650–$775',
+    takeHome: '68–77 pounds',
+    price: '$680–$770',
     freezer:
       'Approximately 1–2 cubic feet of freezer space. This will fit in the freezer compartment of many refrigerators — about the space of 2–3 grocery bags.',
     cta: 'Reserve a quarter pig share',
@@ -26,8 +26,8 @@ export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'half',
     title: 'Half pig share',
-    takeHome: '90–120 pounds',
-    price: '$1,300–$1,550',
+    takeHome: '137–154 pounds',
+    price: '$1,370–$1,540',
     freezer:
       'Approximately 3–4 cubic feet of freezer space. A small chest freezer, or a portion of a larger upright freezer, is usually enough — about the space of 4–6 grocery bags.',
     cta: 'Reserve a half pig share',
@@ -35,8 +35,8 @@ export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'whole',
     title: 'Whole pig share',
-    takeHome: '180–240 pounds',
-    price: '$2,600–$3,100',
+    takeHome: '273–308 pounds',
+    price: '$2,730–$3,080',
     freezer:
       'Approximately 6–8 cubic feet of freezer space. Most customers store a whole pig share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
     cta: 'Reserve a whole pig share',

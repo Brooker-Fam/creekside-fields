@@ -21,10 +21,10 @@ const SHARE_KIND_TITLE: Record<string, string> = {
 }
 
 const SHARE_KIND_BLURB: Record<string, { meat: string; freezer: string }> = {
-  whole:   { meat: 'about 180–240 lb of cut & wrapped pork', freezer: 'fills a chest freezer' },
-  half:    { meat: 'about 90–120 lb of cut & wrapped pork',  freezer: 'fits an upright freezer' },
-  quarter: { meat: 'about 45–60 lb of cut & wrapped pork',   freezer: 'fits in a freezer drawer' },
-  eighth:  { meat: 'about 18–20 lb of cut & wrapped pork',   freezer: 'fits a freezer shelf' },
+  whole:   { meat: 'about 273–308 lb of cut & wrapped pork', freezer: 'fills a chest freezer' },
+  half:    { meat: 'about 137–154 lb of cut & wrapped pork', freezer: 'fits an upright freezer' },
+  quarter: { meat: 'about 68–77 lb of cut & wrapped pork',   freezer: 'fits in a freezer drawer' },
+  eighth:  { meat: 'about 34–39 lb of cut & wrapped pork',   freezer: 'fits a freezer shelf' },
 }
 
 function readInquiryPrefill(): InquiryPrefill | null {
