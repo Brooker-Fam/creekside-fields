@@ -113,6 +113,19 @@
   --creek-300: #8fada8;
   --creek-500: #5f857d;
 
+  /* legacy palette (bill of sale / invoice / reserve / admin). Stored as RGB
+     channels so Tailwind opacity modifiers (e.g. border-mud-800/20) work, and
+     so the values flip under [data-theme="dark"] / [data-theme="medium"]. */
+  --cream-50: 250 247 242;
+  --cream-100: 243 237 228;
+  --cream-200: 232 223 210;
+  --mud-400: 138 121 104;
+  --mud-600: 92 78 66;
+  --mud-700: 74 63 53;
+  --mud-800: 44 36 28;
+  --blush-400: 184 122 98;
+  --blush-500: 166 93 63;
+
   /* semantic aliases */
   --surface-page: var(--linen-50);
   --text-heading: var(--forest-800);
@@ -367,6 +380,18 @@
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 30px -14px rgba(0, 0, 0, 0.55);
   --shadow-soft: 0 18px 50px -22px rgba(0, 0, 0, 0.7);
 
+  /* legacy palette flips: cream surfaces go dark, mud text/borders go light,
+     blush accent tracks the lighter copper so documents stay legible. */
+  --cream-50: 36 30 24;
+  --cream-100: 44 38 32;
+  --cream-200: 58 50 42;
+  --mud-400: 156 143 128;
+  --mud-600: 196 186 176;
+  --mud-700: 210 200 189;
+  --mud-800: 231 223 213;
+  --blush-400: 221 157 121;
+  --blush-500: 203 132 96;
+
   color-scheme: dark;
 }
 
@@ -400,6 +425,13 @@
   --linen-200: #c2b290;  /* hairline borders */
   --surface:   #ece2cd;  /* raised cards / inputs — lifts above the page */
   --white:     #ece2cd;
+
+  /* cream surfaces track the parchment tone; mud/blush keep the :root dark
+     text ramps (inherited) so they stay legible on parchment. */
+  --cream-50: 236 226 205;
+  --cream-100: 227 215 189;
+  --cream-200: 211 196 166;
+
   color-scheme: light;
 }
 
