@@ -125,8 +125,11 @@ export default function ReserveConfirm() {
     })
     setEmailing(false)
     if (!resp.ok) {
-      const body = await resp.json().catch(() => ({}))
-      const msg = (body as { error?: string; detail?: { message?: string } }).detail?.message ?? (body as { error?: string }).error ?? `HTTP ${resp.status}`
+      const body = await resp.json().catch(() => ({})) as {
+        error?: string
+        detail?: { message?: string; error?: string }
+      }
+      const msg = body.detail?.message ?? body.detail?.error ?? body.error ?? `HTTP ${resp.status}`
       posthog?.capture('bill_of_sale_email_failed', {
         reservation_id: reservationId,
         status: resp.status,
