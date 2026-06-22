@@ -46,7 +46,7 @@ export const SHARE_TIERS: ShareTier[] = [
 
 /**
  * Estimated price range by share kind — the single source of truth shown
- * across the site (shares page, reserve flow, bill of sale, emails). Final
+ * across the site (shares page, reserve flow, confirmation, emails). Final
  * price is a flat amount set per reservation once the pig is processed.
  */
 export const SHARE_PRICE_RANGE: Record<string, string> = Object.fromEntries(

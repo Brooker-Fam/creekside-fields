@@ -1,67 +1,63 @@
 # Business + legal model
 
 Recap of the rules the site is built around. Read before changing
-anything that touches the bill of sale, the reservation flow, or how
-money moves.
+anything that touches the reservation flow or how money moves.
 
 ## The deal
 
-Customer buys an **undivided percentage interest in a specific live
-animal** (a whole / half / quarter of one of our gilts) before slaughter.
-After slaughter the processor cuts and wraps it, the customer picks the
-meat up from the processor (or the farm), and the customer pays one
-bundled bill to the farm that includes the processor pass-through fee.
+Customer reserves a **pork share** (a whole / half / quarter of one of our
+gilts), pays a deposit to hold it, and picks up the meat once it's ready.
+The pigs are processed at a **USDA-inspected** facility, the processor cuts
+and wraps the meat under the USDA mark of inspection, and the customer pays
+one bundled bill to the farm that includes the processor pass-through fee.
+Pickup is from the farm (or, if arranged, the processor).
 
 ## Legal foundation
 
-- **Federal**: 9 CFR 303.1(a)(2)(i), "custom-exempt" slaughter
-  exemption. Requires:
-  - Buyer is identified **before** slaughter (signed bill of sale, dated pre-slaughter).
-  - Every wrapped package bears the federally-required "Not For Sale" stamp.
-  - The meat is for the share owners' personal use only; no resale.
-- **New York**: NY Ag &amp; Markets Law Article 5-A §96-d. Specifically
-  exempts farmers who deliver their animals to a custom processor for
-  slaughter for use by the owners. No NY-specific licensing layered on
-  top.
+- **USDA inspection (FSIS)**: because the animals are slaughtered and
+  processed under federal inspection, the meat bears the USDA mark of
+  inspection and can be **sold by the cut or by the share to anyone,
+  post-slaughter**. There's no need to transfer ownership of a live animal
+  before slaughter, no "personal use only" restriction, and no "Not For
+  Sale" stamp — those are custom-exempt requirements that no longer apply.
 - **Sales tax**: NY Tax Law §1115(a)(1) — food for human consumption is
-  exempt. Live animals sold by a farmer for human consumption qualify.
-  Don't register for a Certificate of Authority for these sales.
+  exempt. Sales of meat for human consumption qualify.
 - **Farmer's inputs**: get an ST-125 (Farmer's Exemption Certificate) for
   feed / fencing / vet supplies. Has nothing to do with sales to customers.
 
-Full research lives in conversation history. If the model changes (e.g.
-USDA-inspected, which is being pursued in parallel), revisit the bill of
-sale recitals and "Not For Sale" stamp language.
-
 ## Operationally
 
-- The **farmer** schedules slaughter slot with the processor, transports
-  the live animals, and hands over a roster of owners + cut preferences.
-- The **customer** signs a bill of sale with the farmer + a cut sheet
-  directly with the processor (the cut prefs in the site are
-  a heads-up, not the binding cut sheet).
-- The **processor** kills, cuts, wraps, stamps "Not For Sale", and bills
-  the farmer (we then pass through the cost in the final invoice to the
-  customer).
+- The **farmer** schedules the slaughter slot with the USDA-inspected
+  processor, transports the animals, and hands over a roster of orders +
+  cut preferences (the cut prefs in the site are a heads-up, not a binding
+  cut sheet — confirm directly with the processor).
+- The **processor** kills, cuts, wraps, applies the USDA mark of
+  inspection, and bills the farmer (we then pass through the cost in the
+  final invoice to the customer).
+- The **customer** pays a deposit to reserve, then a single flat balance at
+  pickup. No bill of sale, no signature.
 
 ## Anti-patterns to avoid
 
-- Don't take a deposit **after** slaughter. Bill of sale must predate
-  kill date.
 - Don't quote price per pound of finished meat ("$X/lb bacon"). Always
   per pound of **hanging weight** × share %.
-- Don't have the farmer take possession of the meat from the processor
-  and redistribute. Pickup is direct from processor or farm — meat
-  doesn't roundtrip through a third party.
-- Don't sell more than ~4 shares per animal (we sell whole / half / quarter,
-  fine). The IRS / USDA gets suspicious if a single animal has 12 owners.
-- Don't refund/resell a share after slaughter to a different person —
-  they would be an illegal post-slaughter owner.
+- Don't have the farmer take possession of the meat from the processor and
+  redistribute through a third party — keep pickup direct from the
+  processor or farm.
+- Keep the pricing honest: the deposit is credited toward a single flat
+  final price set from the actual processing weights.
 
-## If you ever go USDA-inspected
+## History: the old custom-exempt model
 
-The pre-sale bill of sale becomes optional (meat can be sold by the
-pound post-slaughter). The "Not For Sale" stamp goes away (USDA mark of
-inspection takes its place). The recitals on the BoS need a rewrite to
-drop the custom-exempt references. The pricing model can stay the same
-or shift to retail by-the-cut.
+Before moving to USDA-inspected processing, the site sold under the federal
+**custom-exempt** exemption (9 CFR 303.1(a)(2)(i)) plus NY Ag & Markets Law
+Article 5-A §96-d. Under that model the customer bought an *undivided
+percentage interest in a specific live animal before slaughter*, every
+package bore the "Not For Sale" stamp, the meat was for the owners'
+personal use only, and the deal was documented with a **signed bill of
+sale dated before the kill date**. That required an on-screen signature pad,
+a `signatures` storage bucket, and a `sign_reservation` RPC — all removed
+when we switched to USDA inspection (migration
+`20260622130000_drop-bill-of-sale-signature.sql`). If you ever revert to
+custom-exempt, those pieces and the pre-slaughter recitals need to come
+back.

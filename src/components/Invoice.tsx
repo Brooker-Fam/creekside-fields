@@ -49,7 +49,7 @@ export default function Invoice({ data }: { data: InvoiceData }) {
         <div className="flex items-baseline justify-between">
           <div>
             <p className="hand text-2xl text-blush-500 print:hidden">Invoice</p>
-            <h2 className="font-display text-3xl">Final Invoice — Live Animal Share</h2>
+            <h2 className="font-display text-3xl">Final Invoice — Pork Share</h2>
           </div>
           <p className="text-right text-sm">
             <strong>Issued:</strong> {issued}
@@ -76,7 +76,7 @@ export default function Invoice({ data }: { data: InvoiceData }) {
       <section className="mt-6">
         <Block label="What you bought">
           <p className="font-semibold">
-            {calc.sharePct}% undivided interest in one (1) live hog
+            {calc.sharePct}% pork share from one heritage hog
           </p>
           <p className="mt-1 text-sm">
             {animal.breed}

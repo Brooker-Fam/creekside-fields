@@ -10,8 +10,8 @@ secret is where it is.
 |---|---|---|
 | **GitHub** | `Brooker-Fam/creekside-fields` | Source of truth. Push to `main` = deploy. |
 | **Vercel** | `guava-tri` team, project `creekside-fields` (`prj_KRVj99R3UJFsMHVnhq8ynQfMXWJf`) | Frontend hosting + edge function + DNS. |
-| **InsForge** | Project `umvug9f9` (Creekside Fields), org `Personal Org`, plan `NANO` (free) | Postgres, auth, storage (signatures bucket). |
-| **Resend** | Account email `creeksidefields@gmail.com`, plan free | Outbound transactional email (signed bill of sale). |
+| **InsForge** | Project `umvug9f9` (Creekside Fields), org `Personal Org`, plan `NANO` (free) | Postgres, auth, storage. |
+| **Resend** | Account email `creeksidefields@gmail.com`, plan free | Outbound transactional email (reservation confirmation). |
 | **Squarespace** | Registrant `creeksidefields@gmail.com` (Brittany Woolley), `brookerhousehold@gmail.com` is the operations email | Domain registrar only. DNS lives at Vercel. |
 
 `brookerhousehold@gmail.com` is the farm's customer-facing email + the
@@ -47,7 +47,7 @@ Vercel deployment, change the records in Vercel, not Squarespace.
 - Env vars on Vercel (production):
   - `VITE_INSFORGE_URL` — the InsForge API base URL (`https://umvug9f9.us-east.insforge.app`). Not secret.
   - `VITE_INSFORGE_ANON_KEY` — the InsForge anon JWT (designed for client use, not secret in the same way an admin key would be).
-  - `RESEND_API_KEY` — **encrypted/sensitive**, server-only. Scoped to "Sending access" + `creeksidefields.com` only. Used by `api/send-bill-of-sale.ts`. **Never expose to the client.**
+  - `RESEND_API_KEY` — **encrypted/sensitive**, server-only. Scoped to "Sending access" + `creeksidefields.com` only. Used by `api/send-confirmation.ts`. **Never expose to the client.**
 
 ## Backend (InsForge)
 
@@ -58,12 +58,15 @@ Vercel deployment, change the records in Vercel, not Squarespace.
   npx @insforge/cli db query "INSERT INTO admin_users (user_id) SELECT id FROM auth.users WHERE email='someone@example.com'"
   ```
 - Storage buckets:
-  - `signatures` (public read, anon insert) — holds the canvas-drawn buyer signature PNGs. Files at `reservations/<reservation_id>/<ts>.png`.
+  - None in active use. (A `signatures` bucket existed for the old signed
+    bill of sale; it was retired with the move to USDA-inspected processing —
+    see migration `20260622130000_drop-bill-of-sale-signature.sql`. Delete the
+    bucket from the InsForge dashboard if it's still hanging around.)
 - RLS model:
   - `animals`, `processors`, `share_options`: public SELECT, admin write.
-  - `reservations`: anon INSERT, admin SELECT/UPDATE/DELETE. Anon also writes signature fields via the `sign_reservation()` `SECURITY DEFINER` RPC (not direct UPDATE).
+  - `reservations`: anon INSERT, admin SELECT/UPDATE/DELETE.
   - `admin_users`: self-SELECT + admin manage.
-  - `storage.objects`: signatures bucket gets public read + anon insert; everything else is locked down to admins.
+  - `storage.objects`: locked down to admins.
 - Migrations live in `/migrations/` and are applied via:
   ```bash
   npx @insforge/cli db migrations up --all
@@ -78,7 +81,7 @@ Vercel deployment, change the records in Vercel, not Squarespace.
 
 - Sender: `Creekside Fields <hello@creeksidefields.com>`.
 - API key stored on Vercel as `RESEND_API_KEY`, restricted to **Sending access** on **creeksidefields.com** only. Rotate by creating a new key in Resend → `vercel env rm RESEND_API_KEY production` → `vercel env add RESEND_API_KEY production`.
-- The send code lives in `api/send-bill-of-sale.ts`. Called from `src/pages/ReserveConfirm.tsx` after a successful signature save.
+- The send code lives in `api/send-confirmation.ts`. Called from `src/pages/ReserveConfirm.tsx` once the reservation confirmation page loads.
 - Domain verification: passes DKIM + SPF + DMARC. Don't remove any of the DNS records listed above.
 - Free tier: 3,000 emails/month, 100/day. Plenty for the volume we're operating at.
 
@@ -92,7 +95,7 @@ git push   # auto-deploys via Vercel-GitHub link
 npx vercel@latest deploy --prod
 
 # Tail Vercel function logs
-npx vercel@latest logs https://creeksidefields.com/api/send-bill-of-sale
+npx vercel@latest logs https://creeksidefields.com/api/send-confirmation
 
 # Run a new migration
 npx @insforge/cli db migrations new <name>
@@ -113,7 +116,7 @@ npx vercel@latest env add <NAME> production
 
 1. **Source of truth for DNS is Vercel, not Squarespace.** Don't bother logging into Squarespace except to renew the domain.
 2. **Two Gmail accounts in play.** `creeksidefields@gmail.com` for domain registrar + Resend; `brookerhousehold@gmail.com` for the farm operations + admin login. Don't conflate them.
-3. **Bill of sale email is the only outbound email** right now. Deposit instructions and final invoices are sent manually via the admin dashboard's "Email …" buttons (which open the farm's mail client with a prefilled draft).
-4. **The signing flow stores PNGs in InsForge storage, not on Vercel.** The image URL is what's embedded in the email. Resend rebroadcasts the InsForge URL — no attachments.
+3. **The reservation confirmation email is the only automatic outbound email** right now (sent via Resend when the confirmation page loads). Deposit instructions and final invoices are sent manually from the admin dashboard's "Email …" buttons.
+4. **No signed bill of sale.** Pigs are processed at a USDA-inspected facility, so the meat is sold by the share post-slaughter — no pre-slaughter live-animal transfer, no signature capture. (The old signed-BoS flow + `signatures` storage bucket were retired; see `docs/MODEL.md` and migration `20260622130000`.)
 5. **Pricing.** Per-pound rate is **per share** on `share_options.rate_per_lb_hw_cents`, with kind-based defaults: **$7.50 whole / $8.00 half / $8.50 quarter** (smaller shares cost a bit more per pound to cover the extra per-customer coordination — standard pasture-pork practice). Edit in the admin UI under `Shares → Rate` column (inline; tab out to save). `animals.rate_per_lb_hw_cents` is still around as a legacy fallback used only when a share has no rate set. The `share_options` dollar ranges (`est_total_low_cents` / `est_total_high_cents`) are estimates derived from `rate × est. hanging weight × share %` and need to be updated by hand if you change the rate.
-6. **Two gilts, but customer never picks one.** The customer-facing flow only thinks in `kind` (whole / half / quarter); the system auto-assigns a specific `share_option` at reserve time. The legally-required pig identity ends up on the bill of sale anyway.
+6. **Two gilts, but customer never picks one.** The customer-facing flow only thinks in `kind` (whole / half / quarter); the system auto-assigns a specific `share_option` at reserve time. The pig identity still shows up on the reservation confirmation.

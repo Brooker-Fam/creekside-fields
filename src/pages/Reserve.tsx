@@ -232,7 +232,7 @@ export default function Reserve() {
         <section className="card">
           <h2 className="font-display text-2xl">Your details</h2>
           <p className="mt-1 text-sm text-mud-600">
-            We'll use this for the bill of sale and to reach you about pickup.
+            We'll use this for your reservation confirmation and to reach you about pickup.
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Full name" name="customer_name" required defaultValue={prefill?.customer_name} />
@@ -279,16 +279,16 @@ export default function Reserve() {
         <section className="card bg-cream-50">
           <h2 className="font-display text-2xl">What happens next</h2>
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-mud-700">
-            <li>We email you a one-page bill of sale to sign.</li>
+            <li>We email you a reservation confirmation right away — nothing to sign.</li>
             <li>You pay the deposit to hold the share — it's credited toward your final price.</li>
-            <li>We raise and process your pig, then confirm your flat final price once the processing weights are known.</li>
-            <li>When it's ready, you pick it up from the farm or the processor — whichever you chose — and pay the balance in one bill to us.</li>
+            <li>We raise and process your pig at a USDA-inspected facility, then confirm your flat final price once the processing weights are known.</li>
+            <li>When it's ready, you pick it up from the farm and pay the balance in one bill to us.</li>
           </ol>
         </section>
 
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-mud-600">
-            Submitting holds the share — we'll be in touch within a day with the bill of sale and
+            Submitting holds the share — we'll email your confirmation right away and follow up with
             deposit details.
           </p>
           <button type="submit" disabled={submitting} className="btn-primary disabled:opacity-60">

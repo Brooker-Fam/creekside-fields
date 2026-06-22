@@ -4,9 +4,9 @@ import { usePostHog } from '@posthog/react'
 import { insforge, formatCents, priceRange } from '../../lib/insforge'
 import type { Animal, Processor, Reservation, ShareOption } from '../../lib/types'
 import { SHARE_PRICE_RANGE } from '../../content/sharesCopy'
-import BillOfSale from '../../components/BillOfSale'
+import OrderSummary from '../../components/OrderSummary'
 import Invoice, { computeInvoice, sharePctFromKind } from '../../components/Invoice'
-import { renderBillOfSaleEmail, renderInvoiceEmail } from '../../lib/emailTemplates'
+import { renderConfirmationEmail, renderInvoiceEmail } from '../../lib/emailTemplates'
 
 type Tab = 'reservations' | 'animals' | 'shares' | 'processors'
 
@@ -199,8 +199,8 @@ function ReservationRow({
   onChange: () => void
 }) {
   const [expanded, setExpanded] = useState(false)
-  const [view, setView] = useState<'closed' | 'bos' | 'invoice'>('closed')
-  const [sendingBos, setSendingBos] = useState(false)
+  const [view, setView] = useState<'closed' | 'summary' | 'invoice'>('closed')
+  const [sendingConfirmation, setSendingConfirmation] = useState(false)
   const [sendingInvoice, setSendingInvoice] = useState(false)
   const [sendStatus, setSendStatus] = useState<{ kind: 'ok' | 'err'; msg: string } | null>(null)
 
@@ -212,15 +212,15 @@ function ReservationRow({
   const isNew = !r.acknowledged_at
   const sharePct = r.share_percentage ?? (share ? sharePctFromKind(share.kind) : 0)
 
-  async function emailBillOfSale() {
+  async function emailConfirmation() {
     if (!share || !animal) {
-      setSendStatus({ kind: 'err', msg: 'Share or animal missing — cannot render bill of sale.' })
+      setSendStatus({ kind: 'err', msg: 'Share or animal missing — cannot render confirmation.' })
       return
     }
-    setSendingBos(true)
+    setSendingConfirmation(true)
     setSendStatus(null)
     const pickupPref = (r.cut_preferences as Record<string, unknown>)?.pickup_preference as string | null ?? null
-    const html = renderBillOfSaleEmail({
+    const html = renderConfirmationEmail({
       customer: {
         name: r.customer_name,
         email: r.customer_email,
@@ -232,10 +232,8 @@ function ReservationRow({
       pickup_preference: pickupPref,
       share_percentage: sharePct,
       date: r.created_at,
-      signature_url: r.signature_url,
-      signed_at: r.bill_of_sale_signed_at,
     })
-    const subject = `Your bill of sale — Creekside Fields — ${share.label ?? share.kind}`
+    const subject = `Reservation confirmation — Creekside Fields — ${share.label ?? share.kind}`
     const { error } = await insforge.emails.send({
       to: r.customer_email,
       cc: FARM_EMAIL,
@@ -244,12 +242,12 @@ function ReservationRow({
       html,
       from: 'Creekside Fields',
     })
-    setSendingBos(false)
+    setSendingConfirmation(false)
     if (error) {
       setSendStatus({ kind: 'err', msg: `Send failed: ${error.message}` })
       return
     }
-    setSendStatus({ kind: 'ok', msg: `Bill of sale sent to ${r.customer_email}.` })
+    setSendStatus({ kind: 'ok', msg: `Confirmation sent to ${r.customer_email}.` })
   }
 
   async function emailInvoice() {
@@ -348,14 +346,14 @@ function ReservationRow({
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2 text-sm">
-        <button onClick={emailBillOfSale} disabled={sendingBos} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 font-semibold hover:bg-blush-100 disabled:opacity-60">
-          {sendingBos ? 'Sending…' : '✉ Email bill of sale'}
+        <button onClick={emailConfirmation} disabled={sendingConfirmation} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 font-semibold hover:bg-blush-100 disabled:opacity-60">
+          {sendingConfirmation ? 'Sending…' : '✉ Email confirmation'}
         </button>
         <button onClick={emailInvoice} disabled={sendingInvoice} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 font-semibold hover:bg-blush-100 disabled:opacity-60">
           {sendingInvoice ? 'Sending…' : '✉ Email invoice'}
         </button>
-        <button onClick={() => setView(view === 'bos' ? 'closed' : 'bos')} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 hover:bg-blush-100">
-          {view === 'bos' ? 'Hide' : 'View'} bill of sale
+        <button onClick={() => setView(view === 'summary' ? 'closed' : 'summary')} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 hover:bg-blush-100">
+          {view === 'summary' ? 'Hide' : 'View'} confirmation
         </button>
         <button onClick={() => setView(view === 'invoice' ? 'closed' : 'invoice')} className="rounded-full border-2 border-mud-800 bg-cream-50 px-3 py-1.5 hover:bg-blush-100">
           {view === 'invoice' ? 'Hide' : 'View'} invoice
@@ -400,8 +398,8 @@ function ReservationRow({
 
       {view !== 'closed' && share && animal && (
         <div className="mt-4">
-          {view === 'bos' ? (
-            <BillOfSale
+          {view === 'summary' ? (
+            <OrderSummary
               data={{
                 customer: {
                   name: r.customer_name,
@@ -414,8 +412,6 @@ function ReservationRow({
                 pickup_preference: (r.cut_preferences as Record<string, unknown>)?.pickup_preference as string | null ?? null,
                 share_percentage: sharePct,
                 date: r.created_at,
-                signature_url: r.signature_url,
-                signed_at: r.bill_of_sale_signed_at,
               }}
             />
           ) : (

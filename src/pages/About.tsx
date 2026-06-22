@@ -8,7 +8,7 @@ const SECTIONS = [
   },
   {
     title: "What you're buying",
-    body: 'A whole, half, or quarter pig share — literally a whole pig, or a fraction of one — delivered as a curated assortment of cuts. Sign a bill of sale, place a deposit, and pick up your pork when it is ready — one flat price for the share, processing included.',
+    body: 'A whole, half, or quarter pig share — literally a whole pig, or a fraction of one — delivered as a curated assortment of cuts. Reserve your share, place a deposit, and pick up your pork when it is ready — one flat price for the share, processing included.',
   },
   {
     title: 'Share sizes',

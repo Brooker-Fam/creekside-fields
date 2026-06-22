@@ -1,11 +1,18 @@
-import type { BillOfSaleData } from '../components/BillOfSale'
+import type { OrderSummaryData } from '../components/OrderSummary'
 import { formatCents, priceRange } from './insforge'
 import { SHARE_PRICE_RANGE } from '../content/sharesCopy'
 
 const PICKUP_LABELS: Record<string, string> = {
   farm: 'Farm pickup (Greenwich, NY)',
   processor: 'Direct from the processor',
-  either: 'Either — to be confirmed when slaughter is scheduled',
+  either: 'Either — to be confirmed when pickup is scheduled',
+}
+
+const SHARE_KIND_TITLE: Record<string, string> = {
+  whole: 'Whole pig share',
+  half: 'Half pig share',
+  quarter: 'Quarter pig share',
+  eighth: 'Eighth pig share',
 }
 
 const FARM = {
@@ -52,71 +59,54 @@ function fmtMonth(iso: string | null): string {
   return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' })
 }
 
-export function renderBillOfSaleEmail(data: BillOfSaleData): string {
-  const { customer, share, animal, pickup_preference, share_percentage, date, signature_url } = data
-  const shareLabel = share_percentage
-    ? `${share_percentage}% undivided interest`
-    : share.label ?? share.kind
-
-  const sigSection = signature_url
-    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0 0;">
-        <tr><td style="font-size:11px;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;color:#6f655c;">Buyer signature</td></tr>
-        <tr><td style="padding-top:6px;"><img src="${escape(signature_url)}" alt="Signature" style="max-width:280px;height:auto;border-bottom:2px solid #2a2522;display:block;"/></td></tr>
-        <tr><td style="padding-top:4px;font-size:13px;">${escape(customer.name)} · signed ${escape(fmtDate(date))}</td></tr>
-      </table>`
-    : `<p style="margin:18px 0 0 0;font-size:13px;color:#6f655c;">Awaiting buyer signature.</p>`
+export function renderConfirmationEmail(data: OrderSummaryData): string {
+  const { customer, share, animal, pickup_preference, date } = data
+  const shareLabel = SHARE_KIND_TITLE[share.kind] ?? share.label ?? share.kind
 
   const inner = `
     <tr><td style="border-bottom:2px solid #2a2522;padding-bottom:12px;">
-      <h1 style="margin:0;font-size:24px;font-family:Georgia,serif;">Bill of Sale — Live Animal Share</h1>
-      <p style="margin:6px 0 0 0;font-size:12px;color:#6f655c;">Issued: ${escape(fmtDate(date))}</p>
+      <h1 style="margin:0;font-size:24px;font-family:Georgia,serif;">Reservation confirmation</h1>
+      <p style="margin:6px 0 0 0;font-size:12px;color:#6f655c;">Reserved: ${escape(fmtDate(date))}</p>
     </td></tr>
     <tr><td style="padding-top:18px;">
-      <p style="margin:0 0 14px 0;font-size:13px;color:#6f655c;">
-        Records the sale of an undivided percentage interest in a specific live animal, executed prior to slaughter,
-        pursuant to federal custom-exempt processing under 9 CFR 303.1(a)(2)(i) and NY Ag &amp; Markets Law Article 5-A §96-d.
-      </p>
-      ${block('Seller', `<strong>${escape(FARM.name)}</strong><br>${escape(FARM.address)}<br>${escape(FARM.contact)}`)}
+      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${escape(customer.name.split(' ')[0])}, thanks for reserving a share with ${escape(FARM.name)}. Here's your confirmation — there's nothing to sign. We'll follow up with deposit and pickup details.</p>
+      ${block('Farm', `<strong>${escape(FARM.name)}</strong><br>${escape(FARM.address)}<br>${escape(FARM.contact)}`)}
       ${block(
-        'Buyer',
+        'Reserved by',
         `<strong>${escape(customer.name)}</strong>${customer.address ? `<br>${escape(customer.address)}` : ''}<br>${escape(customer.email)}${customer.phone ? `<br>${escape(customer.phone)}` : ''}`,
       )}
       ${block(
-        'Item sold',
-        `<strong>${escape(shareLabel)}</strong> in one (1) live hog:
+        'Your share',
+        `<strong>${escape(shareLabel)}</strong>
          <ul style="margin:6px 0 0 18px;padding:0;">
            <li>Breed: <strong>${escape(animal.breed)}</strong></li>
            <li>Date of birth: <strong>${escape(fmtMonth(animal.dob))}</strong></li>
            ${animal.estimated_live_weight_lbs ? `<li>Est. live weight: <strong>${animal.estimated_live_weight_lbs} lb</strong></li>` : ''}
-           <li>Animal ID: <strong>${escape(animal.id)}</strong></li>
          </ul>`,
       )}
       ${block(
-        'Price',
+        'Estimated price',
         `Estimated range: <strong>${escape(SHARE_PRICE_RANGE[share.kind] ?? priceRange(share.est_total_low_cents, share.est_total_high_cents))}</strong><br>
          Your final price is a single flat amount for this ${escape(share.kind)} share, confirmed once the animal is processed — based on the actual weight of the meat and the cuts included.`,
       )}
       ${block(
-        'Deposit (due at signing)',
+        'Deposit',
         `<span style="font-size:22px;font-family:Georgia,serif;">${escape(formatCents(share.deposit_cents))}</span><br>
-         <span style="font-size:12px;color:#6f655c;">Credited toward the final total. Balance due at pickup.</span>`,
+         <span style="font-size:12px;color:#6f655c;">Holds your share and is credited toward the final total. Balance due at pickup.</span>`,
       )}
       ${block(
-        'Pickup preference',
+        'Pickup',
         `<strong>${escape(pickup_preference ? PICKUP_LABELS[pickup_preference] ?? pickup_preference : 'To be confirmed')}</strong>`,
       )}
-      <p style="margin:14px 0 4px 0;font-size:13px;font-weight:bold;">Terms (summary)</p>
-      <ol style="margin:0 0 0 18px;padding:0;font-size:12px;color:#3a322d;line-height:1.5;">
-        <li>Purchased for buyer's personal household consumption; not for resale.</li>
-        <li>Ownership of the share transfers on the issued date, prior to slaughter.</li>
-        <li>Custom-exempt processing under 9 CFR 303.1(a)(2)(i); packages bear the "Not For Sale" stamp.</li>
-        <li>Deposit refundable (or applied to a replacement) if the animal is lost prior to slaughter through no fault of seller.</li>
-        <li>Quality/yield depends on the processor and is not warranted by seller.</li>
-        <li>Governed by the laws of the State of New York.</li>
-      </ol>
-      ${sigSection}
+      <p style="margin:14px 0 4px 0;font-size:13px;font-weight:bold;">Good to know</p>
+      <ul style="margin:0 0 0 18px;padding:0;font-size:12px;color:#3a322d;line-height:1.5;">
+        <li>Raised on our pasture without added growth hormones or antibiotics, and processed at a USDA-inspected facility.</li>
+        <li>Your deposit confirms the share and is credited toward the final total; the balance is due at pickup.</li>
+        <li>Final price, quantity, and the exact mix of cuts depend on the finished animal and are confirmed after processing.</li>
+        <li>We'll confirm your pickup date once the slaughter date is scheduled.</li>
+      </ul>
       <p style="margin:22px 0 0 0;font-size:11px;color:#6f655c;border-top:1px solid #2a2522;padding-top:10px;">
-        Bill of sale ref: ${escape(animal.id.slice(0, 8))}/${escape(share.id.slice(0, 8))} · ${escape(FARM.name)} · ${escape(FARM.contact)}
+        Reservation ref: ${escape(animal.id.slice(0, 8))}/${escape(share.id.slice(0, 8))} · ${escape(FARM.name)} · ${escape(FARM.contact)}
       </p>
     </td></tr>`
   return shell(inner)

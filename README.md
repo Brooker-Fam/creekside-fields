@@ -7,14 +7,13 @@ Live at **https://creeksidefields.com**.
 
 ## What it does
 
-Customers reserve a whole / half / quarter share of one of our gilts, sign
-a bill of sale on-screen, get the signed copy by email, and pick up the
-meat from the processor (or the farm) once it's ready. The site sells
-under the federal **custom-exempt** model (9 CFR 303.1(a)(2)(i)) plus NY
-Ag &amp; Markets Law Article 5-A §96-d — the customer buys the live animal
-share before slaughter, every package gets a "Not For Sale" stamp, and
-the farm handles processing scheduling on the buyer's behalf with one
-bundled invoice at the end.
+Customers reserve a whole / half / quarter share of one of our gilts, get
+a reservation confirmation by email, and pick up the meat from the farm
+once it's ready. The pigs are processed at a **USDA-inspected** facility,
+so the meat can be sold by the share post-slaughter — there's no
+signed bill of sale or pre-slaughter live-animal transfer. The farm
+handles processing scheduling and bills the customer once at the end with
+one bundled invoice.
 
 See **`docs/INFRA.md`** for accounts, env vars, DNS, and everything that
 isn't in the code.
@@ -27,7 +26,7 @@ See **`docs/MODEL.md`** for the legal/business model summary.
 - **Backend**: InsForge (Postgres + auth + storage). Project `umvug9f9` at
   `https://umvug9f9.us-east.insforge.app`.
 - **Email**: Resend, sending from `hello@creeksidefields.com`. Called from
-  a Vercel edge function at `api/send-bill-of-sale.ts`.
+  a Vercel edge function at `api/send-confirmation.ts`.
 - **Domain**: `creeksidefields.com`, registered at Squarespace, DNS
   managed by Vercel (we switched nameservers to `ns1/ns2.vercel-dns.com`).
 
@@ -52,17 +51,17 @@ VITE_POSTHOG_HOST=https://us.i.posthog.com
 `vercel env pull .env.local` if you want to run the function locally
 with `vercel dev`. The Vercel edge function also reads `POSTHOG_KEY` and
 `POSTHOG_HOST` (same project token, set in Vercel project env vars) so
-it can record bill-of-sale email sends/failures against the same user.
+it can record confirmation email sends/failures against the same user.
 
 ## Project layout
 
 ```
 src/
   pages/         Home, Animal, Reserve, ReserveConfirm, About, admin/{Login,Dashboard}
-  components/    Layout, BillOfSale, Invoice, SignaturePad, Spots
+  components/    Layout, OrderSummary, Invoice, Spots
   lib/           insforge client, types, emailTemplates
 api/
-  send-bill-of-sale.ts   Vercel edge function — emails the signed BoS via Resend
+  send-confirmation.ts   Vercel edge function — emails the reservation confirmation via Resend
 migrations/      SQL migrations applied via `npx @insforge/cli db migrations up`
 scripts/         seed.sql for the initial pigs + processors
 public/farm-media/   Hero photos of the gilts

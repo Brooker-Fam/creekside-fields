@@ -1,27 +1,82 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
-import BillOfSale, { type BillOfSaleData } from '../components/BillOfSale'
-import SignaturePad, { type SignaturePadHandle } from '../components/SignaturePad'
-import { insforge } from '../lib/insforge'
+import OrderSummary, { type OrderSummaryData } from '../components/OrderSummary'
 
 const FARM_EMAIL = 'brookerhousehold@gmail.com'
 
-type LocationState = (BillOfSaleData & { reservation_id?: string }) | null
+type LocationState = (OrderSummaryData & { reservation_id?: string }) | null
 
 export default function ReserveConfirm() {
   const location = useLocation()
   const posthog = usePostHog()
   const state = location.state as LocationState
-  const [data, setData] = useState<BillOfSaleData | null>(state)
+  const data = state
   const reservationId = state?.reservation_id
-  const padRef = useRef<SignaturePadHandle>(null)
-  const [signing, setSigning] = useState(false)
-  const [emailing, setEmailing] = useState(false)
-  const [signed, setSigned] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const [error, setError] = useState<string | null>(null)
-  const [hasInk, setHasInk] = useState(false)
+  const sentRef = useRef(false)
+
+  useEffect(() => {
+    if (!data || !reservationId) return
+    // Email the confirmation exactly once per reservation. The sessionStorage
+    // guard survives React StrictMode's double-mount and an accidental refresh.
+    const guardKey = `confirmation-emailed:${reservationId}`
+    if (sentRef.current || sessionStorage.getItem(guardKey)) return
+    sentRef.current = true
+    sessionStorage.setItem(guardKey, '1')
+
+    const payload: OrderSummaryData = {
+      customer: data.customer,
+      share: data.share,
+      animal: data.animal,
+      pickup_preference: data.pickup_preference,
+      share_percentage: data.share_percentage,
+      date: data.date,
+    }
+
+    setEmailStatus('sending')
+    fetch('/api/send-confirmation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-POSTHOG-DISTINCT-ID': posthog?.get_distinct_id() ?? '',
+        'X-POSTHOG-SESSION-ID': posthog?.get_session_id() ?? '',
+      },
+      body: JSON.stringify({ data: payload }),
+    })
+      .then(async (resp) => {
+        if (!resp.ok) {
+          const body = await resp.json().catch(() => ({}))
+          const msg =
+            (body as { error?: string; detail?: { message?: string } }).detail?.message ??
+            (body as { error?: string }).error ??
+            `HTTP ${resp.status}`
+          sessionStorage.removeItem(guardKey)
+          sentRef.current = false
+          posthog?.capture('confirmation_email_failed', {
+            reservation_id: reservationId,
+            status: resp.status,
+            reason: msg,
+          })
+          setError(`We couldn't email your confirmation: ${msg}`)
+          setEmailStatus('error')
+          return
+        }
+        posthog?.capture('confirmation_email_sent', {
+          reservation_id: reservationId,
+          share_kind: data.share.kind,
+        })
+        setEmailStatus('sent')
+      })
+      .catch((err) => {
+        sessionStorage.removeItem(guardKey)
+        sentRef.current = false
+        posthog?.captureException(err, { context: 'confirmation_email', reservation_id: reservationId })
+        setError("We couldn't email your confirmation. Don't worry — your share is still reserved.")
+        setEmailStatus('error')
+      })
+  }, [data, reservationId, posthog])
 
   if (!data) {
     return (
@@ -44,165 +99,44 @@ export default function ReserveConfirm() {
     )
   }
 
-  async function signAndSend() {
-    if (!data || !reservationId) {
-      setError("Reservation reference missing — we can't save the signature. Try reserving again.")
-      return
-    }
-    const pad = padRef.current
-    if (!pad || pad.isEmpty()) {
-      setError('Please sign in the box first.')
-      return
-    }
-    setError(null)
-    setSigning(true)
-
-    const blob = await pad.toBlob()
-    if (!blob) {
-      setError("Couldn't read the signature. Try again.")
-      setSigning(false)
-      return
-    }
-    const file = new File([blob], `signature-${reservationId}.png`, { type: 'image/png' })
-    const path = `reservations/${reservationId}/${Date.now()}.png`
-    const { data: uploaded, error: uploadError } = await insforge.storage
-      .from('signatures')
-      .upload(path, file)
-
-    if (uploadError || !uploaded) {
-      posthog?.captureException(uploadError ?? new Error('signature upload returned no data'), {
-        context: 'signature_upload',
-        reservation_id: reservationId,
-      })
-      setError(uploadError?.message ?? 'Could not upload signature.')
-      setSigning(false)
-      return
-    }
-
-    // Use the sign_reservation RPC — anon can't UPDATE reservations directly
-    // (admin-only by RLS), so we go through a SECURITY DEFINER function that
-    // only allows writing the three signature columns and only on an unsigned row.
-    const signedAt = new Date().toISOString()
-    const { error: updateError } = await insforge.database.rpc('sign_reservation', {
-      p_reservation_id: reservationId,
-      p_signature_url: uploaded.url,
-      p_signature_key: uploaded.key,
-    })
-
-    if (updateError) {
-      posthog?.captureException(updateError, {
-        context: 'sign_reservation_rpc',
-        reservation_id: reservationId,
-      })
-      setError(updateError.message ?? 'Could not save signature to reservation.')
-      setSigning(false)
-      return
-    }
-
-    const nextData: BillOfSaleData = {
-      ...data,
-      signature_url: uploaded.url,
-      signed_at: signedAt,
-    }
-    setData(nextData)
-    setSigned(true)
-    setSigning(false)
-    posthog?.capture('bill_of_sale_signed', {
-      reservation_id: reservationId,
-      share_kind: data.share.kind,
-      share_id: data.share.id,
-    })
-
-    setEmailing(true)
-    const resp = await fetch('/api/send-bill-of-sale', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-POSTHOG-DISTINCT-ID': posthog?.get_distinct_id() ?? '',
-        'X-POSTHOG-SESSION-ID': posthog?.get_session_id() ?? '',
-      },
-      body: JSON.stringify({ data: nextData }),
-    })
-    setEmailing(false)
-    if (!resp.ok) {
-      const body = await resp.json().catch(() => ({}))
-      const msg = (body as { error?: string; detail?: { message?: string } }).detail?.message ?? (body as { error?: string }).error ?? `HTTP ${resp.status}`
-      posthog?.capture('bill_of_sale_email_failed', {
-        reservation_id: reservationId,
-        status: resp.status,
-        reason: msg,
-      })
-      setError(`Signature saved, but email failed: ${msg}`)
-      return
-    }
-    posthog?.capture('bill_of_sale_email_sent', {
-      reservation_id: reservationId,
-      share_kind: data.share.kind,
-    })
-    setEmailSent(true)
-  }
-
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <div className="text-center print:hidden">
         <p className="hand text-4xl text-blush-500">High five.</p>
-        <h1 className="mt-2 font-display text-5xl">Your share is on hold.</h1>
+        <h1 className="mt-2 font-display text-5xl">Your share is reserved.</h1>
         <p className="mx-auto mt-4 max-w-xl text-mud-600">
-          Read the bill of sale below, then sign at the bottom — we'll email you a signed copy and
-          send deposit instructions separately.
+          Here's your reservation confirmation. We're emailing a copy to{' '}
+          <strong>{data.customer.email}</strong> (with us on CC), and we'll follow up with deposit
+          instructions and pickup details.
         </p>
       </div>
 
       <div className="mt-10">
-        <BillOfSale data={data} />
+        <OrderSummary data={data} />
       </div>
 
-      <section className="card mt-8 print:hidden">
-        <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-2xl">Sign the bill of sale</h2>
-          {signed && (
-            <span className="rounded-full border-2 border-sage-700 bg-sage-200 px-3 py-1 text-xs font-bold uppercase text-sage-700">
-              Signed
-            </span>
-          )}
-        </div>
-        <p className="mt-1 text-sm text-mud-600">
-          Use your finger on a phone, or your mouse on a laptop. The signed BoS will be emailed to{' '}
-          <strong>{data.customer.email}</strong> with us on CC.
-        </p>
-        <div className="mt-4">
-          <SignaturePad ref={padRef} onChange={setHasInk} />
-        </div>
-
-        {error && (
-          <p className="mt-4 rounded-2xl border-2 border-blush-500 bg-blush-100 p-3 text-sm">{error}</p>
-        )}
-        {emailSent && (
-          <p className="mt-4 rounded-2xl border-2 border-sage-700 bg-sage-200 p-3 text-sm text-sage-700">
-            Signed copy sent to {data.customer.email}. Check your inbox (and spam, just in case).
+      <div className="mt-6 print:hidden">
+        {emailStatus === 'sent' && (
+          <p className="rounded-2xl border-2 border-sage-700 bg-sage-200 p-3 text-sm text-sage-700">
+            A copy is on its way to {data.customer.email}. Check your inbox (and spam, just in case).
           </p>
         )}
+        {emailStatus === 'sending' && (
+          <p className="rounded-2xl border-2 border-mud-800/30 bg-cream-50 p-3 text-sm text-mud-600">
+            Emailing your copy…
+          </p>
+        )}
+        {error && (
+          <p className="rounded-2xl border-2 border-blush-500 bg-blush-100 p-3 text-sm">{error}</p>
+        )}
+      </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <button
-            onClick={signAndSend}
-            disabled={signing || emailing || !hasInk || emailSent}
-            className="btn-primary disabled:opacity-60"
-          >
-            {signing
-              ? 'Saving signature…'
-              : emailing
-                ? 'Sending email…'
-                : emailSent
-                  ? 'Sent ✓'
-                  : 'Sign & email me a copy'}
-          </button>
-          <button onClick={() => window.print()} className="btn-secondary">
-            🖨 Print
-          </button>
-          <Link to="/" className="btn-secondary">Back to the farm</Link>
-        </div>
-      </section>
+      <div className="mt-5 flex flex-wrap items-center gap-3 print:hidden">
+        <button onClick={() => window.print()} className="btn-secondary">
+          🖨 Print
+        </button>
+        <Link to="/" className="btn-secondary">Back to the farm</Link>
+      </div>
 
       <p className="mt-8 text-center text-sm text-mud-600 print:hidden">
         Questions?{' '}

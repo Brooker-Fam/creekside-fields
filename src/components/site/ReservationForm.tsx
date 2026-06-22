@@ -10,8 +10,7 @@ const SHARE_PCT: Record<string, number> = { whole: 100, half: 50, quarter: 25, e
  * The reservation form, embeddable inline (e.g. inside the shares-page
  * accordion). Fetches an available share of the given kind, collects the
  * customer's details, creates the reservation, then continues to the
- * confirmation + bill-of-sale signature step. Mirrors the standalone
- * /reserve page's submit logic.
+ * confirmation step. Mirrors the standalone /reserve page's submit logic.
  */
 export default function ReservationForm({ kind }: { kind: string }) {
   const navigate = useNavigate()
@@ -176,7 +175,7 @@ export default function ReservationForm({ kind }: { kind: string }) {
       </button>
 
       <p className="text-[0.8125rem] leading-[1.6] text-earth-500">
-        Reserve your share now, then we’ll follow up within a day with the bill of sale and deposit
+        Reserve your share now — we’ll email your confirmation right away and follow up with deposit
         details.
       </p>
     </form>
