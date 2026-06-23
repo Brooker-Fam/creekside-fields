@@ -12,13 +12,22 @@ export default function Shares() {
   const posthog = usePostHog()
   const [soldOut, setSoldOut] = useState<SoldOut>({ whole: false, half: false, quarter: false })
   const [openKinds, setOpenKinds] = useState<Set<PorkShareKind>>(() => new Set())
-  const [reservingKind, setReservingKind] = useState<PorkShareKind | null>(null)
 
   function toggle(kind: PorkShareKind) {
     setOpenKinds((prev) => {
       const next = new Set(prev)
-      if (next.has(kind)) next.delete(kind)
-      else next.add(kind)
+      if (next.has(kind)) {
+        next.delete(kind)
+      } else {
+        next.add(kind)
+        // Expanding a tier is the customer choosing a size — the form is right
+        // there, so this is the moment of intent worth tracking.
+        posthog?.capture('share_size_selected', {
+          share_kind: kind,
+          sold_out: soldOut[kind],
+          source: 'shares',
+        })
+      }
       return next
     })
   }
@@ -105,12 +114,17 @@ export default function Shares() {
                       </p>
                     )}
                   </div>
-                  <span
-                    className="shrink-0 font-display text-3xl text-copper-500"
-                    style={{ transition: 'transform 200ms', transform: open ? 'rotate(45deg)' : 'none' }}
-                    aria-hidden
-                  >
-                    +
+                  <span className="flex shrink-0 items-center gap-2 text-copper-500">
+                    {!out && (
+                      <span className="text-[0.9375rem] font-semibold">{open ? 'Close' : 'Reserve'}</span>
+                    )}
+                    <span
+                      className="font-display text-3xl"
+                      style={{ transition: 'transform 200ms', transform: open ? 'rotate(45deg)' : 'none' }}
+                      aria-hidden
+                    >
+                      +
+                    </span>
                   </span>
                 </button>
 
@@ -131,28 +145,9 @@ export default function Shares() {
                         Reserved for the season
                       </span>
                     ) : (
-                      <>
-                        <button
-                          type="button"
-                          className="btn-primary mt-5 inline-flex"
-                          aria-expanded={reservingKind === s.kind}
-                          onClick={() => {
-                            setReservingKind((cur) => (cur === s.kind ? null : s.kind))
-                            posthog?.capture('share_size_selected', {
-                              share_kind: s.kind,
-                              sold_out: false,
-                              source: 'shares',
-                            })
-                          }}
-                        >
-                          {reservingKind === s.kind ? 'Close' : s.cta}
-                        </button>
-                        {reservingKind === s.kind && (
-                          <div className="mt-6 border-t border-linen-200 pt-6">
-                            <ReservationForm kind={s.kind} />
-                          </div>
-                        )}
-                      </>
+                      <div className="mt-6 border-t border-linen-200 pt-6">
+                        <ReservationForm kind={s.kind} />
+                      </div>
                     )}
                   </div>
                 )}

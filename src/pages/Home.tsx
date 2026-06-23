@@ -207,9 +207,9 @@ function Hero() {
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a href="#shares" className="btn-primary">
+          <Link to="/shares" className="btn-primary">
             Reserve a share
-          </a>
+          </Link>
           <a href="#how" className="btn-secondary">
             How it works
           </a>
