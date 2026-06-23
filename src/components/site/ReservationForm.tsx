@@ -3,25 +3,45 @@ import { useNavigate } from 'react-router-dom'
 import { usePostHog } from '@posthog/react'
 import { insforge } from '../../lib/insforge'
 import type { Animal, ShareOption } from '../../lib/types'
+import type { InquiryPrefill } from '../storybook/ContactInquiryForm'
 
 const SHARE_PCT: Record<string, number> = { whole: 100, half: 50, quarter: 25, eighth: 12.5 }
 
+interface ReservationFormProps {
+  /** Fetch an available share of this kind (used by the /shares accordion). */
+  kind?: string
+  /** Or supply an already-resolved share + animal (used by the /reserve page,
+   *  which has already loaded them to render the header/image). When `share` is
+   *  passed the form skips its own fetch. */
+  share?: ShareOption | null
+  animal?: Animal | null
+  /** Optional prefill carried over from the contact-inquiry flow. */
+  prefill?: InquiryPrefill | null
+}
+
 /**
- * The reservation form, embeddable inline (e.g. inside the shares-page
- * accordion). Fetches an available share of the given kind, collects the
- * customer's details, creates the reservation, then continues to the
- * confirmation step. Mirrors the standalone /reserve page's submit logic.
+ * The single reservation form. Collects the customer's details, creates the
+ * reservation, then continues to the confirmation step. Used both inline on the
+ * /shares accordion (pass `kind`) and on the standalone /reserve page (pass a
+ * resolved `share` + `animal`).
  */
-export default function ReservationForm({ kind }: { kind: string }) {
+export default function ReservationForm({ kind, share: shareProp, animal: animalProp, prefill }: ReservationFormProps) {
   const navigate = useNavigate()
   const posthog = usePostHog()
-  const [share, setShare] = useState<ShareOption | null>(null)
-  const [animal, setAnimal] = useState<Animal | null>(null)
-  const [loading, setLoading] = useState(true)
+  // "Controlled" = the parent resolved the share for us; otherwise we fetch by kind.
+  const controlled = shareProp !== undefined
+  const [fetchedShare, setFetchedShare] = useState<ShareOption | null>(null)
+  const [fetchedAnimal, setFetchedAnimal] = useState<Animal | null>(null)
+  const [loading, setLoading] = useState(!controlled)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // In controlled mode use the props directly; otherwise use what we fetched.
+  const share = controlled ? shareProp ?? null : fetchedShare
+  const animal = controlled ? animalProp ?? null : fetchedAnimal
+
   useEffect(() => {
+    if (controlled || !kind) return
     let active = true
     insforge.database
       .from('share_options')
@@ -37,19 +57,19 @@ export default function ReservationForm({ kind }: { kind: string }) {
           return
         }
         const s = data as ShareOption
-        setShare(s)
+        setFetchedShare(s)
         const { data: animalData } = await insforge.database
           .from('animals')
           .select('*')
           .eq('id', s.animal_id)
           .single()
-        if (active && animalData) setAnimal(animalData as Animal)
+        if (active && animalData) setFetchedAnimal(animalData as Animal)
         setLoading(false)
       })
     return () => {
       active = false
     }
-  }, [kind])
+  }, [kind, controlled])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -57,7 +77,7 @@ export default function ReservationForm({ kind }: { kind: string }) {
     setSubmitting(true)
     setError(null)
     const fd = new FormData(e.currentTarget)
-    // Curated shares — customers don't pick cuts. pickup is always the farm.
+    // Curated shares — customers don't pick cuts. Pickup is always the farm.
     const prefs: Record<string, unknown> = { pickup_preference: 'farm' }
     const sharePct = SHARE_PCT[share.kind] ?? null
     const customer_name = String(fd.get('customer_name') ?? '').trim()
@@ -92,6 +112,11 @@ export default function ReservationForm({ kind }: { kind: string }) {
 
     if (insertError) {
       posthog?.captureException(insertError, { context: 'reservation_insert', share_kind: share.kind, share_id: share.id })
+      posthog?.capture('reservation_submit_failed', {
+        share_kind: share.kind,
+        share_id: share.id,
+        reason: insertError.message,
+      })
       setError(insertError.message ?? 'Something went sideways. Try again or email us.')
       setSubmitting(false)
       return
@@ -103,8 +128,14 @@ export default function ReservationForm({ kind }: { kind: string }) {
       share_id: share.id,
       share_percentage: sharePct,
       animal_id: share.animal_id,
+      deposit_cents: share.deposit_cents,
+      est_total_low_cents: share.est_total_low_cents,
+      est_total_high_cents: share.est_total_high_cents,
       pickup_preference: 'farm',
-      source: 'shares_inline',
+      has_phone: Boolean(customer_phone),
+      has_address: Boolean(customer_address),
+      has_notes: Boolean(reservationNotes),
+      source: controlled ? 'reserve_page' : 'shares_inline',
     })
     navigate(`/reserve/${share.id}/confirmed`, {
       state: {
@@ -141,23 +172,24 @@ export default function ReservationForm({ kind }: { kind: string }) {
       <div>
         <h3 className="font-display text-[1.3rem] text-forest-800">Your details</h3>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field label="Full name" name="customer_name" required />
-          <Field label="Email" name="customer_email" type="email" required />
-          <Field label="Phone" name="customer_phone" type="tel" required />
+          <Field label="Full name" name="customer_name" required defaultValue={prefill?.customer_name} />
+          <Field label="Email" name="customer_email" type="email" required defaultValue={prefill?.customer_email} />
+          <Field label="Phone" name="customer_phone" type="tel" required defaultValue={prefill?.customer_phone} />
           <Field label="Mailing address (optional)" name="customer_address" placeholder="123 Main St, Town, NY 12345" />
         </div>
       </div>
 
       <div>
-        <label className="label" htmlFor={`notes-${kind}`}>
+        <label className="label" htmlFor="reservation-notes">
           Notes for us (optional)
         </label>
         <textarea
-          id={`notes-${kind}`}
+          id="reservation-notes"
           name="notes"
           rows={3}
           className="input"
           placeholder="Anything we should know? Dietary needs, questions…"
+          defaultValue={prefill?.notes}
         />
       </div>
 
@@ -188,12 +220,14 @@ function Field({
   type = 'text',
   required,
   placeholder,
+  defaultValue,
 }: {
   label: string
   name: string
   type?: string
   required?: boolean
   placeholder?: string
+  defaultValue?: string
 }) {
   return (
     <div>
@@ -201,7 +235,15 @@ function Field({
         {label}
         {required && <span className="text-copper-500"> *</span>}
       </label>
-      <input id={name} name={name} type={type} required={required} placeholder={placeholder} className="input" />
+      <input
+        id={name}
+        name={name}
+        type={type}
+        required={required}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+        className="input"
+      />
     </div>
   )
 }
