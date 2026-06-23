@@ -101,6 +101,7 @@
   /* earth */
   --earth-500: #6b5a4a;
   --earth-600: #5c4e42;
+  --earth-700: #43382e;
   --earth-800: #2c241c;
   /* copper accent */
   --copper-500: #a65d3f;
@@ -108,8 +109,10 @@
   /* sage / creek */
   --sage-100: #eef2e8;
   --sage-200: #d8e2cc;
+  --sage-300: #b9c8a6;
   --sage-400: #8fa07a;
   --sage-500: #6b8058;
+  --sage-700: 68 85 58;   /* channels — deep sage for headings/labels */
   --creek-300: #8fada8;
   --creek-500: #5f857d;
 
@@ -123,6 +126,8 @@
   --mud-600: 92 78 66;
   --mud-700: 74 63 53;
   --mud-800: 44 36 28;
+  --blush-100: 244 227 220;  /* soft error wash */
+  --blush-300: 227 169 143;  /* badges / active tab */
   --blush-400: 184 122 98;
   --blush-500: 166 93 63;
 
@@ -364,6 +369,7 @@
 
   --earth-500: #9c8f80;   /* muted text */
   --earth-600: #c4bab0;   /* body text */
+  --earth-700: #d2c8bd;   /* body text (lighter) */
   --earth-800: #e7dfd5;   /* strong text */
 
   --copper-500: #cb8460;  /* accent */
@@ -371,8 +377,10 @@
 
   --sage-100: #232a1f;    /* quiet section tint */
   --sage-200: #3a4730;    /* focus ring */
+  --sage-300: #4a5a3c;    /* hover tint */
   --sage-400: #7e8f68;    /* hover border */
   --sage-500: #92a675;
+  --sage-700: 194 211 171; /* channels — light sage for headings/labels */
 
   --creek-300: #7fa39c;
   --creek-500: #9bbfb8;
@@ -389,6 +397,8 @@
   --mud-600: 196 186 176;
   --mud-700: 210 200 189;
   --mud-800: 231 223 213;
+  --blush-100: 58 37 29;     /* dark error wash — light text stays legible */
+  --blush-300: 168 98 74;    /* badges / active tab — light text stays legible */
   --blush-400: 221 157 121;
   --blush-500: 203 132 96;
 

@@ -20,6 +20,7 @@ export default {
         earth: {
           500: 'var(--earth-500)',
           600: 'var(--earth-600)',
+          700: 'var(--earth-700)',
           800: 'var(--earth-800)',
         },
         copper: {
@@ -29,8 +30,11 @@ export default {
         sage: {
           100: 'var(--sage-100)',
           200: 'var(--sage-200)',
+          300: 'var(--sage-300)',
           400: 'var(--sage-400)',
           500: 'var(--sage-500)',
+          // channel form — used with opacity modifiers (e.g. border-sage-700/25)
+          700: 'rgb(var(--sage-700) / <alpha-value>)',
         },
         creek: {
           300: 'var(--creek-300)',
@@ -54,6 +58,8 @@ export default {
           800: 'rgb(var(--mud-800) / <alpha-value>)',
         },
         blush: {
+          100: 'rgb(var(--blush-100) / <alpha-value>)',
+          300: 'rgb(var(--blush-300) / <alpha-value>)',
           400: 'rgb(var(--blush-400) / <alpha-value>)',
           500: 'rgb(var(--blush-500) / <alpha-value>)',
         },
