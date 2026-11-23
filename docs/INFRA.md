@@ -47,7 +47,7 @@ Vercel deployment, change the records in Vercel, not Squarespace.
 - Env vars on Vercel (production):
   - `VITE_INSFORGE_URL` — the InsForge API base URL (`https://umvug9f9.us-east.insforge.app`). Not secret.
   - `VITE_INSFORGE_ANON_KEY` — the InsForge anon JWT (designed for client use, not secret in the same way an admin key would be).
-  - `RESEND_API_KEY` — **encrypted/sensitive**, server-only. Scoped to "Sending access" + `creeksidefields.com` only. Used by `api/send-confirmation.ts`. **Never expose to the client.**
+  - `RESEND_API_KEY` — **encrypted/sensitive**, server-only. Scoped to "Sending access" + `creeksidefields.com` only. Used by `api/send-confirmation.ts` and `api/send-bird-order.ts`. **Never expose to the client.**
 
 ## Backend (InsForge)
 
@@ -82,6 +82,7 @@ Vercel deployment, change the records in Vercel, not Squarespace.
 - Sender: `Creekside Fields <hello@creeksidefields.com>`.
 - API key stored on Vercel as `RESEND_API_KEY`, restricted to **Sending access** on **creeksidefields.com** only. Rotate by creating a new key in Resend → `vercel env rm RESEND_API_KEY production` → `vercel env add RESEND_API_KEY production`.
 - The send code lives in `api/send-confirmation.ts`. Called from `src/pages/ReserveConfirm.tsx` once the reservation confirmation page loads.
+- Goose & duck orders go through `api/send-bird-order.ts`, called from the order form on `/geese-and-ducks` (`src/components/site/BirdOrderForm.tsx`). It emails the customer a confirmation with `brookerhousehold@gmail.com` CC'd — that email *is* the order record (bird orders aren't stored in InsForge). If the send fails, the form offers the customer a pre-filled email to the farm instead.
 - Domain verification: passes DKIM + SPF + DMARC. Don't remove any of the DNS records listed above.
 - Free tier: 3,000 emails/month, 100/day. Plenty for the volume we're operating at.
 
@@ -116,7 +117,7 @@ npx vercel@latest env add <NAME> production
 
 1. **Source of truth for DNS is Vercel, not Squarespace.** Don't bother logging into Squarespace except to renew the domain.
 2. **Two Gmail accounts in play.** `creeksidefields@gmail.com` for domain registrar + Resend; `brookerhousehold@gmail.com` for the farm operations + admin login. Don't conflate them.
-3. **The reservation confirmation email is the only automatic outbound email** right now (sent via Resend when the confirmation page loads). Deposit instructions and final invoices are sent manually from the admin dashboard's "Email …" buttons.
+3. **Two automatic outbound emails**: the pork reservation confirmation (sent via Resend when the confirmation page loads) and the goose & duck order confirmation (sent when the `/geese-and-ducks` order form is submitted). Deposit instructions and final invoices are sent manually from the admin dashboard's "Email …" buttons.
 4. **No signed bill of sale.** Pigs are processed at a USDA-inspected facility, so the meat is sold by the share post-slaughter — no pre-slaughter live-animal transfer, no signature capture. (The old signed-BoS flow + `signatures` storage bucket were retired; see `docs/MODEL.md` and migration `20260622130000`.)
 5. **Pricing.** Per-pound rate is **per share** on `share_options.rate_per_lb_hw_cents`, with kind-based defaults: **$7.50 whole / $8.00 half / $8.50 quarter** (smaller shares cost a bit more per pound to cover the extra per-customer coordination — standard pasture-pork practice). Edit in the admin UI under `Shares → Rate` column (inline; tab out to save). `animals.rate_per_lb_hw_cents` is still around as a legacy fallback used only when a share has no rate set. The `share_options` dollar ranges (`est_total_low_cents` / `est_total_high_cents`) are estimates derived from `rate × est. hanging weight × share %` and need to be updated by hand if you change the rate.
 6. **Two gilts, but customer never picks one.** The customer-facing flow only thinks in `kind` (whole / half / quarter); the system auto-assigns a specific `share_option` at reserve time. The pig identity still shows up on the reservation confirmation.

@@ -15,6 +15,12 @@ signed bill of sale or pre-slaughter live-animal transfer. The farm
 handles processing scheduling and bills the customer once at the end with
 one bundled invoice.
 
+We also sell whole **geese ($16/lb) and ducks ($14/lb)** on
+`/geese-and-ducks`. Bird orders don't touch the database: the order form
+posts to `api/send-bird-order.ts`, which emails the customer a confirmation
+with the farm CC'd, so orders land in the farm inbox. Prices live in
+`src/content/poultryCopy.ts` and are mirrored in that function.
+
 See **`docs/INFRA.md`** for accounts, env vars, DNS, and everything that
 isn't in the code.
 See **`docs/MODEL.md`** for the legal/business model summary.
@@ -26,7 +32,8 @@ See **`docs/MODEL.md`** for the legal/business model summary.
 - **Backend**: InsForge (Postgres + auth + storage). Project `umvug9f9` at
   `https://umvug9f9.us-east.insforge.app`.
 - **Email**: Resend, sending from `hello@creeksidefields.com`. Called from
-  a Vercel edge function at `api/send-confirmation.ts`.
+  Vercel edge functions at `api/send-confirmation.ts` (pork reservations)
+  and `api/send-bird-order.ts` (goose & duck orders).
 - **Domain**: `creeksidefields.com`, registered at Squarespace, DNS
   managed by Vercel (we switched nameservers to `ns1/ns2.vercel-dns.com`).
 
@@ -57,14 +64,16 @@ it can record confirmation email sends/failures against the same user.
 
 ```
 src/
-  pages/         Home, Animal, Reserve, ReserveConfirm, About, admin/{Login,Dashboard}
+  pages/         Home, Shares, GeeseAndDucks, HowItWorks, OurPigs, Animal, Reserve,
+                 ReserveConfirm, About, admin/{Login,Dashboard}
   components/    Layout, OrderSummary, Invoice, Spots
   lib/           insforge client, types, emailTemplates
 api/
   send-confirmation.ts   Vercel edge function — emails the reservation confirmation via Resend
+  send-bird-order.ts     Vercel edge function — emails a goose & duck order (customer + farm CC) via Resend
 migrations/      SQL migrations applied via `npx @insforge/cli db migrations up`
 scripts/         seed.sql for the initial pigs + processors
-public/farm-media/   Hero photos of the gilts
+public/farm-media/   Farm photos (pigs, plus geese-and-ducks.jpg)
 ```
 
 ## Common admin tasks

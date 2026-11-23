@@ -5,6 +5,7 @@ import { ThemeToggle } from './site/ThemeToggle'
 
 const SECTION_LINKS = [
   { href: '/shares', label: 'Shares' },
+  { href: '/geese-and-ducks', label: 'Geese & ducks' },
   { href: '/how-it-works', label: 'How it works' },
   { href: '/our-pigs', label: 'Our pigs' },
   { href: '/#faq', label: 'FAQ' },
@@ -59,13 +60,13 @@ function Header() {
           <Logo />
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          <div className="flex items-center gap-[26px]">
+        <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
+          <div className="flex items-center gap-5 xl:gap-[26px]">
             {SECTION_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="nav-link"
+                className="nav-link whitespace-nowrap"
                 onClick={(e) => handleSectionClick(e, link.href)}
               >
                 {link.label}
@@ -78,7 +79,7 @@ function Header() {
           <ThemeToggle />
         </nav>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
           <button
             type="button"
@@ -93,7 +94,7 @@ function Header() {
       </div>
 
       {open && (
-        <nav className="border-t border-linen-200 px-6 py-4 md:hidden">
+        <nav className="border-t border-linen-200 px-6 py-4 lg:hidden">
           <div className="flex flex-col gap-1">
             {SECTION_LINKS.map((link) => (
               <a

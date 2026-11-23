@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { WhimsyDivider } from '../components/site/Whimsy'
 import { WORK_STEPS, VALUES, FAQS } from '../content/homeCopy'
 import { SHARE_TIERS } from '../content/sharesCopy'
+import { BIRDS, BIRD_PHOTO } from '../content/poultryCopy'
 
 export default function Home() {
   return (
@@ -49,6 +50,49 @@ export default function Home() {
       </section>
 
       <WhimsyDivider />
+
+      {/* Geese & ducks */}
+      <section id="geese-and-ducks" style={CONTAINER}>
+        <div className="grid items-center gap-12 md:grid-cols-[0.85fr_1.15fr]">
+          <figure className="plate float-slow m-0 mx-auto w-full" style={{ maxWidth: 400 }}>
+            <img
+              className="plate-img"
+              src={BIRD_PHOTO.src}
+              alt={BIRD_PHOTO.alt}
+              style={{ aspectRatio: '4 / 5', objectPosition: '50% 70%', borderRadius: '10px 10px 3px 3px' }}
+            />
+            <figcaption className="plate-cap">{BIRD_PHOTO.caption}</figcaption>
+          </figure>
+
+          <div>
+            <StoryHeader
+              eyebrow="Geese & ducks"
+              title="Whole birds from our pasture."
+              lead="We raise geese and ducks on the same pastures as our pigs. Order a whole bird for your table — priced by the pound."
+            />
+            <dl className="flex flex-wrap gap-x-12 gap-y-5" style={{ marginTop: 28 }}>
+              {BIRDS.map((b) => (
+                <div key={b.kind}>
+                  <dt className="eyebrow">{b.title}</dt>
+                  <dd className="mt-2 flex items-baseline gap-2">
+                    <span className="font-display leading-none text-forest-800" style={{ fontSize: '2.4rem' }}>
+                      ${b.pricePerLb}
+                    </span>
+                    <span className="text-earth-500" style={{ fontSize: 'var(--text-lead)' }}>
+                      per pound
+                    </span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <div style={{ marginTop: 32 }}>
+              <Link to="/geese-and-ducks" className="btn-primary">
+                Order geese &amp; ducks
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* How it works */}
       <section id="how" style={tint('--sage-100', 60)}>
