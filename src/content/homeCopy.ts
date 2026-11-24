@@ -52,7 +52,7 @@ export const FAQS = [
   ],
   [
     'How much freezer space will I need?',
-    'A rough guide: a quarter fits in a freezer drawer or small chest, a half fills an upright freezer, and a whole pig share fills a chest freezer. We are happy to help you plan before you reserve.',
+    'A rough guide: a quarter fits in the freezer of most refrigerators, a half fits in a small chest freezer, and a whole pig share fits in a small chest or upright freezer. We are happy to help you plan before you reserve.',
   ],
   [
     'When will my pork be ready?',

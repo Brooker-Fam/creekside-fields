@@ -18,28 +18,28 @@ export const SHARE_TIERS: ShareTier[] = [
   {
     kind: 'quarter',
     title: 'Quarter pig share',
-    takeHome: '68–77 pounds',
-    price: '$680–$770',
+    takeHome: '41–47 pounds',
+    price: '$410–$470',
     freezer:
-      'Approximately 1–2 cubic feet of freezer space. This will fit in the freezer compartment of many refrigerators — about the space of 2–3 grocery bags.',
+      'About 1 cubic foot of freezer space. This will fit in the freezer compartment of most refrigerators — about the space of 1–2 grocery bags.',
     cta: 'Reserve a quarter pig share',
   },
   {
     kind: 'half',
     title: 'Half pig share',
-    takeHome: '137–154 pounds',
-    price: '$1,370–$1,540',
+    takeHome: '83–93 pounds',
+    price: '$830–$930',
     freezer:
-      'Approximately 3–4 cubic feet of freezer space. A small chest freezer, or a portion of a larger upright freezer, is usually enough — about the space of 4–6 grocery bags.',
+      'About 2–3 cubic feet of freezer space. A small chest freezer, or part of an upright freezer, is plenty — about the space of 3 grocery bags.',
     cta: 'Reserve a half pig share',
   },
   {
     kind: 'whole',
     title: 'Whole pig share',
-    takeHome: '273–308 pounds',
-    price: '$2,730–$3,080',
+    takeHome: '166–187 pounds',
+    price: '$1,660–$1,870',
     freezer:
-      'Approximately 6–8 cubic feet of freezer space. Most customers store a whole pig share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
+      'About 4–5 cubic feet of freezer space. A small chest freezer or a dedicated upright freezer works well — about the space of 5–7 grocery bags.',
     cta: 'Reserve a whole pig share',
     featured: true,
   },
@@ -139,20 +139,7 @@ export const SHARE_FAQS: ReadonlyArray<readonly [string, FaqAnswer]> = [
     'How much freezer space will I need?',
     {
       intro: 'As a general rule:',
-      items: [
-        {
-          label: 'Quarter pig share',
-          body: 'Approximately 1–2 cubic feet of freezer space. This will fit in the freezer compartment of many refrigerators — about the space of 2–3 grocery bags.',
-        },
-        {
-          label: 'Half pig share',
-          body: 'Approximately 3–4 cubic feet of freezer space. A small chest freezer, or a portion of a larger upright freezer, is usually enough — about the space of 4–6 grocery bags.',
-        },
-        {
-          label: 'Whole pig share',
-          body: 'Approximately 6–8 cubic feet of freezer space. Most customers store a whole pig share in a chest freezer or a dedicated upright freezer — about the space of 8–12 grocery bags.',
-        },
-      ],
+      items: SHARE_TIERS.map((t) => ({ label: t.title, body: t.freezer })),
     },
   ],
   [

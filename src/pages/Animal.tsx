@@ -105,10 +105,10 @@ function fmt(iso: string | null) {
 }
 
 const SHARE_DESC: Record<string, { title: string; blurb: string; freezer: string }> = {
-  whole:   { title: 'Whole pig share',   blurb: 'The whole animal, the fullest selection of cuts. The best value.', freezer: 'about 273–308 lb of pork · large chest freezer' },
-  half:    { title: 'Half pig share',    blurb: 'Half the animal — a generous variety of cuts.',                  freezer: 'about 137–154 lb · upright freezer' },
-  quarter: { title: 'Quarter pig share', blurb: 'A quarter pig share. Great if it\'s your first time.',           freezer: 'about 68–77 lb · regular freezer drawer' },
-  eighth:  { title: 'Eighth hog',   blurb: 'A sampler share.',                                                freezer: 'about 34–39 lb' },
+  whole:   { title: 'Whole pig share',   blurb: 'The whole animal, the fullest selection of cuts. The best value.', freezer: 'about 166–187 lb of pork · chest or upright freezer' },
+  half:    { title: 'Half pig share',    blurb: 'Half the animal — a generous variety of cuts.',                  freezer: 'about 83–93 lb · small chest freezer' },
+  quarter: { title: 'Quarter pig share', blurb: 'A quarter pig share. Great if it\'s your first time.',           freezer: 'about 41–47 lb · refrigerator freezer' },
+  eighth:  { title: 'Eighth hog',   blurb: 'A sampler share.',                                                freezer: 'about 21–23 lb' },
   dozen:   { title: 'Dozen',        blurb: '',                                                                freezer: '' },
   custom:  { title: 'Custom',       blurb: '',                                                                freezer: '' },
 }

@@ -27,9 +27,9 @@ const SHARE_KIND_TITLE: Record<string, string> = {
 // Mirror of SHARE_PRICE_RANGE in src/content/sharesCopy.ts — kept in sync here
 // because this edge function is bundled separately and can't import from src.
 const SHARE_PRICE_RANGE: Record<string, string> = {
-  quarter: '$680–$770',
-  half: '$1,370–$1,540',
-  whole: '$2,730–$3,080',
+  quarter: '$410–$470',
+  half: '$830–$930',
+  whole: '$1,660–$1,870',
 }
 
 interface ConfirmationData {
