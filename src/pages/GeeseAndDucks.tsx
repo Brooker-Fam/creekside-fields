@@ -1,18 +1,8 @@
-import { useEffect, type MouseEvent } from 'react'
+import { useEffect } from 'react'
 import { WhimsyDivider } from '../components/site/Whimsy'
-import BirdOrderForm from '../components/site/BirdOrderForm'
-import { BIRDS, BIRD_PHOTO } from '../content/poultryCopy'
-
-// Scroll to the order form ourselves — native fragment navigation doesn't fire
-// reliably with this site's scroll container (see Layout.tsx).
-function scrollToOrder(e: MouseEvent<HTMLAnchorElement>) {
-  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
-  const el = document.getElementById('order')
-  if (!el) return
-  e.preventDefault()
-  el.scrollIntoView({ behavior: 'smooth' })
-  window.history.replaceState(null, '', '#order')
-}
+import OrderForm from '../components/site/OrderForm'
+import { BIRDS, BIRD_ITEMS, BIRD_ORDER, BIRD_PHOTO } from '../content/poultryCopy'
+import { scrollToSection } from '../lib/scroll'
 
 export default function GeeseAndDucks() {
   useEffect(() => {
@@ -61,7 +51,7 @@ export default function GeeseAndDucks() {
             </div>
 
             <div style={{ marginTop: 32 }}>
-              <a href="#order" className="btn-primary" onClick={scrollToOrder}>
+              <a href="#order" className="btn-primary" onClick={scrollToSection}>
                 Order your birds
               </a>
             </div>
@@ -100,7 +90,7 @@ export default function GeeseAndDucks() {
         </header>
 
         <div className="card mx-auto" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
-          <BirdOrderForm />
+          <OrderForm items={BIRD_ITEMS} copy={BIRD_ORDER} />
         </div>
       </section>
     </div>

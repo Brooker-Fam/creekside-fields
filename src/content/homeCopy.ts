@@ -44,7 +44,7 @@ export const FAQS = [
   ],
   [
     'Can I choose my cuts?',
-    'We curate a balanced, versatile assortment for every share, so you do not have to pick individual cuts. The cuts we list are what we expect to include, but because these are real animals, the exact cuts and quantities can vary slightly from share to share.',
+    'We curate a balanced, versatile assortment for every share, so you do not have to pick individual cuts. The cuts we list are what we expect to include, but because these are real animals, the exact cuts and quantities can vary slightly from share to share. If you would rather choose for yourself, you can also buy individual cuts by the pack.',
   ],
   [
     'How is my final price set?',

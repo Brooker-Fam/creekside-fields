@@ -16,10 +16,14 @@ handles processing scheduling and bills the customer once at the end with
 one bundled invoice.
 
 We also sell whole **geese ($16/lb) and ducks ($14/lb)** on
-`/geese-and-ducks`. Bird orders don't touch the database: the order form
-posts to `api/send-bird-order.ts`, which emails the customer a confirmation
-with the farm CC'd, so orders land in the farm inbox. Prices live in
-`src/content/poultryCopy.ts` and are mirrored in that function.
+`/geese-and-ducks`, and **individual pork cuts** by the pack (no prices
+listed — weighed and priced at pickup) in the `#cuts` section of `/shares`.
+These orders don't touch the database: both order forms
+(`src/components/site/OrderForm.tsx`) post to `api/send-order.ts`, which
+emails the customer a confirmation with the farm CC'd, so orders land in the
+farm inbox. Bird prices live in `src/content/poultryCopy.ts`; the cut list
+(also used as a share's "possible cuts") is `PORK_CUTS` in
+`src/content/sharesCopy.ts`.
 
 See **`docs/INFRA.md`** for accounts, env vars, DNS, and everything that
 isn't in the code.
@@ -33,7 +37,7 @@ See **`docs/MODEL.md`** for the legal/business model summary.
   `https://umvug9f9.us-east.insforge.app`.
 - **Email**: Resend, sending from `hello@creeksidefields.com`. Called from
   Vercel edge functions at `api/send-confirmation.ts` (pork reservations)
-  and `api/send-bird-order.ts` (goose & duck orders).
+  and `api/send-order.ts` (goose & duck and individual cut orders).
 - **Domain**: `creeksidefields.com`, registered at Squarespace, DNS
   managed by Vercel (we switched nameservers to `ns1/ns2.vercel-dns.com`).
 
@@ -70,7 +74,7 @@ src/
   lib/           insforge client, types, emailTemplates
 api/
   send-confirmation.ts   Vercel edge function — emails the reservation confirmation via Resend
-  send-bird-order.ts     Vercel edge function — emails a goose & duck order (customer + farm CC) via Resend
+  send-order.ts          Vercel edge function — emails a goose & duck or pork cut order (customer + farm CC) via Resend
 migrations/      SQL migrations applied via `npx @insforge/cli db migrations up`
 scripts/         seed.sql for the initial pigs + processors
 public/farm-media/   Farm photos (pigs, plus geese-and-ducks.jpg)

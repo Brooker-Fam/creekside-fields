@@ -24,7 +24,7 @@ const SECTIONS = [
   },
   {
     title: "What's included",
-    body: 'A thoughtfully curated assortment — bacon, ham, pork chops, tenderloin, roasts, ribs, bratwurst, breakfast sausage, and ground pork. These are the cuts we expect to include, but exact cuts and quantities vary slightly from animal to animal. We choose the assortment for you.',
+    body: 'A thoughtfully curated assortment — pork chops, ribs, Boston butt roasts, bacon, smoked ham steaks and sliced ham, breakfast and sweet Italian sausage, bratwurst, and ground pork, plus ham hocks, soup bones, and fat for lard. These are the cuts we expect to include, but exact cuts and quantities vary slightly from animal to animal. We choose the assortment for you.',
   },
   {
     title: 'Pickup',

@@ -1,14 +1,13 @@
 // Geese and ducks — sold as whole birds, priced by the pound. Backs the
 // /geese-and-ducks page, its order form, and the home page teaser.
-//
-// Prices are mirrored in api/send-bird-order.ts (the order email), which is
-// bundled separately and can't import from src — change both together.
+
+import type { OrderCounts, OrderFormCopy, OrderItem } from './orders'
 
 export type BirdKind = 'goose' | 'duck'
 
 export interface Bird {
   kind: BirdKind
-  /** Card / form heading, e.g. "Geese". */
+  /** Card heading, e.g. "Geese". */
   title: string
   singular: string
   plural: string
@@ -36,9 +35,6 @@ export const BIRDS: Bird[] = [
   },
 ]
 
-/** Most of one kind a single online order can request. */
-export const MAX_BIRDS_PER_KIND = 10
-
 export const BIRD_PHOTO = {
   src: '/farm-media/geese-and-ducks.jpg',
   alt: 'A flock of geese and ducks walking across a green pasture in front of two old wooden barns under a blue sky',
@@ -46,8 +42,29 @@ export const BIRD_PHOTO = {
 } as const
 
 /** "1 goose", "2 geese and 3 ducks", … */
-export function describeBirds(counts: Record<BirdKind, number>): string {
-  return BIRDS.filter((b) => counts[b.kind] > 0)
+export function describeBirds(counts: OrderCounts): string {
+  return BIRDS.filter((b) => (counts[b.kind] ?? 0) > 0)
     .map((b) => `${counts[b.kind]} ${counts[b.kind] === 1 ? b.singular : b.plural}`)
     .join(' and ')
+}
+
+/** The birds as order-form lines. */
+export const BIRD_ITEMS: OrderItem[] = BIRDS.map((b) => ({
+  id: b.kind,
+  title: `Whole ${b.singular}`,
+  detail: `$${b.pricePerLb} per pound`,
+}))
+
+export const BIRD_ORDER: OrderFormCopy = {
+  kind: 'birds',
+  legend: 'Your birds',
+  emptyError: 'Choose at least one goose or duck.',
+  idleHint: 'Whole birds, priced by weight.',
+  describe: describeBirds,
+  selectedHint: 'priced by weight, so we’ll confirm your total before pickup.',
+  pickup: 'Birds are picked up from our farm in Greenwich, NY — we’ll reach out to arrange a time.',
+  submit: 'Reserve my birds',
+  finePrint: 'We’ll email your confirmation right away, then follow up to confirm your total and pickup.',
+  thanksTail: 'we’ll be in touch to confirm your total and arrange pickup at the farm.',
+  mailSubject: 'Goose & duck order',
 }

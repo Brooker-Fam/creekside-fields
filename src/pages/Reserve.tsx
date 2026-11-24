@@ -139,9 +139,10 @@ export default function Reserve() {
       <section className="card mt-8 bg-cream-50">
         <h2 className="font-display text-2xl">What's included</h2>
         <p className="mt-1 text-sm text-mud-700">
-          Every share is a thoughtfully curated assortment — bacon, ham, chops, tenderloin,
-          roasts, ribs, bratwurst, breakfast sausage, and ground pork. These are the cuts we
-          expect to include, but because these are real animals, the exact cuts and quantities
+          Every share is a thoughtfully curated assortment — pork chops, ribs, Boston butt
+          roasts, bacon, smoked ham steaks and sliced ham, breakfast and sweet Italian sausage,
+          bratwurst, and ground pork, plus ham hocks, soup bones, and fat for lard. These are the
+          cuts we expect to include, but because these are real animals, the exact cuts and quantities
           vary slightly from share to share. Anything you definitely do or don't want? Let us
           know in the notes below.
         </p>

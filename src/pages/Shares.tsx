@@ -4,7 +4,9 @@ import { insforge } from '../lib/insforge'
 import type { ShareOption } from '../lib/types'
 import { WhimsyDivider } from '../components/site/Whimsy'
 import ReservationForm from '../components/site/ReservationForm'
-import { SHARE_TIERS, POSSIBLE_CUTS, type PorkShareKind } from '../content/sharesCopy'
+import OrderForm from '../components/site/OrderForm'
+import { SHARE_TIERS, POSSIBLE_CUTS, PORK_CUTS, PORK_ORDER, type PorkShareKind } from '../content/sharesCopy'
+import { scrollToSection } from '../lib/scroll'
 
 type SoldOut = Record<PorkShareKind, boolean>
 
@@ -33,7 +35,7 @@ export default function Shares() {
   }
 
   useEffect(() => {
-    document.title = 'Pasture-raised pig shares · Creekside Fields'
+    document.title = 'Pasture-raised pork · Creekside Fields'
     insforge.database
       .from('share_options')
       .select('*')
@@ -54,13 +56,13 @@ export default function Shares() {
       {/* ---------- header ---------- */}
       <section style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '76px 24px 0', textAlign: 'center' }}>
         <p className="story-eyebrow" style={{ display: 'flex', justifyContent: 'center' }}>
-          Pig shares
+          Pasture-raised pork
         </p>
         <h1
-          className="fairy-sparkle mt-4 inline-block font-display leading-[1.12] text-forest-800"
+          className="fairy-sparkle mt-4 inline-block text-balance font-display leading-[1.12] text-forest-800"
           style={{ fontSize: 'clamp(2.4rem, 1.5rem + 3.4vw, 3.4rem)' }}
         >
-          Choose your pig share.
+          By the share or by the cut.
         </h1>
         <p
           className="mx-auto text-earth-600"
@@ -68,8 +70,16 @@ export default function Shares() {
         >
           A pig share is just that — you are buying a whole pig, a half or a quarter of one of our
           two pigs, raised by our family and delivered as a curated assortment of cuts at one flat
-          price.
+          price. Just want a few favorites? You can also buy individual cuts by the pack.
         </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <a href="#share-options" className="btn-primary" onClick={scrollToSection}>
+            Pig shares
+          </a>
+          <a href="#cuts" className="btn-secondary" onClick={scrollToSection}>
+            Individual cuts
+          </a>
+        </div>
       </section>
 
       <div style={{ marginTop: 40 }}>
@@ -78,7 +88,8 @@ export default function Shares() {
 
       {/* ---------- the three options ---------- */}
       <section id="share-options" style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '48px 24px 88px' }}>
-        <div className="mx-auto grid gap-4" style={{ maxWidth: '46rem' }}>
+        <StoryHeader align="center" maxWidth="40rem" eyebrow="Pig shares" title="Choose your share size." />
+        <div className="mx-auto grid gap-4" style={{ maxWidth: '46rem', marginTop: 36 }}>
           {SHARE_TIERS.map((s) => {
             const out = soldOut[s.kind]
             const open = openKinds.has(s.kind)
@@ -219,6 +230,19 @@ export default function Shares() {
         </div>
       </section>
 
+      {/* ---------- individual cuts ---------- */}
+      <section id="cuts" style={CONTAINER}>
+        <StoryHeader
+          align="center"
+          maxWidth="40rem"
+          eyebrow="Individual cuts"
+          title="Just the cuts you want."
+          lead="Not ready for a whole share? Order individual cuts of our pasture-raised pork by the pack. Everything is priced by weight, so we’ll weigh your order and give you the total at pickup."
+        />
+        <div className="card mx-auto" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
+          <OrderForm items={PORK_CUTS} copy={PORK_ORDER} />
+        </div>
+      </section>
     </div>
   )
 }

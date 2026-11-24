@@ -1,4 +1,5 @@
 import type { ShareKind } from '../lib/types'
+import type { OrderFormCopy, OrderItem } from './orders'
 
 /** The three pork-share sizes offered on the dedicated shares page. */
 export type PorkShareKind = Extract<ShareKind, 'whole' | 'half' | 'quarter'>
@@ -53,19 +54,45 @@ export const SHARE_PRICE_RANGE: Record<string, string> = Object.fromEntries(
   SHARE_TIERS.map((t) => [t.kind, t.price]),
 )
 
+/**
+ * The cuts we have, sold individually on the Pork page and listed as what a
+ * share may include. Pack sizes come from a sample quarter share's packages.
+ */
+export const PORK_CUTS: OrderItem[] = [
+  { id: 'chops', title: 'Pork chops', detail: 'About 1–2½ lb packs' },
+  { id: 'ribs', title: 'Ribs', detail: 'About 3½ lb racks' },
+  { id: 'boston-butt', title: 'Boston butt', detail: 'About 5 lb roasts' },
+  { id: 'bacon', title: 'Bacon', detail: 'About 1 lb packs' },
+  { id: 'ham-steak', title: 'Smoked ham steak', detail: 'About 2 lb packs' },
+  { id: 'sliced-ham', title: 'Smoked sliced ham', detail: 'About 1 lb packs' },
+  { id: 'breakfast-sausage', title: 'Ground breakfast sausage', detail: 'About 1 lb packs' },
+  { id: 'sweet-italian', title: 'Ground sweet Italian sausage', detail: 'About 1 lb packs' },
+  { id: 'bratwurst', title: 'Bratwurst links', detail: 'About 1–1½ lb packs' },
+  { id: 'ground-pork', title: 'Ground pork', detail: 'About 1 lb packs' },
+  { id: 'ham-hocks', title: 'Ham hocks', detail: 'For beans, soups, and greens' },
+  { id: 'soup-bones', title: 'Soup bones', detail: 'For broth and stock' },
+  { id: 'lard-fat', title: 'Pork fat for lard', detail: 'For rendering your own lard' },
+]
+
 /** A representative — not guaranteed — list of cuts a share may include. */
-export const POSSIBLE_CUTS = [
-  'Bacon',
-  'Ham',
-  'Pork chops',
-  'Tenderloin',
-  'Roasts',
-  'Ribs',
-  'Bratwurst links',
-  'Ground breakfast sausage',
-  'Ground sweet Italian sausage',
-  'Ground pork',
-] as const
+export const POSSIBLE_CUTS = PORK_CUTS.map((c) => c.title)
+
+export const PORK_ORDER: OrderFormCopy = {
+  kind: 'pork',
+  legend: 'Your cuts',
+  emptyError: 'Choose at least one cut.',
+  idleHint: 'Priced by weight — we’ll weigh your order at pickup.',
+  describe: (counts) => {
+    const n = Object.values(counts).reduce((sum, c) => sum + c, 0)
+    return `${n} ${n === 1 ? 'pack' : 'packs'}`
+  },
+  selectedHint: 'we’ll weigh your order and give you the total at pickup.',
+  pickup: 'Orders are picked up from our farm in Greenwich, NY — we’ll reach out to arrange a time.',
+  submit: 'Send my order',
+  finePrint: 'We’ll email your confirmation right away, then follow up to arrange pickup.',
+  thanksTail: 'we’ll be in touch to arrange pickup. We’ll weigh your order and give you the total then.',
+  mailSubject: 'Pork order',
+}
 
 export const SHARE_STEPS: ReadonlyArray<readonly [string, string, string]> = [
   [

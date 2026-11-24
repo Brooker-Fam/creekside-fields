@@ -47,6 +47,15 @@ export default function Home() {
             View pig shares
           </Link>
         </div>
+        <p
+          className="mx-auto text-center text-[1.0625rem] leading-[1.7] text-earth-600"
+          style={{ marginTop: 22, maxWidth: '36rem' }}
+        >
+          Just want a few favorites? We also sell individual cuts — bacon, chops, sausage, and more.{' '}
+          <a href="/shares#cuts" className="whitespace-nowrap font-semibold text-copper-500 hover:text-copper-600">
+            Order individual cuts →
+          </a>
+        </p>
       </section>
 
       <WhimsyDivider />

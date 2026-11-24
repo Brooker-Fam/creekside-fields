@@ -1,6 +1,7 @@
-// Vercel serverless function — emails a goose & duck order via Resend. The
-// customer gets a confirmation and the farm is CC'd, so every order lands in
-// the farm inbox (bird orders don't go through the reservations table).
+// Vercel serverless function — emails an order from one of the site's order
+// forms (geese & ducks, individual pork cuts) via Resend. The customer gets a
+// confirmation and the farm is CC'd, so every order lands in the farm inbox
+// (these orders don't go through the reservations table).
 // Self-contained: no imports from src/ (Vercel's bundler doesn't include it).
 
 export const config = { runtime: 'edge' }
@@ -13,25 +14,42 @@ const FARM = {
 }
 const SENDER = `${FARM.name} <hello@creeksidefields.com>`
 
-// Mirror of BIRDS / MAX_BIRDS_PER_KIND in src/content/poultryCopy.ts — kept in
-// sync here because this edge function is bundled separately and can't import
-// from src.
-const BIRDS = [
-  { key: 'geese', singular: 'goose', plural: 'geese', pricePerLb: 16 },
-  { key: 'ducks', singular: 'duck', plural: 'ducks', pricePerLb: 14 },
-] as const
-const MAX_BIRDS_PER_KIND = 10
+// Email wording per order form. The kinds and MAX_PER_ITEM mirror
+// src/content/orders.ts — kept in sync here because this edge function is
+// bundled separately and can't import from src.
+const KINDS = {
+  birds: {
+    title: 'Goose & duck order',
+    next: "we'll be in touch to confirm your order, your total, and a pickup time.",
+    price: "Each bird is priced by the pound, so we'll confirm your total once your birds are weighed.",
+  },
+  pork: {
+    title: 'Pork order',
+    next: "we'll be in touch to confirm your order and a pickup time.",
+    price: "Each pack is priced by weight — we'll weigh your order and give you the total at pickup.",
+  },
+} as const
+type Kind = keyof typeof KINDS
+const MAX_PER_ITEM = 10
+const MAX_LINES = 30
 
-const LIMITS = { name: 120, email: 254, phone: 40, notes: 2000 }
+const LIMITS = { name: 120, email: 254, phone: 40, notes: 2000, title: 80, detail: 80 }
 
-interface BirdOrder {
+interface OrderLine {
+  id: string
+  title: string
+  detail: string
+  quantity: number
+}
+
+interface Order {
+  kind: Kind
   customer: { name: string; email: string; phone: string }
-  geese: number
-  ducks: number
+  items: OrderLine[]
   notes: string | null
 }
 
-type Parsed = { order: BirdOrder } | { error: string }
+type Parsed = { order: Order } | { error: string }
 
 function text(v: unknown, singleLine = true): string {
   if (typeof v !== 'string') return ''
@@ -39,8 +57,17 @@ function text(v: unknown, singleLine = true): string {
   return singleLine ? t.replace(/[\r\n\t]+/g, ' ') : t
 }
 
-function count(v: unknown): number | null {
-  return typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= MAX_BIRDS_PER_KIND ? v : null
+function parseLine(raw: unknown): OrderLine | null {
+  const l = (raw ?? {}) as Record<string, unknown>
+  const id = text(l.id)
+  const title = text(l.title)
+  const detail = text(l.detail)
+  const q = l.quantity
+  if (!/^[a-z0-9-]{1,40}$/.test(id) || !title || title.length > LIMITS.title || detail.length > LIMITS.detail) {
+    return null
+  }
+  if (typeof q !== 'number' || !Number.isInteger(q) || q < 1 || q > MAX_PER_ITEM) return null
+  return { id, title, detail, quantity: q }
 }
 
 function parseOrder(raw: unknown): Parsed {
@@ -50,9 +77,8 @@ function parseOrder(raw: unknown): Parsed {
   const email = text(c.email)
   const phone = text(c.phone)
   const notes = text(o.notes, false)
-  const geese = count(o.geese)
-  const ducks = count(o.ducks)
 
+  if (typeof o.kind !== 'string' || !Object.hasOwn(KINDS, o.kind)) return { error: 'Unknown order type.' }
   if (!name || !email || !phone) return { error: 'Name, email, and phone are required.' }
   if (
     name.length > LIMITS.name ||
@@ -63,12 +89,19 @@ function parseOrder(raw: unknown): Parsed {
     return { error: 'One of the fields is too long.' }
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: 'That email address doesn’t look right.' }
-  if (geese === null || ducks === null) {
-    return { error: `Choose between 0 and ${MAX_BIRDS_PER_KIND} of each bird.` }
-  }
-  if (geese + ducks === 0) return { error: 'Choose at least one goose or duck.' }
+  if (!Array.isArray(o.items) || o.items.length === 0) return { error: 'Choose at least one item.' }
+  if (o.items.length > MAX_LINES) return { error: 'That order has too many lines.' }
+  const items = o.items.map(parseLine)
+  if (items.some((l) => l === null)) return { error: `Choose between 1 and ${MAX_PER_ITEM} of each item.` }
 
-  return { order: { customer: { name, email, phone }, geese, ducks, notes: notes || null } }
+  return {
+    order: {
+      kind: o.kind as Kind,
+      customer: { name, email, phone },
+      items: items as OrderLine[],
+      notes: notes || null,
+    },
+  }
 }
 
 function escape(s: string | null | undefined): string {
@@ -108,22 +141,25 @@ function shell(inner: string): string {
 </body></html>`
 }
 
-function renderOrderEmail(order: BirdOrder, ref: string, dateIso: string): string {
+function renderOrderEmail(order: Order, ref: string, dateIso: string): string {
   const { customer, notes } = order
-  const items = BIRDS.filter((b) => order[b.key] > 0)
-    .map((b) => {
-      const n = order[b.key]
-      return `<li><strong>${n} whole ${n === 1 ? b.singular : b.plural}</strong> — $${b.pricePerLb} per pound</li>`
-    })
+  const wording = KINDS[order.kind]
+  const items = order.items
+    .map(
+      (l) =>
+        `<li style="margin:0 0 6px 0;"><strong>${l.quantity} × ${escape(l.title)}</strong>${
+          l.detail ? `<br><span style="font-size:12px;color:#6f655c;">${escape(l.detail)}</span>` : ''
+        }</li>`,
+    )
     .join('')
 
   const inner = `
     <tr><td style="border-bottom:2px solid #2a2522;padding-bottom:12px;">
-      <h1 style="margin:0;font-size:24px;font-family:Georgia,serif;">Goose &amp; duck order</h1>
+      <h1 style="margin:0;font-size:24px;font-family:Georgia,serif;">${escape(wording.title)}</h1>
       <p style="margin:6px 0 0 0;font-size:12px;color:#6f655c;">Ordered: ${escape(fmtDate(dateIso))}</p>
     </td></tr>
     <tr><td style="padding-top:18px;">
-      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${escape(customer.name.split(' ')[0])}, thanks for ordering from ${escape(FARM.name)}. Here's what you asked for — we'll be in touch to confirm your order, your total, and a pickup time.</p>
+      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${escape(customer.name.split(' ')[0])}, thanks for ordering from ${escape(FARM.name)}. Here's what you asked for — ${escape(wording.next)}</p>
       ${block('Farm', `<strong>${escape(FARM.name)}</strong><br>${escape(FARM.address)}<br>${escape(FARM.contact)}`)}
       ${block(
         'Ordered by',
@@ -133,7 +169,7 @@ function renderOrderEmail(order: BirdOrder, ref: string, dateIso: string): strin
       ${block(
         'Price',
         `<strong>Priced by weight</strong><br>
-         <span style="font-size:12px;color:#6f655c;">Each bird is priced by the pound, so we'll confirm your total once your birds are weighed.</span>`,
+         <span style="font-size:12px;color:#6f655c;">${escape(wording.price)}</span>`,
       )}
       ${block(
         'Pickup',
@@ -164,7 +200,7 @@ async function capturePostHog(
         api_key: phKey,
         event,
         distinct_id: distinctId,
-        properties: { $lib: 'server', source: 'send-bird-order', ...properties },
+        properties: { $lib: 'server', source: 'send-order', ...properties },
         timestamp: new Date().toISOString(),
       }),
     })
@@ -210,7 +246,7 @@ export default async function handler(req: Request): Promise<Response> {
   const sessionId = req.headers.get('x-posthog-session-id') ?? ''
   const ref = crypto.randomUUID().slice(0, 8)
   const html = renderOrderEmail(order, ref, new Date().toISOString())
-  const subject = `Goose & duck order — ${FARM.name} — ${order.customer.name}`
+  const subject = `${KINDS[order.kind].title} — ${FARM.name} — ${order.customer.name}`
 
   const resp = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -231,20 +267,21 @@ export default async function handler(req: Request): Promise<Response> {
   const respBody = (await resp.json().catch(() => ({}))) as Record<string, unknown>
   const phProps: Record<string, unknown> = {
     order_ref: ref,
-    geese: order.geese,
-    ducks: order.ducks,
+    kind: order.kind,
+    items: order.items.map(({ id, quantity }) => ({ id, quantity })),
+    total_quantity: order.items.reduce((sum, l) => sum + l.quantity, 0),
     customer_email: order.customer.email,
     $session_id: sessionId || undefined,
   }
   if (!resp.ok) {
-    await capturePostHog('bird_order_email_send_failed', distinctId, {
+    await capturePostHog('order_email_send_failed', distinctId, {
       ...phProps,
       status: resp.status,
       detail: respBody,
     })
     return json({ error: 'Resend failed', detail: respBody }, 502)
   }
-  await capturePostHog('bird_order_email_send_succeeded', distinctId, {
+  await capturePostHog('order_email_send_succeeded', distinctId, {
     ...phProps,
     resend_id: respBody.id,
   })
