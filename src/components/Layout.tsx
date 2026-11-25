@@ -1,6 +1,6 @@
 import { useEffect, useState, type MouseEvent } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { SparkleField, WhimsyDivider } from './site/Whimsy'
+import { FireflyField, FooterFireflies, WhimsyDivider } from './site/Whimsy'
 import { ThemeToggle } from './site/ThemeToggle'
 
 const SECTION_LINKS = [
@@ -8,7 +8,7 @@ const SECTION_LINKS = [
   { href: '/geese-and-ducks', label: 'Geese & ducks' },
   { href: '/#how', label: 'How it works' },
   { href: '/our-pigs', label: 'Our pigs' },
-  { href: '/#faq', label: 'FAQ' },
+  { href: '/#faq', label: 'Questions' },
 ] as const
 
 // On the home page, scroll straight to the section (native fragment navigation
@@ -28,18 +28,24 @@ function handleSectionClick(e: MouseEvent<HTMLAnchorElement>, href: string) {
   window.history.replaceState(null, '', `/#${id}`)
 }
 
-function Logo({ size = 22 }: { size?: number }) {
+function Logo({ size = 22, dusk = false }: { size?: number; dusk?: boolean }) {
   return (
     <span className="flex flex-col" style={{ lineHeight: 1.04 }}>
       <span
-        className="font-display leading-none text-forest-800"
-        style={{ fontSize: size, whiteSpace: 'nowrap' }}
+        className={`font-display leading-none ${dusk ? '' : 'text-forest-800'}`}
+        style={{ fontSize: size, whiteSpace: 'nowrap', ...(dusk ? { color: '#f1ebde' } : null) }}
       >
         Creekside Fields
       </span>
       <span
-        className="font-accent italic text-copper-500"
-        style={{ fontSize: Math.round(size * 0.5), lineHeight: 1.15, marginTop: 2, whiteSpace: 'nowrap' }}
+        className={`font-accent italic ${dusk ? '' : 'text-copper-500'}`}
+        style={{
+          fontSize: Math.round(size * 0.55),
+          lineHeight: 1.15,
+          marginTop: 2,
+          whiteSpace: 'nowrap',
+          ...(dusk ? { color: '#e8b892' } : null),
+        }}
       >
         Pasture raised, family loved
       </span>
@@ -73,7 +79,7 @@ function Header() {
               </a>
             ))}
           </div>
-          <a href="/contact" className="btn-primary px-4 py-2 text-xs">
+          <a href="/contact" className="btn-pill">
             Contact us
           </a>
           <ThemeToggle />
@@ -111,7 +117,7 @@ function Header() {
             ))}
             <a
               href="/contact"
-              className="btn-primary mt-2 px-4 py-2 text-xs"
+              className="btn-pill mt-2 self-start"
               onClick={() => setOpen(false)}
             >
               Contact us
@@ -125,56 +131,48 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="cf-footer border-t border-linen-200">
-      <div className="pb-2 pt-10">
+    <>
+      <div className="pb-8 pt-14">
         <WhimsyDivider />
       </div>
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 pb-14 pt-8 sm:grid-cols-3">
-        <div>
-          <Logo />
-          <p className="mt-4 text-sm leading-relaxed text-earth-600">
-            49 Clarks Mills Rd
-            <br />
-            Greenwich, NY 12834
-          </p>
+      <footer className="cf-footer">
+        <FooterFireflies />
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 pb-16 pt-12 sm:grid-cols-3">
+          <div>
+            <Logo dusk />
+            <p className="footer-muted mt-4 text-[0.95rem] leading-relaxed">
+              49 Clarks Mills Rd
+              <br />
+              Greenwich, NY 12834
+            </p>
+          </div>
+          <div>
+            <h2 className="footer-label">Explore</h2>
+            <ul className="mt-4 space-y-2 text-base">
+              {SECTION_LINKS.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} onClick={(e) => handleSectionClick(e, link.href)}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 className="footer-label">Contact</h2>
+            <p className="mt-4 text-base">
+              <a href="/contact">Send us a note</a>
+            </p>
+            <p className="mt-2 text-base">
+              <a href="mailto:brookerhousehold@gmail.com">brookerhousehold@gmail.com</a>
+            </p>
+            <p className="footer-muted mt-5 font-accent text-base italic leading-relaxed">
+              Heritage pork, raised on pasture in Greenwich, NY. No antibiotics.
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="label">Explore</h2>
-          <ul className="mt-4 space-y-2 text-base">
-            {SECTION_LINKS.map((link) => (
-              <li key={link.href}>
-                <a
-                  className="text-earth-600 hover:text-copper-500"
-                  href={link.href}
-                  onClick={(e) => handleSectionClick(e, link.href)}
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h2 className="label">Contact</h2>
-          <p className="mt-4 text-base">
-            <a className="text-earth-600 hover:text-copper-500" href="/contact">
-              Send us a message
-            </a>
-          </p>
-          <p className="mt-2 text-base">
-            <a
-              className="text-earth-600 hover:text-copper-500"
-              href="mailto:brookerhousehold@gmail.com"
-            >
-              brookerhousehold@gmail.com
-            </a>
-          </p>
-          <p className="mt-4 font-accent text-base italic leading-relaxed text-earth-500">
-            Heritage pasture-raised pork. No hormones, no antibiotics.
-          </p>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   )
 }
 
@@ -210,7 +208,7 @@ export default function Layout() {
 
   return (
     <div className="book flex min-h-screen flex-col">
-      <SparkleField />
+      <FireflyField />
       <Header />
       <main className="flex-1">
         <Outlet />

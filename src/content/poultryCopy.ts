@@ -1,13 +1,13 @@
 // Geese and ducks — sold as whole birds, priced by the pound. Backs the
-// /geese-and-ducks page, its order form, and the home page teaser.
+// /geese-and-ducks page and its order form, and the home page price list.
 
-import type { OrderCounts, OrderFormCopy, OrderItem } from './orders'
+import type { OrderCounts, OrderFormCopy, OrderGroup } from './orders'
 
 export type BirdKind = 'goose' | 'duck'
 
 export interface Bird {
   kind: BirdKind
-  /** Card heading, e.g. "Geese". */
+  /** Price-list heading, e.g. "Geese". */
   title: string
   singular: string
   plural: string
@@ -23,7 +23,7 @@ export const BIRDS: Bird[] = [
     singular: 'goose',
     plural: 'geese',
     pricePerLb: 16,
-    blurb: 'Rich, deeply flavored meat — the classic roast for a holiday table.',
+    blurb: 'A big, rich bird and the classic holiday roast.',
   },
   {
     kind: 'duck',
@@ -31,7 +31,7 @@ export const BIRDS: Bird[] = [
     singular: 'duck',
     plural: 'ducks',
     pricePerLb: 14,
-    blurb: 'Tender, flavorful meat under skin that roasts up golden and crisp.',
+    blurb: 'Smaller than a goose, with skin that roasts up golden and crisp.',
   },
 ]
 
@@ -40,7 +40,7 @@ export const BIRD_PHOTO = {
   /** 600 px wide copy for phones. */
   small: '/farm-media/geese-and-ducks-600.jpg',
   alt: 'A flock of geese and ducks walking across a green pasture in front of two old wooden barns under a blue sky',
-  caption: 'Our geese and ducks out on pasture by the barns',
+  caption: 'The flock, heading somewhere important',
 } as const
 
 /** "1 goose", "2 geese and 3 ducks", … */
@@ -50,19 +50,23 @@ export function describeBirds(counts: OrderCounts): string {
     .join(' and ')
 }
 
-/** The birds as order-form lines. */
-export const BIRD_ITEMS: OrderItem[] = BIRDS.map((b) => ({
-  id: b.kind,
-  title: `Whole ${b.singular}`,
-  pricePerLb: b.pricePerLb,
-  detail: '',
-}))
+/** The birds as one order-form group. */
+export const BIRD_GROUPS: OrderGroup[] = [
+  {
+    id: 'birds',
+    items: BIRDS.map((b) => ({
+      id: b.kind,
+      title: `Whole ${b.singular}`,
+      pricePerLb: b.pricePerLb,
+      detail: 'Priced by weight',
+    })),
+  },
+]
 
 export const BIRD_ORDER: OrderFormCopy = {
   kind: 'birds',
-  legend: 'Your birds',
-  emptyError: 'Choose at least one goose or duck.',
-  idleHint: 'Whole birds, priced by weight.',
+  emptyError: 'Pick at least one goose or duck first.',
+  idleHint: 'Use the + buttons to add birds.',
   describe: describeBirds,
   mailSubject: 'Goose & duck order',
 }

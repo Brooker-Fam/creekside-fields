@@ -15,17 +15,17 @@ export default function Contact() {
           Contact
         </p>
         <h1
-          className="fairy-sparkle mt-4 inline-block font-display leading-[1.12] text-forest-800"
+          className="mt-4 inline-block font-display leading-[1.12] text-forest-800"
           style={{ fontSize: 'clamp(2.4rem, 1.5rem + 3.4vw, 3.4rem)' }}
         >
-          Get in touch.
+          Say hello
         </h1>
         <p
           className="mx-auto text-earth-600"
           style={{ marginTop: 18, maxWidth: '36rem', fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
         >
-          Questions about pig shares, cuts, or geese and ducks? Send us a note — we read every message
-          ourselves and will get back to you soon.
+          Not sure which share fits your freezer, or when you can pick up? Send us a note and we’ll
+          write back soon.
         </p>
       </header>
 
@@ -47,7 +47,7 @@ export default function Contact() {
             <br />
             Greenwich, NY 12834
           </p>
-          <p className="mt-1 text-[0.9375rem] text-earth-500">Pickup by arrangement — we’ll set a time with you.</p>
+          <p className="mt-1 text-[0.95rem] text-earth-500">Pickup only, at a time we set together.</p>
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { usePostHog } from '@posthog/react'
-import Field from './Field'
+import Field, { EmailField } from './Field'
+import { Sprig } from './Whimsy'
 
 const FARM_EMAIL = 'brookerhousehold@gmail.com'
 
@@ -68,17 +69,17 @@ export default function ContactForm() {
   if (sent) {
     return (
       <div className="text-center" role="status">
-        <img src="/brand/ornament-sprig.svg" alt="" aria-hidden className="mx-auto" style={{ width: 30 }} />
+        <Sprig className="mx-auto" />
         <h2
           ref={thanksRef}
           tabIndex={-1}
           className="mt-4 font-display text-[1.7rem] text-forest-800 focus:outline-none"
         >
-          Thank you, {sent.firstName}.
+          Thanks, {sent.firstName}!
         </h2>
         <p className="mx-auto mt-3 text-[1.0625rem] leading-[1.7] text-earth-600" style={{ maxWidth: '32rem' }}>
-          Your message is on its way to us
-          {sent.emailed ? `, and we’ve emailed a copy to ${sent.email}.` : '.'} We’ll get back to you
+          Your note is on its way to us
+          {sent.emailed ? `, and we’ve emailed you a copy at ${sent.email}.` : '.'} We’ll write back
           soon.
         </p>
       </div>
@@ -89,7 +90,7 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field id="contact-name" label="Name" name="customer_name" autoComplete="name" maxLength={120} className="sm:col-span-2" />
-        <Field id="contact-email" label="Email" name="customer_email" type="email" autoComplete="email" maxLength={254} />
+        <EmailField id="contact-email" name="customer_email" />
         <Field
           id="contact-phone"
           label="Phone"
@@ -111,7 +112,7 @@ export default function ContactForm() {
           required
           maxLength={2000}
           className="input"
-          placeholder="Questions about shares, cuts, geese and ducks, or pickup — ask us anything."
+          placeholder="Hi! I was wondering…"
         />
       </div>
 
@@ -123,7 +124,7 @@ export default function ContactForm() {
               <a className="font-semibold text-copper-500 underline hover:text-copper-600" href={fallbackHref}>
                 Email it to us instead
               </a>{' '}
-              — we’ve filled it in for you.
+              (it’s filled in for you), or write to {FARM_EMAIL}.
             </p>
           )}
         </div>

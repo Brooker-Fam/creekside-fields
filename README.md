@@ -11,8 +11,9 @@ Live at **https://creeksidefields.com**.
 Customers order through simple forms — nothing is paid online:
 
 - **Pig shares** (quarter / half / whole) at $10/lb of take-home pork,
-  shown as estimated ranges from a real sample quarter.
-- **Individual cuts**, priced per pound (`#cuts` on `/shares`).
+  shown as estimated ranges from a real sample quarter, and **individual
+  cuts** priced per pound — both in one order form on `/shares`
+  (`#share-options`, `#cuts`), so a share and extra packs go in one order.
 - **Whole geese ($16/lb) and ducks ($14/lb)** on `/geese-and-ducks`.
 - A **contact form** on `/contact`.
 

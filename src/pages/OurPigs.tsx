@@ -1,50 +1,32 @@
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { WhimsyDivider } from '../components/site/Whimsy'
+import QuestionsLine from '../components/site/QuestionsLine'
 import { SEASONS } from '../content/homeCopy'
 
-const CONTAINER: CSSProperties = {
-  maxWidth: 'var(--container)',
-  margin: '0 auto',
-  padding: '64px 24px 88px',
-}
-
-interface PlatePhoto {
-  src: string
-  /** Width of `src` in pixels; a 750 px copy sits next to it as `-750.jpg`. */
+interface Photo {
+  /** File name in /public/farm-media/pigs/, without ".jpg"; a "-750" copy sits beside it. */
+  name: string
+  /** Width of the full-size file in pixels. */
   width: number
   alt: string
-  /** Shown if `src` is missing; the plate hides entirely if this fails too. */
-  fallback?: string
+  caption: string
+  aspect: string
 }
 
-// Photos live in /public/farm-media/pigs/.
-const PHOTOS: PlatePhoto[] = [
+const GALLERY: Photo[] = [
   {
-    src: '/farm-media/pigs/01-arrival-barn.jpg',
-    width: 1500,
-    alt: 'Two spotted Gloucestershire Old Spot piglets curled up together in the barn straw',
-  },
-  {
-    src: '/farm-media/pigs/02-guardian.jpg',
+    name: '02-guardian',
     width: 1125,
-    alt: 'The young piglets in the barn with one of the farm dogs nearby',
+    alt: 'Two young spotted pigs in the barn straw with a black dog watching them',
+    caption: 'Getting to know one of our dogs',
+    aspect: '3 / 4',
   },
   {
-    src: '/farm-media/pigs/03-feeding.jpg',
+    name: '04-gentle-hands',
     width: 2000,
-    alt: 'Farmer crouching to feed the young pigs by hand in the straw',
-  },
-  {
-    src: '/farm-media/pigs/04-gentle-hands.jpg',
-    width: 2000,
-    alt: 'A piglet greeting a gentle hand at the edge of the pen',
-  },
-  {
-    src: '/farm-media/pigs/05-pasture.jpg',
-    width: 2000,
-    alt: 'Three pigs at a feeder out on pasture with a guardian dog watching in the background',
-    fallback: '/farm-media/pig-grazing.jpg',
+    alt: 'A man crouched in the barn straw, scratching a young spotted pig on the back',
+    caption: 'Saying hello',
+    aspect: '4 / 3',
   },
 ]
 
@@ -55,141 +37,104 @@ export default function OurPigs() {
 
   return (
     <div>
-      {/* ---------- our pigs: the breed ---------- */}
-      <section style={{ ...CONTAINER, padding: '64px 24px 8px' }}>
-        <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+      {/* ---------- how they came home ---------- */}
+      <section style={{ maxWidth: '68rem', margin: '0 auto', padding: '56px 24px 40px' }}>
+        <div className="grid items-center gap-12 md:grid-cols-[1.15fr_0.85fr]">
           <div>
-            <p className="story-eyebrow solo">Our pigs · Greenwich, New York</p>
+            <p className="story-eyebrow solo">Our pigs</p>
             <h1
-              className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
-              style={{ fontSize: 'clamp(2.2rem, 1.4rem + 2.6vw, 3rem)' }}
+              className="mt-4 text-balance font-display text-forest-800"
+              style={{ fontSize: 'clamp(2.5rem, 1.6rem + 3.4vw, 3.8rem)', lineHeight: 1.06 }}
             >
-              The orchard pig of England.
+              They came home in cat carriers
             </h1>
-            <p
-              className="text-earth-600"
-              style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
-            >
-              At Creekside Fields, our Gloucestershire Old Spot pigs are raised slowly and
-              thoughtfully over the course of more than a year.
-            </p>
-            <p
-              className="text-[1.0625rem] leading-[1.72] text-earth-600"
-              style={{ marginTop: 16, maxWidth: '42rem' }}
-            >
-              As a heritage breed, Old Spots are known for their gentle temperament, excellent
-              foraging instincts, and richly flavored pork. Often called the orchard pig of England,
-              they thrive when given the room to root, graze, and explore — fresh air, sunshine, and
-              a slower, natural pace of growth.
-            </p>
+            <div className="mt-6 space-y-4 text-[1.125rem] leading-[1.75] text-earth-700">
+              <p>
+                In March 2025 we brought three little Gloucestershire Old Spots home in the back of our
+                Subaru. They spent their first month in the warm barn, then moved out to pasture with our
+                chickens, ducks and geese, watched over by our livestock guardian dogs, Bristol and Blanca.
+              </p>
+              <p>
+                We raise our pigs slowly, for more than a year, mostly out on pasture. Old Spots are a gentle
+                heritage breed, nicknamed the orchard pig of England. They do best with plenty of room to
+                root and no hurry to grow.
+              </p>
+            </div>
           </div>
-          <figure className="plate float-slow m-0">
+
+          <figure className="plate plate--tilt-right m-0 mx-auto w-full" style={{ maxWidth: 360 }}>
             <img
               className="plate-img"
-              src="/farm-media/pig-grazing.jpg"
-              srcSet="/farm-media/pig-grazing-800.jpg 800w, /farm-media/pig-grazing.jpg 1600w"
-              sizes="(max-width: 1024px) calc(100vw - 70px), 500px"
-              alt="Old Spot pig foraging at pasture"
-              style={{ aspectRatio: '4 / 3', borderRadius: '10px 10px 3px 3px' }}
+              src="/farm-media/pigs/01-arrival-barn.jpg"
+              srcSet="/farm-media/pigs/01-arrival-barn-750.jpg 750w, /farm-media/pigs/01-arrival-barn.jpg 1500w"
+              sizes="(max-width: 768px) calc(100vw - 74px), 334px"
+              alt="Two spotted Old Spot piglets curled up together in the barn straw"
+              style={{ aspectRatio: '3 / 4' }}
             />
+            <figcaption className="plate-cap">Home at last, in the barn straw</figcaption>
           </figure>
         </div>
+      </section>
 
-        <div className="grid gap-[22px] sm:grid-cols-2" style={{ marginTop: 48 }}>
-          {SEASONS.map(([title, body]) => (
-            <div key={title} className="card" style={{ background: 'var(--surface)' }}>
-              <p className="story-eyebrow solo" style={{ fontSize: 'var(--text-sm)' }}>
-                {title}
-              </p>
-              <p className="mt-3 text-[0.9375rem] leading-[1.7] text-earth-600">{body}</p>
-            </div>
-          ))}
+      {/* ---------- what they eat ---------- */}
+      <section style={{ maxWidth: '68rem', margin: '0 auto', padding: '40px 24px' }}>
+        <div className="grid items-center gap-12 md:grid-cols-[0.9fr_1.1fr]">
+          <figure className="plate plate--tilt m-0 mx-auto w-full md:order-none" style={{ maxWidth: 460 }}>
+            <img
+              className="plate-img"
+              src="/farm-media/pig-feast.jpg"
+              loading="lazy"
+              alt="A spotted pig sprawled across a blue tub of leftover pasta, happily eating"
+              style={{ aspectRatio: '4 / 3' }}
+            />
+            <figcaption className="plate-cap">Cafeteria leftovers, much appreciated</figcaption>
+          </figure>
+
+          <div className="space-y-8">
+            {SEASONS.map(([title, body]) => (
+              <div key={title}>
+                <h2 className="font-display text-[1.6rem] text-forest-800">{title}</h2>
+                <p className="mt-2 text-[1.125rem] leading-[1.75] text-earth-700">{body}</p>
+              </div>
+            ))}
+          </div>
         </div>
-
-        <blockquote className="text-center" style={{ margin: '52px auto 0', maxWidth: '44rem' }}>
-          <p
-            className="font-accent italic leading-[1.5] text-forest-800"
-            style={{ fontSize: 'clamp(1.4rem, 1rem + 1.4vw, 1.9rem)' }}
-          >
-            The active life of a pasture-raised pig builds strong muscle and beautiful marbling,
-            while a diverse diet and slow, heritage growth make pork that is tender, succulent, and
-            deeply flavorful.
-          </p>
-          <p className="story-eyebrow solo mt-[22px] justify-center">
-            Exceptional pork starts with exceptional care
-          </p>
-        </blockquote>
       </section>
 
-      <WhimsyDivider />
-
-      {/* ---------- how it started ---------- */}
-      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '64px 24px 8px', textAlign: 'center' }}>
-        <h2
-          className="fairy-sparkle inline-block font-display leading-[1.14] text-forest-800"
-          style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
-        >
-          How it started
-        </h2>
-        <p
-          className="text-earth-600"
-          style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
-        >
-          The story of our three little pigs began in March 2025, when we brought them home in cat
-          carriers in the back of our Subaru.
-        </p>
-        <p
-          className="mx-auto text-earth-600"
-          style={{ marginTop: 16, maxWidth: '40rem', fontSize: 'var(--text-base)', lineHeight: 1.72 }}
-        >
-          For their first month they stayed in the safety and warmth of the barn, until they were
-          big enough to move out onto pasture — in the good company of our chickens, ducks, and
-          geese, watched over by our livestock guardian dogs, Bristol and Blanca.
-        </p>
-      </section>
-
-      {/* ---------- photos ---------- */}
-      <section style={CONTAINER}>
-        <div className="mx-auto [column-gap:2rem] [columns:1] sm:[columns:2]" style={{ maxWidth: '60rem' }}>
-          {PHOTOS.map((photo) => (
-            <StoryPlate key={photo.src} photo={photo} />
+      {/* ---------- a few more ---------- */}
+      <section style={{ maxWidth: '60rem', margin: '0 auto', padding: '48px 24px 24px' }}>
+        <div className="grid items-start gap-10 sm:grid-cols-2">
+          {GALLERY.map((p, i) => (
+            <figure key={p.name} className={`plate m-0 ${i % 2 ? 'plate--tilt-right sm:mt-16' : 'plate--tilt'}`}>
+              <img
+                className="plate-img"
+                src={`/farm-media/pigs/${p.name}.jpg`}
+                srcSet={`/farm-media/pigs/${p.name}-750.jpg 750w, /farm-media/pigs/${p.name}.jpg ${p.width}w`}
+                sizes="(max-width: 640px) calc(100vw - 74px), 440px"
+                loading="lazy"
+                alt={p.alt}
+                style={{ aspectRatio: p.aspect }}
+              />
+              <figcaption className="plate-cap">{p.caption}</figcaption>
+            </figure>
           ))}
         </div>
       </section>
 
-      {/* ---------- closing cta ---------- */}
-      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '8px 24px 96px', textAlign: 'center' }}>
-        <div className="flex flex-wrap justify-center gap-3">
+      {/* ---------- closing ---------- */}
+      <section style={{ maxWidth: '44rem', margin: '0 auto', padding: '40px 24px 72px', textAlign: 'center' }}>
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
           <Link to="/shares" className="btn-primary">
-            See our pig shares
+            See the pork
           </Link>
-          <Link to="/" className="btn-secondary">
-            Back to the farm
+          <Link to="/geese-and-ducks" className="btn-secondary">
+            Geese &amp; ducks
           </Link>
+        </div>
+        <div style={{ marginTop: 40 }}>
+          <QuestionsLine />
         </div>
       </section>
     </div>
-  )
-}
-
-/** A framed photo plate at the image's natural shape; falls back, then hides, if its file is missing. */
-function StoryPlate({ photo }: { photo: PlatePhoto }) {
-  const [stage, setStage] = useState<'primary' | 'fallback' | 'gone'>('primary')
-  if (stage === 'gone') return null
-  const primary = stage === 'primary'
-  const src = primary ? photo.src : (photo.fallback ?? photo.src)
-  return (
-    <figure className="plate m-0 mb-8 break-inside-avoid">
-      <img
-        className="plate-img"
-        src={src}
-        srcSet={primary ? `${photo.src.replace(/\.jpg$/, '-750.jpg')} 750w, ${photo.src} ${photo.width}w` : undefined}
-        sizes="(max-width: 640px) calc(100vw - 70px), 470px"
-        loading="lazy"
-        alt={photo.alt}
-        style={{ height: 'auto' }}
-        onError={() => setStage((s) => (s === 'primary' && photo.fallback ? 'fallback' : 'gone'))}
-      />
-    </figure>
   )
 }

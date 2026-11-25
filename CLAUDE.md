@@ -20,12 +20,26 @@ The brand/design system lives in the "Creekside Fields Design System" skill
   Spectral (body, UI, italic accents). Sentence case everywhere; no emoji.
 - **Color:** linen creams (surfaces), forest greens (headings/primary), warm
   browns (body), a single copper accent, sage tints. No pure black.
-- **Storybook treatment:** framed photo "plates" with italic captions,
-  botanical sprig + leaf/acorn ornament dividers, an ambient
-  firefly/sparkle field, paper-grain background, gentle radii, two warm-brown
-  shadows. Tokens live as CSS variables in `src/index.css`; the storybook
-  layer (`.plate`, `.story-eyebrow`, `.numeral`, `.whimsy-*`, `.book`) is there
-  too. Whimsy components are in `src/components/site/Whimsy.tsx`.
+- **Storybook treatment:** real farm photos in matted "plates" (square
+  corners, thin inner rule, some tilted a degree or two) with italic captions;
+  one sprig + leaf/acorn divider per page (above the footer); fireflies only at
+  night (dark theme) and in the dusk-green footer; paper grain; warm paper
+  surfaces, never pure white; a seed-catalog price list with dotted leaders;
+  italic roman numerals for steps. No four-point "sparkle" icons — they read as
+  AI. Tokens live as CSS variables in `src/index.css`; the storybook layer
+  (`.plate`, `.story-eyebrow`, `.numeral`, `.catalog-*`, `.whimsy-*`, `.book`)
+  is there too. Whimsy components are in `src/components/site/Whimsy.tsx`.
+- **Layout:** at most three small-caps labels per page; headings without
+  trailing periods; one "get in touch" prompt per page.
+
+## Voice
+
+Write like the family talking at pickup: "we," contractions, short sentences.
+Use a true, specific detail instead of an adjective (cat carriers, the Subaru,
+Bristol and Blanca, cafeteria leftovers). Say each thing once per page. Prefer
+periods to dashes, and skip rhythm-only lists of three. Never use: curated,
+thoughtfully, exceptional, succulent, elevate, "reach out", "we'd love to hear
+from you". Headlines should sound like something you'd say out loud.
 
 ## Commands
 

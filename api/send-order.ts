@@ -20,29 +20,27 @@ const SENDER = `${FARM.name} <hello@creeksidefields.com>`
 // Email wording per form. The kinds and MAX_PER_ITEM mirror
 // src/content/orders.ts — kept in sync here because this edge function is
 // bundled separately and can't import from src.
-const ORDER_NEXT = "we'll be in touch to confirm your order and set a pickup time at the farm."
 const KINDS = {
-  shares: {
-    title: 'Pig share order',
-    next: ORDER_NEXT,
-    price: "Shares are $10 per pound of take-home pork — we'll weigh your share and give you the exact total.",
-  },
   pork: {
     title: 'Pork order',
-    next: ORDER_NEXT,
-    price: "Each pack is priced by weight — we'll weigh your order and give you the exact total.",
+    price: "Shares are $10 a pound of take-home pork, and cuts are priced per pound as listed. We'll weigh everything and send your total.",
   },
   birds: {
     title: 'Goose & duck order',
-    next: ORDER_NEXT,
-    price: "Each bird is priced by the pound — we'll weigh your birds and give you the exact total.",
+    price: "Each bird is priced by the pound. We'll weigh your birds and send your total.",
+  },
+  // Older pages sent share orders on their own; still accepted.
+  shares: {
+    title: 'Pig share order',
+    price: "Shares are $10 a pound of take-home pork. We'll weigh your share and send your total.",
   },
   message: {
     title: 'Message',
-    next: "we'll get back to you soon.",
     price: '',
   },
 } as const
+
+const SIGN_OFF = '<p style="margin:20px 0 0 0;font-size:15px;">See you at the farm,<br>Creekside Fields</p>'
 type Kind = keyof typeof KINDS
 const MAX_PER_ITEM = 10
 const MAX_LINES = 30
@@ -222,20 +220,21 @@ function renderCustomerEmail(order: Order, ref: string, dateIso: string): string
       ? `
     ${header('Thanks for getting in touch', dateIso)}
     <tr><td style="padding-top:18px;">
-      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${first}, thanks for writing to ${escape(FARM.name)} — ${escape(wording.next)} Here's a copy of your message.</p>
+      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${first}, thanks for writing! We'll write back soon. Here's a copy of your message.</p>
       ${notes ? block('Your message', multiline(notes)) : ''}
-      ${block('Farm', `<strong>${escape(FARM.name)}</strong><br>${escape(FARM.address)}<br>${escape(FARM.contact)}`)}
+      ${SIGN_OFF}
       ${footer(ref)}
     </td></tr>`
       : `
     ${header(wording.title, dateIso)}
     <tr><td style="padding-top:18px;">
-      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${first}, thanks for ordering from ${escape(FARM.name)}. Here's what you asked for — ${escape(wording.next)}</p>
+      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${first}, thanks for your order! Here's a copy. We'll write back soon with your total and a time to pick it up at the farm.</p>
       ${itemsBlock(order)}
       ${block('Price', `<strong>Priced by weight</strong><br><span style="font-size:12px;color:#6f655c;">${escape(wording.price)}</span>`)}
-      ${block('Pickup', `<strong>At our farm</strong><br>${escape(FARM.address)}<br><span style="font-size:12px;color:#6f655c;">Nothing to pay online. We'll reach out to set a time.</span>`)}
+      ${block('Pickup', `<strong>At our farm</strong><br>${escape(FARM.address)}<br><span style="font-size:12px;color:#6f655c;">Nothing to pay online.</span>`)}
       ${notes ? block('Your notes', multiline(notes)) : ''}
-      ${block('Questions?', `Just reply to this email, or write to <a href="mailto:${escape(FARM.contact)}" style="color:#2a2522;">${escape(FARM.contact)}</a>.`)}
+      <p style="margin:14px 0 0 0;font-size:15px;">Questions? Just hit reply.</p>
+      ${SIGN_OFF}
       ${footer(ref)}
     </td></tr>`
   return shell(inner)

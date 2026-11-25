@@ -15,10 +15,10 @@ export default function NotFound() {
         className="mt-4 font-display leading-[1.12] text-forest-800"
         style={{ fontSize: 'clamp(2.2rem, 1.5rem + 3vw, 3rem)' }}
       >
-        We couldn’t find that page.
+        This page wandered off
       </h1>
       <p className="mx-auto mt-4 text-earth-600" style={{ fontSize: 'var(--text-lead)', lineHeight: 1.7 }}>
-        It may have moved. Here’s where to find everything we have:
+        It might have moved. Everything we have is on one of these:
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link to="/shares" className="btn-primary">
@@ -28,7 +28,7 @@ export default function NotFound() {
           Geese &amp; ducks
         </Link>
         <Link to="/contact" className="btn-secondary">
-          Contact us
+          Say hello
         </Link>
       </div>
     </section>

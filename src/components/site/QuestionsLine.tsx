@@ -1,13 +1,12 @@
-/** "Questions? Get in touch" — closes pages so nobody hits a dead end. */
-export default function QuestionsLine({ lead = 'Questions? We’d love to hear from you.' }: { lead?: string }) {
+/** Closes a page so nobody hits a dead end. */
+export default function QuestionsLine({ lead = 'Something we didn’t cover?' }: { lead?: string }) {
   return (
-    <div className="text-center">
-      <p className="font-accent text-[1.2rem] italic leading-[1.6] text-earth-600">{lead}</p>
-      <div className="mt-5">
-        <a href="/contact" className="btn-secondary">
-          Get in touch
-        </a>
-      </div>
-    </div>
+    <p className="text-center font-accent text-[1.2rem] italic leading-[1.6] text-earth-600">
+      {lead}{' '}
+      <a href="/contact" className="not-italic font-body font-semibold text-copper-500 underline underline-offset-4 hover:text-copper-600">
+        Just ask
+      </a>
+      .
+    </p>
   )
 }
