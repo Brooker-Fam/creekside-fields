@@ -56,23 +56,25 @@ export const SHARE_PRICE_RANGE: Record<string, string> = Object.fromEntries(
 
 /**
  * The cuts we have, sold individually on the Pork page and listed as what a
- * share may include. Pack sizes come from a sample quarter share's packages.
- * Mark a cut `soldOut: true` to take it off the order form until it's back.
+ * share may include. Pack sizes come from a sample quarter share's packages;
+ * prices come from Nov 2026 research on pasture-raised pork prices (upstate NY
+ * farmers markets, Northeast farms, USDA). Mark a cut `soldOut: true` to take
+ * it off the order form until it's back.
  */
 export const PORK_CUTS: OrderItem[] = [
-  { id: 'chops', title: 'Boneless pork chops', detail: 'About 1–2½ lb packs' },
-  { id: 'ribs', title: 'Ribs', detail: 'About 3½ lb racks', soldOut: true },
-  { id: 'boston-butt', title: 'Boston butt', detail: 'About 5 lb roasts' },
-  { id: 'bacon', title: 'Bacon', detail: 'About 1 lb packs' },
-  { id: 'ham-steak', title: 'Smoked ham steak', detail: 'About 2 lb packs' },
-  { id: 'sliced-ham', title: 'Smoked sliced ham', detail: 'About 1 lb packs' },
-  { id: 'breakfast-sausage', title: 'Ground breakfast sausage', detail: 'About 1 lb packs' },
-  { id: 'sweet-italian', title: 'Ground sweet Italian sausage', detail: 'About 1 lb packs' },
-  { id: 'bratwurst', title: 'Bratwurst links', detail: 'About 1–1½ lb packs' },
-  { id: 'ground-pork', title: 'Ground pork', detail: 'About 1 lb packs' },
-  { id: 'ham-hocks', title: 'Ham hocks', detail: 'Fresh, not smoked — for soups and stock' },
-  { id: 'soup-bones', title: 'Soup bones', detail: 'For broth and stock' },
-  { id: 'lard-fat', title: 'Pork fat for lard', detail: 'For rendering your own lard' },
+  { id: 'chops', title: 'Boneless pork chops', pricePerLb: 15, detail: 'About 1–2½ lb packs' },
+  { id: 'ribs', title: 'Ribs', pricePerLb: 10, detail: 'About 3½ lb racks', soldOut: true },
+  { id: 'boston-butt', title: 'Boston butt', pricePerLb: 11, detail: 'About 5 lb roasts' },
+  { id: 'bacon', title: 'Bacon', pricePerLb: 15, detail: 'About 1 lb packs' },
+  { id: 'ham-steak', title: 'Smoked ham steak', pricePerLb: 11, detail: 'About 2 lb packs' },
+  { id: 'sliced-ham', title: 'Smoked sliced ham', pricePerLb: 12, detail: 'About 1 lb packs' },
+  { id: 'breakfast-sausage', title: 'Ground breakfast sausage', pricePerLb: 11, detail: 'About 1 lb packs' },
+  { id: 'sweet-italian', title: 'Ground sweet Italian sausage', pricePerLb: 11, detail: 'About 1 lb packs' },
+  { id: 'bratwurst', title: 'Bratwurst links', pricePerLb: 12, detail: 'About 1–1½ lb packs' },
+  { id: 'ground-pork', title: 'Ground pork', pricePerLb: 10, detail: 'About 1 lb packs' },
+  { id: 'ham-hocks', title: 'Ham hocks', pricePerLb: 5, detail: 'Fresh, not smoked' },
+  { id: 'soup-bones', title: 'Soup bones', pricePerLb: 4, detail: 'For broth and stock' },
+  { id: 'lard-fat', title: 'Pork fat for lard', pricePerLb: 4, detail: 'For rendering your own lard' },
 ]
 
 /** A representative — not guaranteed — list of cuts a share may include. */

@@ -1,6 +1,6 @@
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 import { usePostHog } from '@posthog/react'
-import { MAX_PER_ITEM, type OrderCounts, type OrderFormCopy, type OrderItem } from '../../content/orders'
+import { MAX_PER_ITEM, itemDetail, type OrderCounts, type OrderFormCopy, type OrderItem } from '../../content/orders'
 
 const FARM_EMAIL = 'brookerhousehold@gmail.com'
 
@@ -62,7 +62,12 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
     const phone = String(fd.get('customer_phone') ?? '').trim()
     const notes = String(fd.get('notes') ?? '').trim()
     const summary = copy.describe(counts)
-    const lines = chosen.map((item) => ({ ...item, quantity: counts[item.id] }))
+    const lines = chosen.map((item) => ({
+      id: item.id,
+      title: item.title,
+      detail: itemDetail(item),
+      quantity: counts[item.id],
+    }))
     const analytics = {
       kind: copy.kind,
       items: lines.map(({ id, quantity }) => ({ id, quantity })),
@@ -239,17 +244,17 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
 function ItemLine({ item, count, onAdjust }: { item: OrderItem; count: number; onAdjust: (delta: number) => void }) {
   const atMax = count >= MAX_PER_ITEM
   return (
-    <li className="px-4 py-3">
-      <div className="flex items-center justify-between gap-4">
+    <li className="px-3 py-3 sm:px-4">
+      <div className="flex items-center justify-between gap-3 sm:gap-4">
         <div>
-          <p className="font-display text-[1.2rem] leading-tight text-forest-800">{item.title}</p>
-          <p className="mt-0.5 text-[0.9375rem] text-earth-500">{item.detail}</p>
+          <p className="font-display text-[1.1rem] leading-tight text-forest-800 sm:text-[1.2rem]">{item.title}</p>
+          <p className="mt-0.5 text-[0.875rem] text-earth-500 sm:text-[0.9375rem]">{itemDetail(item)}</p>
         </div>
-        <div className="flex shrink-0 items-center gap-2" role="group" aria-label={`${item.title} quantity`}>
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2" role="group" aria-label={`${item.title} quantity`}>
           <StepButton label={`One fewer: ${item.title}`} disabled={count === 0} onClick={() => onAdjust(-1)}>
             −
           </StepButton>
-          <output className="w-8 text-center font-body text-[1.35rem] font-semibold tabular-nums leading-none text-forest-800">
+          <output className="w-7 text-center font-body text-[1.2rem] font-semibold tabular-nums leading-none text-forest-800 sm:w-8 sm:text-[1.35rem]">
             {count}
           </output>
           <StepButton label={`One more: ${item.title}`} disabled={atMax} onClick={() => onAdjust(1)}>
@@ -281,7 +286,7 @@ function StepButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-11 w-11 items-center justify-center rounded-full border border-sage-400 bg-surface font-display text-[1.4rem] leading-none text-copper-500 transition hover:bg-sage-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface"
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-sage-400 bg-surface font-display text-[1.3rem] leading-none text-copper-500 transition hover:bg-sage-100 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-surface sm:h-11 sm:w-11 sm:text-[1.4rem]"
     >
       <span aria-hidden>{children}</span>
     </button>

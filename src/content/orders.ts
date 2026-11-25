@@ -12,10 +12,17 @@ export interface OrderItem {
   id: string
   /** Shown in the picker and the order email, e.g. "Whole goose", "Bacon". */
   title: string
-  /** Second line, e.g. "$16 per pound" or "About 1 lb packs". */
+  /** Price per pound, in whole dollars. */
+  pricePerLb?: number
+  /** Extra detail after the price, e.g. "About 1 lb packs". */
   detail: string
   /** Out of stock: left off the order form (cuts still show as possible share cuts). */
   soldOut?: boolean
+}
+
+/** The line under an item's name: "$15/lb · About 1 lb packs". */
+export function itemDetail(item: OrderItem): string {
+  return [item.pricePerLb != null ? `$${item.pricePerLb}/lb` : '', item.detail].filter(Boolean).join(' · ')
 }
 
 /** Most of any one item a single online order can request. */

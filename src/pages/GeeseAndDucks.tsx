@@ -89,7 +89,7 @@ export default function GeeseAndDucks() {
           </p>
         </header>
 
-        <div className="card mx-auto" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
+        <div className="card mx-auto p-4 sm:p-6" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
           <OrderForm items={BIRD_ITEMS} copy={BIRD_ORDER} />
         </div>
       </section>

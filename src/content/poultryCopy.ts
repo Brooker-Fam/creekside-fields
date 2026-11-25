@@ -52,7 +52,8 @@ export function describeBirds(counts: OrderCounts): string {
 export const BIRD_ITEMS: OrderItem[] = BIRDS.map((b) => ({
   id: b.kind,
   title: `Whole ${b.singular}`,
-  detail: `$${b.pricePerLb} per pound`,
+  pricePerLb: b.pricePerLb,
+  detail: '',
 }))
 
 export const BIRD_ORDER: OrderFormCopy = {

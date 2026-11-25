@@ -237,9 +237,9 @@ export default function Shares() {
           maxWidth="40rem"
           eyebrow="Individual cuts"
           title="Just the cuts you want."
-          lead="Not ready for a whole share? Order individual cuts of our pasture-raised pork by the pack. Everything is priced by weight, so we’ll weigh your order and give you the total at pickup."
+          lead="Not ready for a whole share? Order individual cuts of our pasture-raised pork by the pack. Prices are per pound, so we’ll weigh your order and give you the total at pickup."
         />
-        <div className="card mx-auto" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
+        <div className="card mx-auto p-4 sm:p-6" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
           <OrderForm items={PORK_CUTS} copy={PORK_ORDER} />
         </div>
       </section>
