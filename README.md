@@ -1,29 +1,36 @@
 # Creekside Fields
 
 The customer-facing site + admin tooling for selling pasture-raised
-Gloucestershire Old Spots pork shares from our farm in Greenwich, NY.
+Gloucestershire Old Spots pork (by the share or by the cut) and whole geese
+and ducks from our farm in Greenwich, NY.
 
 Live at **https://creeksidefields.com**.
 
 ## What it does
 
-Customers reserve a whole / half / quarter share of one of our gilts, get
-a reservation confirmation by email, and pick up the meat from the farm
-once it's ready. The pigs are processed at a **USDA-inspected** facility,
-so the meat can be sold by the share post-slaughter — there's no
-signed bill of sale or pre-slaughter live-animal transfer. The farm
-handles processing scheduling and bills the customer once at the end with
-one bundled invoice.
+Customers order through simple forms — nothing is paid online:
 
-We also sell whole **geese ($16/lb) and ducks ($14/lb)** on
-`/geese-and-ducks`, and **individual pork cuts** by the pack (no prices
-listed — weighed and priced at pickup) in the `#cuts` section of `/shares`.
-These orders don't touch the database: both order forms
-(`src/components/site/OrderForm.tsx`) post to `api/send-order.ts`, which
-emails the customer a confirmation with the farm CC'd, so orders land in the
-farm inbox. Bird prices live in `src/content/poultryCopy.ts`; the cut list
-(also used as a share's "possible cuts") is `PORK_CUTS` in
-`src/content/sharesCopy.ts`.
+- **Pig shares** (quarter / half / whole) at $10/lb of take-home pork,
+  shown as estimated ranges from a real sample quarter.
+- **Individual cuts**, priced per pound (`#cuts` on `/shares`).
+- **Whole geese ($16/lb) and ducks ($14/lb)** on `/geese-and-ducks`.
+- A **contact form** on `/contact`.
+
+Every form posts to `api/send-order.ts`, which sends two emails: one to the
+farm with Reply-To set to the customer (so a plain Reply starts the
+conversation), and a confirmation to the customer. The farm's inbox is the
+order record — orders aren't stored in the database. The farm follows up to
+confirm the total (actual weight × price) and a pickup time at the farm. The
+pork was processed at a **USDA-inspected** facility, so it can be sold by the
+share or by the cut.
+
+Prices and product lists live in `src/content/`: share sizes and cuts in
+`sharesCopy.ts` (mark a cut `soldOut: true` to hide it from the order form),
+geese and ducks in `poultryCopy.ts`. The email function mirrors only the order
+kinds and the per-item limit from `src/content/orders.ts`.
+
+The admin dashboard (`/admin`) and the InsForge database still hold the
+earlier online share reservations; the public site no longer uses them.
 
 See **`docs/INFRA.md`** for accounts, env vars, DNS, and everything that
 isn't in the code.
@@ -34,10 +41,10 @@ See **`docs/MODEL.md`** for the legal/business model summary.
 - **Frontend**: React + Vite + TypeScript + Tailwind v3.4, deployed on
   Vercel (`guava-tri/creekside-fields`).
 - **Backend**: InsForge (Postgres + auth + storage). Project `umvug9f9` at
-  `https://umvug9f9.us-east.insforge.app`.
+  `https://umvug9f9.us-east.insforge.app`. Only the admin dashboard uses it
+  now (loaded on demand, so it isn't in the public bundle).
 - **Email**: Resend, sending from `hello@creeksidefields.com`. Called from
-  Vercel edge functions at `api/send-confirmation.ts` (pork reservations)
-  and `api/send-order.ts` (goose & duck and individual cut orders).
+  the Vercel edge function `api/send-order.ts` (every form on the site).
 - **Domain**: `creeksidefields.com`, registered at Squarespace, DNS
   managed by Vercel (we switched nameservers to `ns1/ns2.vercel-dns.com`).
 
@@ -68,16 +75,20 @@ it can record confirmation email sends/failures against the same user.
 
 ```
 src/
-  pages/         Home, Shares, GeeseAndDucks, HowItWorks, OurPigs, Animal, Reserve,
-                 ReserveConfirm, About, admin/{Login,Dashboard}
-  components/    Layout, OrderSummary, Invoice, Spots
-  lib/           insforge client, types, emailTemplates
+  pages/         Home, Shares (the Pork page), GeeseAndDucks, OurPigs, Contact,
+                 NotFound, admin/{Login,Dashboard}
+  components/    Layout, LegacyRedirect (old URLs), site/{OrderForm, ContactForm,
+                 Field, QuestionsLine, Whimsy, ThemeToggle}; OrderSummary +
+                 Invoice are admin-only
+  content/       Copy, prices, and product lists (orders, sharesCopy,
+                 poultryCopy, homeCopy)
+  lib/           insforge client + types + emailTemplates (admin), scroll helper
 api/
-  send-confirmation.ts   Vercel edge function — emails the reservation confirmation via Resend
-  send-order.ts          Vercel edge function — emails a goose & duck or pork cut order (customer + farm CC) via Resend
+  send-order.ts          Vercel edge function — emails every site form via Resend
+                         (farm copy with Reply-To = customer, plus a customer confirmation)
 migrations/      SQL migrations applied via `npx @insforge/cli db migrations up`
 scripts/         seed.sql for the initial pigs + processors
-public/farm-media/   Farm photos (pigs, plus geese-and-ducks.jpg)
+public/farm-media/   Farm photos, each with a smaller "-600/-750/-800" copy for phones
 ```
 
 ## Common admin tasks

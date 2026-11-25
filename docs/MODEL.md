@@ -1,16 +1,19 @@
 # Business + legal model
 
 Recap of the rules the site is built around. Read before changing
-anything that touches the reservation flow or how money moves.
+anything that touches ordering or how money moves.
 
 ## The deal
 
-Customer reserves a **pork share** (a whole / half / quarter of one of our
-gilts), pays a deposit to hold it, and picks up the meat once it's ready.
-The pigs are processed at a **USDA-inspected** facility, the processor cuts
-and wraps the meat under the USDA mark of inspection, and the customer pays
-one bundled bill to the farm that includes the processor pass-through fee.
-Pickup is from the farm (or, if arranged, the processor).
+Customers order through the site's forms: a **pork share** (a whole / half
+/ quarter of a pig, $10/lb of take-home pork), **individual cuts** priced per
+pound, or **whole geese and ducks** priced per pound. Nothing is paid online:
+the farm gets an email, confirms the total (actual weight × price), and sets a
+pickup time at the farm. The pigs were processed at a **USDA-inspected**
+facility, which cut and wrapped the meat under the USDA mark of inspection.
+
+Geese and ducks: how they're processed and labeled isn't documented here —
+check with the farm before making inspection claims about them on the site.
 
 ## Legal foundation
 
@@ -34,18 +37,20 @@ Pickup is from the farm (or, if arranged, the processor).
 - The **processor** kills, cuts, wraps, applies the USDA mark of
   inspection, and bills the farmer (we then pass through the cost in the
   final invoice to the customer).
-- The **customer** pays a deposit to reserve, then a single flat balance at
-  pickup. No bill of sale, no signature.
+- The **customer** sends an order; the farm follows up about the total and
+  payment, and the customer picks up at the farm. No bill of sale, no
+  signature, and the site doesn't mention deposits.
 
 ## Anti-patterns to avoid
 
-- Don't quote price per pound of finished meat ("$X/lb bacon"). Always
-  per pound of **hanging weight** × share %.
+- Prices are per pound of packaged (take-home) meat: $10/lb for shares,
+  the listed per-pound price for each cut and bird. The final total is always
+  the actual weight × price.
 - Don't have the farmer take possession of the meat from the processor and
   redistribute through a third party — keep pickup direct from the
   processor or farm.
-- Keep the pricing honest: the deposit is credited toward a single flat
-  final price set from the actual processing weights.
+- Keep the pricing honest: list prices up front, and set the final total from
+  the actual weights.
 
 ## History: the old custom-exempt model
 

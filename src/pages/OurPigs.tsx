@@ -11,6 +11,8 @@ const CONTAINER: CSSProperties = {
 
 interface PlatePhoto {
   src: string
+  /** Width of `src` in pixels; a 750 px copy sits next to it as `-750.jpg`. */
+  width: number
   alt: string
   /** Shown if `src` is missing; the plate hides entirely if this fails too. */
   fallback?: string
@@ -20,22 +22,27 @@ interface PlatePhoto {
 const PHOTOS: PlatePhoto[] = [
   {
     src: '/farm-media/pigs/01-arrival-barn.jpg',
+    width: 1500,
     alt: 'Two spotted Gloucestershire Old Spot piglets curled up together in the barn straw',
   },
   {
     src: '/farm-media/pigs/02-guardian.jpg',
+    width: 1125,
     alt: 'The young piglets in the barn with one of the farm dogs nearby',
   },
   {
     src: '/farm-media/pigs/03-feeding.jpg',
+    width: 2000,
     alt: 'Farmer crouching to feed the young pigs by hand in the straw',
   },
   {
     src: '/farm-media/pigs/04-gentle-hands.jpg',
+    width: 2000,
     alt: 'A piglet greeting a gentle hand at the edge of the pen',
   },
   {
     src: '/farm-media/pigs/05-pasture.jpg',
+    width: 2000,
     alt: 'Three pigs at a feeder out on pasture with a guardian dog watching in the background',
     fallback: '/farm-media/pig-grazing.jpg',
   },
@@ -80,6 +87,8 @@ export default function OurPigs() {
             <img
               className="plate-img"
               src="/farm-media/pig-grazing.jpg"
+              srcSet="/farm-media/pig-grazing-800.jpg 800w, /farm-media/pig-grazing.jpg 1600w"
+              sizes="(max-width: 1024px) calc(100vw - 70px), 500px"
               alt="Old Spot pig foraging at pasture"
               style={{ aspectRatio: '4 / 3', borderRadius: '10px 10px 3px 3px' }}
             />
@@ -167,12 +176,16 @@ export default function OurPigs() {
 function StoryPlate({ photo }: { photo: PlatePhoto }) {
   const [stage, setStage] = useState<'primary' | 'fallback' | 'gone'>('primary')
   if (stage === 'gone') return null
-  const src = stage === 'fallback' && photo.fallback ? photo.fallback : photo.src
+  const primary = stage === 'primary'
+  const src = primary ? photo.src : (photo.fallback ?? photo.src)
   return (
     <figure className="plate m-0 mb-8 break-inside-avoid">
       <img
         className="plate-img"
         src={src}
+        srcSet={primary ? `${photo.src.replace(/\.jpg$/, '-750.jpg')} 750w, ${photo.src} ${photo.width}w` : undefined}
+        sizes="(max-width: 640px) calc(100vw - 70px), 470px"
+        loading="lazy"
         alt={photo.alt}
         style={{ height: 'auto' }}
         onError={() => setStage((s) => (s === 'primary' && photo.fallback ? 'fallback' : 'gone'))}

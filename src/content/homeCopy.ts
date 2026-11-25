@@ -1,23 +1,11 @@
-// Pork-share sizing, pricing, and cut copy now lives in `sharesCopy.ts`,
-// which backs the dedicated /shares page. This file holds the Home page's
-// farm-story content only.
+// Home page copy: how ordering works, the farm story, and the FAQ. Share
+// sizes and prices live in `sharesCopy.ts`; geese and ducks in `poultryCopy.ts`.
 
 export const WORK_STEPS = [
-  ['1', 'Reserve your share', 'Place a deposit to hold your quarter, half, or whole pig share.'],
-  ['2', 'We raise and process', 'We raise our pigs with care and deliver them to our USDA-certified processor.'],
-  ['3', 'We confirm your price', 'Once processing weights are known, we will contact you with your final share price.'],
-  ['4', 'Pick up your pork', 'Pick up your share and fill your freezer.'],
-] as const
-
-export const VALUES = [
-  [
-    'Pasture raised',
-    'Our pigs spend their days on pasture, where they naturally forage for grasses, roots, insects, acorns, and other seasonal treats they discover while exploring. Their diet is supplemented with locally grown, freshly milled feed and nutritious recovered foods from a nearby school cafeteria that would otherwise go to waste.',
-  ],
-  [
-    'Family loved',
-    "Our pigs have been part of our family's daily life since we brought them home as piglets in the back of our Subaru. Raised on pasture with fresh air, sunshine, and attentive care from every member of our family, they reflect our commitment to giving animals the best life possible while they are in our care.",
-  ],
+  ['1', 'Choose what you’d like', 'A pig share, individual cuts, or whole geese and ducks. Prices are on each page.'],
+  ['2', 'Send us your order', 'Fill out the short form — nothing to pay online. We get your order, and you get a copy by email.'],
+  ['3', 'We’ll get in touch', 'We’ll confirm your order and your total, and set a pickup time that works for you.'],
+  ['4', 'Pick up at the farm', 'Come by our farm in Greenwich, NY, and fill your freezer.'],
 ] as const
 
 export const SEASONS = [
@@ -31,31 +19,25 @@ export const SEASONS = [
   ],
 ] as const
 
-export const FARM_PIGS = [
-  { name: 'Sushi', note: 'Gloucestershire Old Spot · born February 2025' },
-  { name: 'Nori', note: 'Gloucestershire Old Spot · born February 2025' },
-  { name: 'Carrot', note: 'Gloucestershire Old Spot · born February 2025' },
-] as const
-
 export const FAQS = [
   [
     'What is a pig share?',
-    'It is exactly what it sounds like — you are buying a whole pig, or a half or quarter of one, raised right here on our farm. We take it to our processor, and it comes back to you as a curated assortment of cuts — a freezer’s worth of pork. You reserve it with a deposit and pick it up once your pig is processed.',
+    'It is exactly what it sounds like — a whole pig, or a half or quarter of one, raised right here on our farm and cut into a curated assortment of cuts. A freezer’s worth of pork at $10 per pound of take-home pork.',
   ],
   [
     'Can I choose my cuts?',
-    'We curate a balanced, versatile assortment for every share, so you do not have to pick individual cuts. The cuts we list are what we expect to include, but because these are real animals, the exact cuts and quantities can vary slightly from share to share. If you would rather choose for yourself, you can also buy individual cuts by the pack.',
+    'Shares come as a balanced, curated assortment, so you do not have to pick. If you would rather choose for yourself, you can buy individual cuts by the pack — bacon, chops, sausage, and more.',
   ],
   [
-    'How is my final price set?',
-    'Each share is a flat price. We list an estimated range up front, then confirm your final price once your pig is processed — based on the actual weight of the meat and the cuts included. The deposit is credited toward it; the balance is due at pickup.',
+    'How is the price set?',
+    'Everything is priced by the pound: shares are $10 per pound of take-home pork, and cuts, geese, and ducks are priced per pound as listed. We weigh your order and give you the exact total — nothing to pay online.',
   ],
   [
     'How much freezer space will I need?',
-    'A rough guide: a quarter fits in the freezer of most refrigerators, a half fits in a small chest freezer, and a whole pig share fits in a small chest or upright freezer. We are happy to help you plan before you reserve.',
+    'A rough guide: a quarter share fits in most refrigerator freezers, a half fits in a small chest freezer, and a whole share fits in a chest or upright freezer. We are happy to help you plan.',
   ],
   [
-    'When will my pork be ready?',
-    'Our pigs are raised for more than a year, so shares are seasonal. Once your pig is processed, we confirm the pickup date and place and reach out to arrange it with you directly.',
+    'When can I pick up?',
+    'Our pork is ready now — cut, wrapped, and in the freezer. Send your order and we will reach out to set a pickup time at our farm in Greenwich, NY.',
   ],
 ] as const

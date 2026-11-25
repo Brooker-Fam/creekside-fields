@@ -1,12 +1,13 @@
-// Shared shape for the site's order forms: geese & ducks, and individual pork
-// cuts. Orders are emailed through api/send-order.ts (customer confirmation,
-// farm CC'd) — nothing is stored in InsForge.
+// Shared shape for the site's order forms: pig shares, individual pork cuts,
+// and geese & ducks. Orders (and contact-form messages) are emailed through
+// api/send-order.ts — the farm gets its own copy to reply to, and the customer
+// gets a confirmation. Nothing is stored in the database.
 //
-// OrderKind and MAX_PER_ITEM are mirrored in api/send-order.ts, which is
+// The kinds and MAX_PER_ITEM are mirrored in api/send-order.ts, which is
 // bundled separately and can't import from src — change both together.
 
-/** Which form an order came from; picks the wording of the order email. */
-export type OrderKind = 'birds' | 'pork'
+/** Which order form an order came from; picks the wording of the emails. */
+export type OrderKind = 'shares' | 'pork' | 'birds'
 
 export interface OrderItem {
   id: string
@@ -16,7 +17,7 @@ export interface OrderItem {
   pricePerLb?: number
   /** Extra detail after the price, e.g. "About 1 lb packs". */
   detail: string
-  /** Out of stock: left off the order form (cuts still show as possible share cuts). */
+  /** Out of stock: left off the order form and listed as "sold out for now". */
   soldOut?: boolean
 }
 
@@ -42,14 +43,17 @@ export interface OrderFormCopy {
   idleHint: string
   /** Short summary of what's chosen, e.g. "2 geese and 1 duck" or "6 packs". */
   describe: (counts: OrderCounts) => string
-  /** Follows the summary under the picker, after a dash. */
-  selectedHint: string
-  /** Pickup line above the submit button. */
-  pickup: string
-  submit: string
-  finePrint: string
-  /** Ends the thank-you note: "We've emailed a confirmation to …, and <thanksTail>" */
-  thanksTail: string
   /** Subject of the pre-filled fallback email if sending fails. */
   mailSubject: string
 }
+
+/** Wording every order form shares. */
+export const ORDER_WORDING = {
+  /** Follows the summary under the picker, after a dash. */
+  selectedHint: 'priced by weight, so we’ll weigh your order and give you the exact total.',
+  pickup: 'Pickup is at our farm in Greenwich, NY. Nothing to pay online — we’ll reach out to set a time.',
+  submit: 'Send my order',
+  finePrint: 'We’ll email you a copy right away, then get in touch to confirm your order and set a pickup time.',
+  /** Ends the thank-you note. */
+  thanksTail: 'we’ll be in touch soon to confirm your order and set a pickup time at the farm.',
+} as const

@@ -1,54 +1,13 @@
-import { useEffect, useState, type CSSProperties } from 'react'
-import { usePostHog } from '@posthog/react'
-import { insforge } from '../lib/insforge'
-import type { ShareOption } from '../lib/types'
+import { useEffect, type CSSProperties } from 'react'
 import { WhimsyDivider } from '../components/site/Whimsy'
-import ReservationForm from '../components/site/ReservationForm'
 import OrderForm from '../components/site/OrderForm'
-import { SHARE_TIERS, POSSIBLE_CUTS, PORK_CUTS, PORK_ORDER, type PorkShareKind } from '../content/sharesCopy'
+import QuestionsLine from '../components/site/QuestionsLine'
+import { SHARE_TIERS, SHARE_ITEMS, SHARE_ORDER, PORK_CUTS, PORK_ORDER } from '../content/sharesCopy'
 import { scrollToSection } from '../lib/scroll'
 
-type SoldOut = Record<PorkShareKind, boolean>
-
 export default function Shares() {
-  const posthog = usePostHog()
-  const [soldOut, setSoldOut] = useState<SoldOut>({ whole: false, half: false, quarter: false })
-  const [openKinds, setOpenKinds] = useState<Set<PorkShareKind>>(() => new Set())
-
-  function toggle(kind: PorkShareKind) {
-    setOpenKinds((prev) => {
-      const next = new Set(prev)
-      if (next.has(kind)) {
-        next.delete(kind)
-      } else {
-        next.add(kind)
-        // Expanding a tier is the customer choosing a size — the form is right
-        // there, so this is the moment of intent worth tracking.
-        posthog?.capture('share_size_selected', {
-          share_kind: kind,
-          sold_out: soldOut[kind],
-          source: 'shares',
-        })
-      }
-      return next
-    })
-  }
-
   useEffect(() => {
     document.title = 'Pasture-raised pork · Creekside Fields'
-    insforge.database
-      .from('share_options')
-      .select('*')
-      .then(({ data }) => {
-        const rows = (data ?? []) as ShareOption[]
-        if (!rows.length) return
-        const next: SoldOut = { whole: false, half: false, quarter: false }
-        ;(['whole', 'half', 'quarter'] as PorkShareKind[]).forEach((kind) => {
-          const forKind = rows.filter((s) => s.kind === kind)
-          if (forKind.length) next[kind] = !forKind.some((s) => s.status === 'available')
-        })
-        setSoldOut(next)
-      })
   }, [])
 
   return (
@@ -68,9 +27,8 @@ export default function Shares() {
           className="mx-auto text-earth-600"
           style={{ marginTop: 18, maxWidth: '40rem', fontSize: 'var(--text-lead)', lineHeight: 1.7 }}
         >
-          A pig share is just that — you are buying a whole pig, a half or a quarter of one of our
-          two pigs, raised by our family and delivered as a curated assortment of cuts at one flat
-          price. Just want a few favorites? You can also buy individual cuts by the pack.
+          Our pork is ready now — cut, wrapped, and in the freezer. Buy a quarter, half, or whole pig
+          share, or just the cuts you want, and pick it up at our farm in Greenwich, NY.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <a href="#share-options" className="btn-primary" onClick={scrollToSection}>
@@ -86,162 +44,59 @@ export default function Shares() {
         <WhimsyDivider />
       </div>
 
-      {/* ---------- the three options ---------- */}
+      {/* ---------- pig shares ---------- */}
       <section id="share-options" style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '48px 24px 88px' }}>
-        <StoryHeader align="center" maxWidth="40rem" eyebrow="Pig shares" title="Choose your share size." />
-        <div className="mx-auto grid gap-4" style={{ maxWidth: '46rem', marginTop: 36 }}>
-          {SHARE_TIERS.map((s) => {
-            const out = soldOut[s.kind]
-            const open = openKinds.has(s.kind)
-            return (
-              <div
-                key={s.kind}
-                className="overflow-hidden rounded-lg bg-surface shadow-card"
-                style={{
-                  border: '1px solid var(--border)',
-                  ...(s.featured ? { borderColor: 'var(--sage-400)' } : null),
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggle(s.kind)}
-                  aria-expanded={open}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition hover:bg-sage-100"
-                >
-                  <div>
-                    <p className="eyebrow">{s.title}</p>
-                    {out ? (
-                      <p className="mt-2 font-display text-[1.7rem] leading-none text-forest-800">
-                        Reserved for the season
-                      </p>
-                    ) : (
-                      <p className="mt-2 flex flex-wrap items-baseline gap-x-2.5">
-                        <span className="font-display text-[1.7rem] leading-none text-forest-800">
-                          {s.takeHome}
-                        </span>
-                        <span className="text-[0.9375rem] text-earth-500">
-                          estimated take-home pork · {s.price}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                  <span className="flex shrink-0 items-center gap-2 text-copper-500">
-                    {!out && (
-                      <span className="text-[0.9375rem] font-semibold">{open ? 'Close' : 'Reserve'}</span>
-                    )}
-                    <span
-                      className="font-display text-3xl"
-                      style={{ transition: 'transform 200ms', transform: open ? 'rotate(45deg)' : 'none' }}
-                      aria-hidden
-                    >
-                      +
-                    </span>
-                  </span>
-                </button>
+        <StoryHeader
+          align="center"
+          maxWidth="40rem"
+          eyebrow="Pig shares"
+          title="Choose your share size."
+          lead="A whole pig, or a half or quarter of one, as a curated mix of cuts — chops, bacon, ham, sausage, a Boston butt roast, and more, with no added nitrates. $10 per pound of take-home pork; we weigh your share and give you the exact total."
+        />
 
-                {open && (
-                  <div className="border-t border-linen-200 px-6 pb-6 pt-5">
-                    <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
-                      An estimated flat price of <strong className="text-forest-800">{s.price}</strong> for{' '}
-                      {s.takeHome} of curated cuts — see the full list below.
-                    </p>
-                    <p className="mt-3 text-[0.9375rem] leading-[1.72] text-earth-600">
-                      <strong className="text-forest-800">Freezer space:</strong> {s.freezer}
-                    </p>
-                    {out ? (
-                      <span
-                        className="btn-secondary mt-5 inline-flex cursor-not-allowed opacity-60"
-                        aria-disabled="true"
-                      >
-                        Reserved for the season
-                      </span>
-                    ) : (
-                      <div className="mt-6 border-t border-linen-200 pt-6">
-                        <ReservationForm kind={s.kind} />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-          })}
+        <div className="mx-auto grid gap-4 sm:grid-cols-3" style={{ maxWidth: '58rem', marginTop: 40 }}>
+          {SHARE_TIERS.map((t) => (
+            <div key={t.kind} className="flex flex-col rounded-lg border border-linen-200 bg-surface p-6 shadow-card">
+              <p className="eyebrow">{t.title}</p>
+              <p className="mt-4 font-display text-[1.9rem] leading-none text-forest-800">{t.takeHome}</p>
+              <p className="mt-1 text-[0.9375rem] text-earth-500">estimated take-home pork</p>
+              <p className="mt-4 border-t border-linen-200 pt-4 font-display text-[1.3rem] text-forest-700">
+                {t.price}
+              </p>
+              <p className="mt-2 text-[0.9375rem] leading-[1.6] text-earth-600">{t.freezer}</p>
+            </div>
+          ))}
         </div>
 
-        <p
-          className="mx-auto text-center font-accent text-[1.0625rem] italic leading-[1.7] text-earth-600"
-          style={{ marginTop: 32, maxWidth: '46rem' }}
+        <div
+          className="card mx-auto p-4 sm:p-6"
+          style={{ marginTop: 32, maxWidth: '46rem', background: 'var(--surface)' }}
         >
-          Our pigs are still growing, so weights and prices are estimates. We confirm your final
-          price once processing weights are in — then you pick up from us at the farm when it’s ready.
-        </p>
-      </section>
-
-      {/* ---------- what's included ---------- */}
-      <section style={tint('--sage-100', 60)}>
-        <div style={CONTAINER}>
-          <StoryHeader
-            align="center"
-            maxWidth="40rem"
-            eyebrow="What’s included"
-            title="Cuts we curate for you."
-            lead="Every share includes a balanced selection of cuts prepared by our USDA-certified processor."
-          />
-
-          <p
-            className="text-center text-[0.9375rem] uppercase tracking-[0.16em] text-earth-500"
-            style={{ marginTop: 44 }}
-          >
-            Possible cuts include
-          </p>
-          <ul
-            className="mx-auto grid list-none grid-cols-2 gap-3 p-0 sm:grid-cols-3"
-            style={{ marginTop: 18, maxWidth: '46rem' }}
-          >
-            {POSSIBLE_CUTS.map((cut) => (
-              <li
-                key={cut}
-                className="flex items-center gap-2.5 rounded-md border border-linen-200 bg-surface px-4 py-3 text-[0.9375rem] text-earth-700"
-              >
-                <LeafMark />
-                {cut}
-              </li>
-            ))}
-          </ul>
-
-          <div
-            className="card"
-            style={{
-              background: 'var(--surface)',
-              borderLeft: '3px solid var(--copper-500)',
-              maxWidth: '46rem',
-              margin: '32px auto 0',
-              display: 'flex',
-              gap: 18,
-              alignItems: 'flex-start',
-            }}
-          >
-            <img src="/brand/ornament-sprig.svg" alt="" aria-hidden style={{ width: 28, flexShrink: 0, marginTop: 2 }} />
-            <p className="text-[0.9375rem] leading-[1.72] text-earth-600">
-              <strong className="text-forest-800">All pig shares are processed with no added nitrates.</strong>{' '}
-              Because these are real animals, exact weights and cut quantities vary slightly from
-              share to share — we divide every share fairly and thoughtfully.
-            </p>
-          </div>
+          <OrderForm items={SHARE_ITEMS} copy={SHARE_ORDER} />
         </div>
       </section>
 
       {/* ---------- individual cuts ---------- */}
-      <section id="cuts" style={CONTAINER}>
-        <StoryHeader
-          align="center"
-          maxWidth="40rem"
-          eyebrow="Individual cuts"
-          title="Just the cuts you want."
-          lead="Not ready for a whole share? Order individual cuts of our pasture-raised pork by the pack. Prices are per pound, so we’ll weigh your order and give you the total at pickup."
-        />
-        <div className="card mx-auto p-4 sm:p-6" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
-          <OrderForm items={PORK_CUTS} copy={PORK_ORDER} />
+      <section id="cuts" style={tint('--sage-100', 60)}>
+        <div style={CONTAINER}>
+          <StoryHeader
+            align="center"
+            maxWidth="40rem"
+            eyebrow="Individual cuts"
+            title="Just the cuts you want."
+            lead="Not ready for a whole share? Order individual cuts by the pack. Prices are per pound, so we’ll weigh your order and give you the exact total."
+          />
+          <div
+            className="card mx-auto p-4 sm:p-6"
+            style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}
+          >
+            <OrderForm items={PORK_CUTS} copy={PORK_ORDER} />
+          </div>
         </div>
+      </section>
+
+      <section style={{ padding: '64px 24px 96px' }}>
+        <QuestionsLine />
       </section>
     </div>
   )
@@ -296,22 +151,5 @@ function StoryHeader({
         </p>
       )}
     </header>
-  )
-}
-
-/* Small farm-inspired leaf marker used as a list bullet. */
-function LeafMark() {
-  return (
-    <svg width="16" height="15" viewBox="0 0 26 22" fill="none" aria-hidden className="flex-shrink-0">
-      <path d="M2 20 C 2 9 11 2 24 2 C 24 13 15 20 2 20 Z" fill="#8fa07a" opacity="0.55" />
-      <path
-        d="M2 20 C 9 13 16 7 24 2"
-        stroke="#6b8058"
-        strokeWidth="1.3"
-        strokeLinecap="round"
-        opacity="0.85"
-        fill="none"
-      />
-    </svg>
   )
 }

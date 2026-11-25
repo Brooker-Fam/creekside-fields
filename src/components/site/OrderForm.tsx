@@ -1,6 +1,14 @@
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 import { usePostHog } from '@posthog/react'
-import { MAX_PER_ITEM, itemDetail, type OrderCounts, type OrderFormCopy, type OrderItem } from '../../content/orders'
+import {
+  MAX_PER_ITEM,
+  ORDER_WORDING,
+  itemDetail,
+  type OrderCounts,
+  type OrderFormCopy,
+  type OrderItem,
+} from '../../content/orders'
+import Field from './Field'
 
 const FARM_EMAIL = 'brookerhousehold@gmail.com'
 
@@ -8,17 +16,21 @@ interface SentOrder {
   firstName: string
   email: string
   summary: string
+  /** Whether the customer's confirmation email went out. */
+  emailed: boolean
 }
 
 /**
- * Order form shared by the geese & ducks page and the individual pork cuts
- * section. Customers pick quantities and leave their details; the order goes to
- * /api/send-order, which emails them a confirmation with the farm CC'd. If that
- * fails, the form offers a pre-filled email to the farm so the order isn't lost.
+ * Order form shared by pig shares, individual cuts, and geese & ducks.
+ * Customers pick quantities and leave their details; the order goes to
+ * /api/send-order, which emails the farm (reply goes to the customer) and sends
+ * the customer a confirmation. If that fails, the form offers a pre-filled
+ * email to the farm so the order isn't lost.
  */
 export default function OrderForm({ items: allItems, copy }: { items: OrderItem[]; copy: OrderFormCopy }) {
   const posthog = usePostHog()
   const items = allItems.filter((item) => !item.soldOut)
+  const soldOut = allItems.filter((item) => item.soldOut)
   const [counts, setCounts] = useState<OrderCounts>({})
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -89,7 +101,11 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
           order: { kind: copy.kind, customer: { name, email, phone }, items: lines, notes: notes || null },
         }),
       })
-      const body = (await resp.json().catch(() => ({}))) as { error?: string; ref?: string }
+      const body = (await resp.json().catch(() => ({}))) as {
+        error?: string
+        ref?: string
+        customerEmailed?: boolean
+      }
 
       if (resp.status === 400 && body.error) {
         // Something the customer can fix (e.g. a mistyped email address).
@@ -101,7 +117,7 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
 
       posthog?.identify(email, { email, name })
       posthog?.capture('order_submitted', { ...analytics, order_ref: body.ref, has_notes: Boolean(notes) })
-      setSent({ firstName: name.split(' ')[0], email, summary })
+      setSent({ firstName: name.split(' ')[0], email, summary, emailed: body.customerEmailed !== false })
     } catch (err) {
       posthog?.captureException(err, { context: 'order', ...analytics })
       posthog?.capture('order_failed', { ...analytics, reason: err instanceof Error ? err.message : String(err) })
@@ -132,8 +148,9 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
           Thank you, {sent.firstName}.
         </h3>
         <p className="mx-auto mt-3 text-[1.0625rem] leading-[1.7] text-earth-600" style={{ maxWidth: '34rem' }}>
-          Your order for <strong className="text-forest-800">{sent.summary}</strong> is in. We’ve emailed
-          a confirmation to {sent.email}, and {copy.thanksTail}
+          Your order for <strong className="text-forest-800">{sent.summary}</strong> is in
+          {sent.emailed ? `. We’ve emailed a copy to ${sent.email}, and ` : ', and '}
+          {ORDER_WORDING.thanksTail}
         </p>
         <p className="mt-4 text-[0.9375rem] text-earth-500">
           Questions?{' '}
@@ -160,6 +177,11 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
             />
           ))}
         </ul>
+        {soldOut.length > 0 && (
+          <p className="mt-2 text-[0.875rem] text-earth-500">
+            Sold out for now: {soldOut.map((item) => item.title).join(', ')}.
+          </p>
+        )}
         <p
           className={`mt-3 text-[0.9375rem] leading-[1.6] ${nothingChosen ? 'font-semibold text-copper-600' : 'text-earth-500'}`}
           aria-live="polite"
@@ -167,7 +189,7 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
           {nothingChosen
             ? copy.emptyError
             : total > 0
-              ? `${copy.describe(counts)} — ${copy.selectedHint}`
+              ? `${copy.describe(counts)} — ${ORDER_WORDING.selectedHint}`
               : copy.idleHint}
         </p>
       </fieldset>
@@ -216,7 +238,7 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
         />
       </div>
 
-      <p className="text-[0.9375rem] leading-[1.7] text-earth-600">{copy.pickup}</p>
+      <p className="text-[0.9375rem] leading-[1.7] text-earth-600">{ORDER_WORDING.pickup}</p>
 
       {error && (
         <div role="alert" className="rounded-md border border-copper-500 px-4 py-3 text-[0.9375rem] leading-[1.6] text-earth-700">
@@ -233,10 +255,10 @@ export default function OrderForm({ items: allItems, copy }: { items: OrderItem[
       )}
 
       <button type="submit" disabled={submitting} className="btn-primary disabled:opacity-60">
-        {submitting ? 'Sending your order…' : copy.submit}
+        {submitting ? 'Sending your order…' : ORDER_WORDING.submit}
       </button>
 
-      <p className="text-[0.8125rem] leading-[1.6] text-earth-500">{copy.finePrint}</p>
+      <p className="text-[0.8125rem] leading-[1.6] text-earth-500">{ORDER_WORDING.finePrint}</p>
     </form>
   )
 }
@@ -290,42 +312,6 @@ function StepButton({
     >
       <span aria-hidden>{children}</span>
     </button>
-  )
-}
-
-function Field({
-  id,
-  label,
-  name,
-  type = 'text',
-  autoComplete,
-  maxLength,
-  className = '',
-}: {
-  id: string
-  label: string
-  name: string
-  type?: string
-  autoComplete?: string
-  maxLength?: number
-  className?: string
-}) {
-  return (
-    <div className={className}>
-      <label className="label" htmlFor={id}>
-        {label}
-        <span className="text-copper-500"> *</span>
-      </label>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        required
-        autoComplete={autoComplete}
-        maxLength={maxLength}
-        className="input"
-      />
-    </div>
   )
 }
 

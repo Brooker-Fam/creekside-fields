@@ -436,6 +436,11 @@
   --surface:   #ece2cd;  /* raised cards / inputs — lifts above the page */
   --white:     #ece2cd;
 
+  /* deeper accent + muted text so they keep readable contrast on parchment */
+  --copper-500: #7f432c;
+  --copper-600: #6b3823;
+  --earth-500:  #5c4e42;
+
   /* cream surfaces track the parchment tone; mud/blush keep the :root dark
      text ramps (inherited) so they stay legible on parchment. */
   --cream-50: 236 226 205;

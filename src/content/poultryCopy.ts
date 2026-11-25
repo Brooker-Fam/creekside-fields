@@ -37,6 +37,8 @@ export const BIRDS: Bird[] = [
 
 export const BIRD_PHOTO = {
   src: '/farm-media/geese-and-ducks.jpg',
+  /** 600 px wide copy for phones. */
+  small: '/farm-media/geese-and-ducks-600.jpg',
   alt: 'A flock of geese and ducks walking across a green pasture in front of two old wooden barns under a blue sky',
   caption: 'Our geese and ducks out on pasture by the barns',
 } as const
@@ -62,10 +64,5 @@ export const BIRD_ORDER: OrderFormCopy = {
   emptyError: 'Choose at least one goose or duck.',
   idleHint: 'Whole birds, priced by weight.',
   describe: describeBirds,
-  selectedHint: 'priced by weight, so we’ll confirm your total before pickup.',
-  pickup: 'Birds are picked up from our farm in Greenwich, NY — we’ll reach out to arrange a time.',
-  submit: 'Reserve my birds',
-  finePrint: 'We’ll email your confirmation right away, then follow up to confirm your total and pickup.',
-  thanksTail: 'we’ll be in touch to confirm your total and arrange pickup at the farm.',
   mailSubject: 'Goose & duck order',
 }

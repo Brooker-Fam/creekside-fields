@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { WhimsyDivider } from '../components/site/Whimsy'
 import OrderForm from '../components/site/OrderForm'
+import QuestionsLine from '../components/site/QuestionsLine'
 import { BIRDS, BIRD_ITEMS, BIRD_ORDER, BIRD_PHOTO } from '../content/poultryCopy'
 import { scrollToSection } from '../lib/scroll'
 
@@ -61,6 +62,8 @@ export default function GeeseAndDucks() {
             <img
               className="plate-img"
               src={BIRD_PHOTO.src}
+              srcSet={`${BIRD_PHOTO.small} 600w, ${BIRD_PHOTO.src} 1200w`}
+              sizes="(max-width: 508px) calc(100vw - 70px), 440px"
               alt={BIRD_PHOTO.alt}
               style={{ aspectRatio: '3 / 4', borderRadius: '10px 10px 3px 3px' }}
             />
@@ -81,16 +84,20 @@ export default function GeeseAndDucks() {
             className="fairy-sparkle mt-4 inline-block font-display leading-[1.14] text-forest-800"
             style={{ fontSize: 'clamp(2rem, 1.4rem + 2.4vw, 2.5rem)' }}
           >
-            Reserve your birds.
+            Order your birds.
           </h2>
           <p className="text-earth-600" style={{ marginTop: 18, fontSize: 'var(--text-lead)', lineHeight: 1.7 }}>
             Choose how many geese and ducks you’d like. Each bird is priced by its weight, so we’ll
-            confirm your total before you pick up at the farm.
+            weigh your birds and give you the exact total.
           </p>
         </header>
 
         <div className="card mx-auto p-4 sm:p-6" style={{ marginTop: 40, maxWidth: '46rem', background: 'var(--surface)' }}>
           <OrderForm items={BIRD_ITEMS} copy={BIRD_ORDER} />
+        </div>
+
+        <div style={{ marginTop: 64 }}>
+          <QuestionsLine />
         </div>
       </section>
     </div>

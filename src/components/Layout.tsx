@@ -1,12 +1,12 @@
 import { useEffect, useState, type MouseEvent } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { SparkleField, WhimsyDivider } from './site/Whimsy'
 import { ThemeToggle } from './site/ThemeToggle'
 
 const SECTION_LINKS = [
   { href: '/shares', label: 'Pork' },
   { href: '/geese-and-ducks', label: 'Geese & ducks' },
-  { href: '/how-it-works', label: 'How it works' },
+  { href: '/#how', label: 'How it works' },
   { href: '/our-pigs', label: 'Our pigs' },
   { href: '/#faq', label: 'FAQ' },
 ] as const
@@ -73,8 +73,8 @@ function Header() {
               </a>
             ))}
           </div>
-          <a href="/shares" className="btn-primary px-4 py-2 text-xs">
-            Reserve your share
+          <a href="/contact" className="btn-primary px-4 py-2 text-xs">
+            Contact us
           </a>
           <ThemeToggle />
         </nav>
@@ -83,7 +83,7 @@ function Header() {
           <ThemeToggle />
           <button
             type="button"
-            className="text-sm font-medium text-forest-800"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center px-2 text-sm font-medium text-forest-800"
             aria-expanded={open}
             aria-label={open ? 'Close menu' : 'Open menu'}
             onClick={() => setOpen((v) => !v)}
@@ -110,11 +110,11 @@ function Header() {
               </a>
             ))}
             <a
-              href="/shares"
+              href="/contact"
               className="btn-primary mt-2 px-4 py-2 text-xs"
               onClick={() => setOpen(false)}
             >
-              Reserve your share
+              Contact us
             </a>
           </div>
         </nav>
@@ -139,7 +139,7 @@ function Footer() {
           </p>
         </div>
         <div>
-          <h4 className="label">Explore</h4>
+          <h2 className="label">Explore</h2>
           <ul className="mt-4 space-y-2 text-base">
             {SECTION_LINKS.map((link) => (
               <li key={link.href}>
@@ -155,8 +155,13 @@ function Footer() {
           </ul>
         </div>
         <div>
-          <h4 className="label">Contact</h4>
+          <h2 className="label">Contact</h2>
           <p className="mt-4 text-base">
+            <a className="text-earth-600 hover:text-copper-500" href="/contact">
+              Send us a message
+            </a>
+          </p>
+          <p className="mt-2 text-base">
             <a
               className="text-earth-600 hover:text-copper-500"
               href="mailto:brookerhousehold@gmail.com"
@@ -174,6 +179,14 @@ function Footer() {
 }
 
 export default function Layout() {
+  const { pathname, hash } = useLocation()
+
+  // In-app navigation keeps the old scroll position by default; start each new
+  // page at the top unless the link targets a section.
+  useEffect(() => {
+    if (!hash) window.scrollTo(0, 0)
+  }, [pathname, hash])
+
   // When the page loads at a section anchor (e.g. arriving at /#shares from
   // another page), scroll to it once the content has rendered. The browser's
   // native fragment scroll misses because the section doesn't exist yet at

@@ -11,7 +11,7 @@ secret is where it is.
 | **GitHub** | `Brooker-Fam/creekside-fields` | Source of truth. Push to `main` = deploy. |
 | **Vercel** | `guava-tri` team, project `creekside-fields` (`prj_KRVj99R3UJFsMHVnhq8ynQfMXWJf`) | Frontend hosting + edge function + DNS. |
 | **InsForge** | Project `umvug9f9` (Creekside Fields), org `Personal Org`, plan `NANO` (free) | Postgres, auth, storage. |
-| **Resend** | Account email `creeksidefields@gmail.com`, plan free | Outbound transactional email (reservation confirmation). |
+| **Resend** | Account email `creeksidefields@gmail.com`, plan free | Outbound transactional email (order and contact-form emails). |
 | **Squarespace** | Registrant `creeksidefields@gmail.com` (Brittany Woolley), `brookerhousehold@gmail.com` is the operations email | Domain registrar only. DNS lives at Vercel. |
 
 `brookerhousehold@gmail.com` is the farm's customer-facing email + the
@@ -47,7 +47,7 @@ Vercel deployment, change the records in Vercel, not Squarespace.
 - Env vars on Vercel (production):
   - `VITE_INSFORGE_URL` — the InsForge API base URL (`https://umvug9f9.us-east.insforge.app`). Not secret.
   - `VITE_INSFORGE_ANON_KEY` — the InsForge anon JWT (designed for client use, not secret in the same way an admin key would be).
-  - `RESEND_API_KEY` — **encrypted/sensitive**, server-only. Scoped to "Sending access" + `creeksidefields.com` only. Used by `api/send-confirmation.ts` and `api/send-order.ts`. **Never expose to the client.**
+  - `RESEND_API_KEY` — **encrypted/sensitive**, server-only. Scoped to "Sending access" + `creeksidefields.com` only. Used by `api/send-order.ts`. **Never expose to the client.**
 
 ## Backend (InsForge)
 
@@ -81,8 +81,7 @@ Vercel deployment, change the records in Vercel, not Squarespace.
 
 - Sender: `Creekside Fields <hello@creeksidefields.com>`.
 - API key stored on Vercel as `RESEND_API_KEY`, restricted to **Sending access** on **creeksidefields.com** only. Rotate by creating a new key in Resend → `vercel env rm RESEND_API_KEY production` → `vercel env add RESEND_API_KEY production`.
-- The send code lives in `api/send-confirmation.ts`. Called from `src/pages/ReserveConfirm.tsx` once the reservation confirmation page loads.
-- Goose & duck orders and individual pork cut orders go through `api/send-order.ts`, called from the order forms on `/geese-and-ducks` and `/shares#cuts` (`src/components/site/OrderForm.tsx`). It emails the customer a confirmation with `brookerhousehold@gmail.com` CC'd — that email *is* the order record (these orders aren't stored in InsForge). If the send fails, the form offers the customer a pre-filled email to the farm instead.
+- Every form on the site (pig shares, cuts, geese & ducks, contact) posts to `api/send-order.ts` (`src/components/site/OrderForm.tsx`, `ContactForm.tsx`). It sends two emails: one to `brookerhousehold@gmail.com` with Reply-To set to the customer, then a confirmation to the customer with Reply-To set to the farm. The farm's email *is* the order record (nothing is stored in InsForge). If the farm email fails, the form offers the customer a pre-filled email to the farm instead.
 - Domain verification: passes DKIM + SPF + DMARC. Don't remove any of the DNS records listed above.
 - Free tier: 3,000 emails/month, 100/day. Plenty for the volume we're operating at.
 
@@ -96,7 +95,7 @@ git push   # auto-deploys via Vercel-GitHub link
 npx vercel@latest deploy --prod
 
 # Tail Vercel function logs
-npx vercel@latest logs https://creeksidefields.com/api/send-confirmation
+npx vercel@latest logs https://creeksidefields.com/api/send-order
 
 # Run a new migration
 npx @insforge/cli db migrations new <name>
@@ -117,7 +116,7 @@ npx vercel@latest env add <NAME> production
 
 1. **Source of truth for DNS is Vercel, not Squarespace.** Don't bother logging into Squarespace except to renew the domain.
 2. **Two Gmail accounts in play.** `creeksidefields@gmail.com` for domain registrar + Resend; `brookerhousehold@gmail.com` for the farm operations + admin login. Don't conflate them.
-3. **Two automatic outbound emails**: the pork reservation confirmation (sent via Resend when the confirmation page loads) and the order confirmation for geese & ducks or individual cuts (sent when one of those order forms is submitted). Deposit instructions and final invoices are sent manually from the admin dashboard's "Email …" buttons.
+3. **One automatic email path**: `api/send-order.ts`, for every form on the site. The admin dashboard's "Email …" buttons (confirmations and invoices for the older online reservations) go through InsForge.
 4. **No signed bill of sale.** Pigs are processed at a USDA-inspected facility, so the meat is sold by the share post-slaughter — no pre-slaughter live-animal transfer, no signature capture. (The old signed-BoS flow + `signatures` storage bucket were retired; see `docs/MODEL.md` and migration `20260622130000`.)
-5. **Pricing.** Per-pound rate is **per share** on `share_options.rate_per_lb_hw_cents`, with kind-based defaults: **$7.50 whole / $8.00 half / $8.50 quarter** (smaller shares cost a bit more per pound to cover the extra per-customer coordination — standard pasture-pork practice). Edit in the admin UI under `Shares → Rate` column (inline; tab out to save). `animals.rate_per_lb_hw_cents` is still around as a legacy fallback used only when a share has no rate set. The `share_options` dollar ranges (`est_total_low_cents` / `est_total_high_cents`) are estimates derived from `rate × est. hanging weight × share %` and need to be updated by hand if you change the rate.
-6. **Two gilts, but customer never picks one.** The customer-facing flow only thinks in `kind` (whole / half / quarter); the system auto-assigns a specific `share_option` at reserve time. The pig identity still shows up on the reservation confirmation.
+5. **Pricing lives in the code.** Shares are $10/lb of take-home pork, with estimated ranges in `SHARE_TIERS` (`src/content/sharesCopy.ts`); cut prices are in `PORK_CUTS`; bird prices are in `src/content/poultryCopy.ts`. The `share_options` rate and estimate columns only matter to the admin dashboard.
+6. **InsForge status.** In Nov 2026 the InsForge project answered every request with 503 "No backend services available" (likely paused on the free plan). The public site doesn't depend on it anymore; resume the project from the InsForge dashboard to use `/admin` again.

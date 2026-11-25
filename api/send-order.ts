@@ -1,7 +1,10 @@
-// Vercel serverless function — emails an order from one of the site's order
-// forms (geese & ducks, individual pork cuts) via Resend. The customer gets a
-// confirmation and the farm is CC'd, so every order lands in the farm inbox
-// (these orders don't go through the reservations table).
+// Vercel serverless function — emails orders and messages from the site's
+// forms (pig shares, individual cuts, geese & ducks, and the contact form) via
+// Resend. Two emails go out:
+//   1. to the farm, with Reply-To set to the customer, so a plain "Reply"
+//      starts the conversation;
+//   2. to the customer, a confirmation with Reply-To set to the farm.
+// Nothing is stored in the database — the farm's email is the record.
 // Self-contained: no imports from src/ (Vercel's bundler doesn't include it).
 
 export const config = { runtime: 'edge' }
@@ -14,19 +17,30 @@ const FARM = {
 }
 const SENDER = `${FARM.name} <hello@creeksidefields.com>`
 
-// Email wording per order form. The kinds and MAX_PER_ITEM mirror
+// Email wording per form. The kinds and MAX_PER_ITEM mirror
 // src/content/orders.ts — kept in sync here because this edge function is
 // bundled separately and can't import from src.
+const ORDER_NEXT = "we'll be in touch to confirm your order and set a pickup time at the farm."
 const KINDS = {
-  birds: {
-    title: 'Goose & duck order',
-    next: "we'll be in touch to confirm your order, your total, and a pickup time.",
-    price: "Each bird is priced by the pound, so we'll confirm your total once your birds are weighed.",
+  shares: {
+    title: 'Pig share order',
+    next: ORDER_NEXT,
+    price: "Shares are $10 per pound of take-home pork — we'll weigh your share and give you the exact total.",
   },
   pork: {
     title: 'Pork order',
-    next: "we'll be in touch to confirm your order and a pickup time.",
-    price: "Each pack is priced by weight — we'll weigh your order and give you the total at pickup.",
+    next: ORDER_NEXT,
+    price: "Each pack is priced by weight — we'll weigh your order and give you the exact total.",
+  },
+  birds: {
+    title: 'Goose & duck order',
+    next: ORDER_NEXT,
+    price: "Each bird is priced by the pound — we'll weigh your birds and give you the exact total.",
+  },
+  message: {
+    title: 'Message',
+    next: "we'll get back to you soon.",
+    price: '',
   },
 } as const
 type Kind = keyof typeof KINDS
@@ -79,7 +93,11 @@ function parseOrder(raw: unknown): Parsed {
   const notes = text(o.notes, false)
 
   if (typeof o.kind !== 'string' || !Object.hasOwn(KINDS, o.kind)) return { error: 'Unknown order type.' }
-  if (!name || !email || !phone) return { error: 'Name, email, and phone are required.' }
+  const kind = o.kind as Kind
+  const isMessage = kind === 'message'
+
+  if (!name || !email) return { error: 'Please add your name and email.' }
+  if (!isMessage && !phone) return { error: 'Name, email, and phone are required.' }
   if (
     name.length > LIMITS.name ||
     email.length > LIMITS.email ||
@@ -89,19 +107,19 @@ function parseOrder(raw: unknown): Parsed {
     return { error: 'One of the fields is too long.' }
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: 'That email address doesn’t look right.' }
-  if (!Array.isArray(o.items) || o.items.length === 0) return { error: 'Choose at least one item.' }
-  if (o.items.length > MAX_LINES) return { error: 'That order has too many lines.' }
-  const items = o.items.map(parseLine)
-  if (items.some((l) => l === null)) return { error: `Choose between 1 and ${MAX_PER_ITEM} of each item.` }
 
-  return {
-    order: {
-      kind: o.kind as Kind,
-      customer: { name, email, phone },
-      items: items as OrderLine[],
-      notes: notes || null,
-    },
+  let items: OrderLine[] = []
+  if (isMessage) {
+    if (!notes) return { error: 'Please write a message.' }
+  } else {
+    if (!Array.isArray(o.items) || o.items.length === 0) return { error: 'Choose at least one item.' }
+    if (o.items.length > MAX_LINES) return { error: 'That order has too many lines.' }
+    const parsed = o.items.map(parseLine)
+    if (parsed.some((l) => l === null)) return { error: `Choose between 1 and ${MAX_PER_ITEM} of each item.` }
+    items = parsed as OrderLine[]
   }
+
+  return { order: { kind, customer: { name, email, phone }, items, notes: notes || null } }
 }
 
 function escape(s: string | null | undefined): string {
@@ -111,6 +129,10 @@ function escape(s: string | null | undefined): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+}
+
+function multiline(s: string): string {
+  return escape(s).replace(/\r?\n/g, '<br>')
 }
 
 function fmtDate(iso: string): string {
@@ -141,9 +163,15 @@ function shell(inner: string): string {
 </body></html>`
 }
 
-function renderOrderEmail(order: Order, ref: string, dateIso: string): string {
-  const { customer, notes } = order
-  const wording = KINDS[order.kind]
+function header(title: string, dateIso: string): string {
+  return `<tr><td style="border-bottom:2px solid #2a2522;padding-bottom:12px;">
+      <h1 style="margin:0;font-size:24px;font-family:Georgia,serif;">${escape(title)}</h1>
+      <p style="margin:6px 0 0 0;font-size:12px;color:#6f655c;">${escape(fmtDate(dateIso))}</p>
+    </td></tr>`
+}
+
+function itemsBlock(order: Order): string {
+  if (!order.items.length) return ''
   const items = order.items
     .map(
       (l) =>
@@ -152,36 +180,75 @@ function renderOrderEmail(order: Order, ref: string, dateIso: string): string {
         }</li>`,
     )
     .join('')
+  return block('Order', `<ul style="margin:0 0 0 18px;padding:0;">${items}</ul>`)
+}
 
+function footer(ref: string): string {
+  return `<p style="margin:22px 0 0 0;font-size:11px;color:#6f655c;border-top:1px solid #2a2522;padding-top:10px;">
+        Ref: ${escape(ref)} · ${escape(FARM.name)} · ${escape(FARM.contact)}
+      </p>`
+}
+
+/** The farm's copy: who it's from, how to reach them, and what they want. */
+function renderFarmEmail(order: Order, ref: string, dateIso: string): string {
+  const { customer, notes, kind } = order
+  const isMessage = kind === 'message'
+  const contact = [
+    `<strong>${escape(customer.name)}</strong>`,
+    `<a href="mailto:${escape(customer.email)}" style="color:#2a2522;">${escape(customer.email)}</a>`,
+    customer.phone ? `<a href="tel:${escape(customer.phone)}" style="color:#2a2522;">${escape(customer.phone)}</a>` : '',
+  ]
+    .filter(Boolean)
+    .join('<br>')
   const inner = `
-    <tr><td style="border-bottom:2px solid #2a2522;padding-bottom:12px;">
-      <h1 style="margin:0;font-size:24px;font-family:Georgia,serif;">${escape(wording.title)}</h1>
-      <p style="margin:6px 0 0 0;font-size:12px;color:#6f655c;">Ordered: ${escape(fmtDate(dateIso))}</p>
-    </td></tr>
+    ${header(isMessage ? 'New message' : `New ${KINDS[kind].title.toLowerCase()}`, dateIso)}
     <tr><td style="padding-top:18px;">
-      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${escape(customer.name.split(' ')[0])}, thanks for ordering from ${escape(FARM.name)}. Here's what you asked for — ${escape(wording.next)}</p>
-      ${block('Farm', `<strong>${escape(FARM.name)}</strong><br>${escape(FARM.address)}<br>${escape(FARM.contact)}`)}
-      ${block(
-        'Ordered by',
-        `<strong>${escape(customer.name)}</strong><br>${escape(customer.email)}<br>${escape(customer.phone)}`,
-      )}
-      ${block('Your order', `<ul style="margin:0 0 0 18px;padding:0;">${items}</ul>`)}
-      ${block(
-        'Price',
-        `<strong>Priced by weight</strong><br>
-         <span style="font-size:12px;color:#6f655c;">${escape(wording.price)}</span>`,
-      )}
-      ${block(
-        'Pickup',
-        `<strong>Farm pickup (Greenwich, NY)</strong><br>
-         <span style="font-size:12px;color:#6f655c;">We'll reach out to arrange a pickup time.</span>`,
-      )}
-      ${notes ? block('Your notes', escape(notes).replace(/\r?\n/g, '<br>')) : ''}
-      <p style="margin:22px 0 0 0;font-size:11px;color:#6f655c;border-top:1px solid #2a2522;padding-top:10px;">
-        Order ref: ${escape(ref)} · ${escape(FARM.name)} · ${escape(FARM.contact)}
-      </p>
+      <p style="margin:0 0 14px 0;font-size:15px;">From the website. Just reply to this email to reach ${escape(customer.name.split(' ')[0])}.</p>
+      ${block('From', contact)}
+      ${itemsBlock(order)}
+      ${notes ? block(isMessage ? 'Message' : 'Notes', multiline(notes)) : ''}
+      ${footer(ref)}
     </td></tr>`
   return shell(inner)
+}
+
+/** The customer's confirmation. */
+function renderCustomerEmail(order: Order, ref: string, dateIso: string): string {
+  const { customer, notes, kind } = order
+  const wording = KINDS[kind]
+  const first = escape(customer.name.split(' ')[0])
+  const inner =
+    kind === 'message'
+      ? `
+    ${header('Thanks for getting in touch', dateIso)}
+    <tr><td style="padding-top:18px;">
+      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${first}, thanks for writing to ${escape(FARM.name)} — ${escape(wording.next)} Here's a copy of your message.</p>
+      ${notes ? block('Your message', multiline(notes)) : ''}
+      ${block('Farm', `<strong>${escape(FARM.name)}</strong><br>${escape(FARM.address)}<br>${escape(FARM.contact)}`)}
+      ${footer(ref)}
+    </td></tr>`
+      : `
+    ${header(wording.title, dateIso)}
+    <tr><td style="padding-top:18px;">
+      <p style="margin:0 0 14px 0;font-size:15px;">Hi ${first}, thanks for ordering from ${escape(FARM.name)}. Here's what you asked for — ${escape(wording.next)}</p>
+      ${itemsBlock(order)}
+      ${block('Price', `<strong>Priced by weight</strong><br><span style="font-size:12px;color:#6f655c;">${escape(wording.price)}</span>`)}
+      ${block('Pickup', `<strong>At our farm</strong><br>${escape(FARM.address)}<br><span style="font-size:12px;color:#6f655c;">Nothing to pay online. We'll reach out to set a time.</span>`)}
+      ${notes ? block('Your notes', multiline(notes)) : ''}
+      ${block('Questions?', `Just reply to this email, or write to <a href="mailto:${escape(FARM.contact)}" style="color:#2a2522;">${escape(FARM.contact)}</a>.`)}
+      ${footer(ref)}
+    </td></tr>`
+  return shell(inner)
+}
+
+async function sendEmail(apiKey: string, email: Record<string, unknown>) {
+  const resp = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: SENDER, ...email }),
+  })
+  const body = (await resp.json().catch(() => ({}))) as Record<string, unknown>
+  return { ok: resp.ok, status: resp.status, body }
 }
 
 async function capturePostHog(
@@ -245,26 +312,8 @@ export default async function handler(req: Request): Promise<Response> {
   const distinctId = req.headers.get('x-posthog-distinct-id') ?? ''
   const sessionId = req.headers.get('x-posthog-session-id') ?? ''
   const ref = crypto.randomUUID().slice(0, 8)
-  const html = renderOrderEmail(order, ref, new Date().toISOString())
-  const subject = `${KINDS[order.kind].title} — ${FARM.name} — ${order.customer.name}`
-
-  const resp = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: SENDER,
-      to: order.customer.email,
-      cc: FARM_EMAIL,
-      reply_to: FARM_EMAIL,
-      subject,
-      html,
-    }),
-  })
-
-  const respBody = (await resp.json().catch(() => ({}))) as Record<string, unknown>
+  const now = new Date().toISOString()
+  const title = KINDS[order.kind].title
   const phProps: Record<string, unknown> = {
     order_ref: ref,
     kind: order.kind,
@@ -273,19 +322,38 @@ export default async function handler(req: Request): Promise<Response> {
     customer_email: order.customer.email,
     $session_id: sessionId || undefined,
   }
-  if (!resp.ok) {
-    await capturePostHog('order_email_send_failed', distinctId, {
-      ...phProps,
-      status: resp.status,
-      detail: respBody,
-    })
-    return json({ error: 'Resend failed', detail: respBody }, 502)
+
+  // 1. The farm's copy comes first — it's the one that matters.
+  const farm = await sendEmail(apiKey, {
+    to: FARM_EMAIL,
+    reply_to: order.customer.email,
+    subject:
+      order.kind === 'message'
+        ? `Message from ${order.customer.name}`
+        : `New ${title.toLowerCase()} from ${order.customer.name}`,
+    html: renderFarmEmail(order, ref, now),
+  })
+  if (!farm.ok) {
+    await capturePostHog('order_email_send_failed', distinctId, { ...phProps, status: farm.status, detail: farm.body })
+    return json({ error: 'Resend failed', detail: farm.body }, 502)
   }
+
+  // 2. The customer's confirmation. If only this fails, the farm still has the
+  //    order, so report success and let the page skip "we've emailed you".
+  const customer = await sendEmail(apiKey, {
+    to: order.customer.email,
+    reply_to: FARM_EMAIL,
+    subject: order.kind === 'message' ? `Thanks for getting in touch — ${FARM.name}` : `${title} — ${FARM.name}`,
+    html: renderCustomerEmail(order, ref, now),
+  })
+
   await capturePostHog('order_email_send_succeeded', distinctId, {
     ...phProps,
-    resend_id: respBody.id,
+    resend_id: farm.body.id,
+    customer_emailed: customer.ok,
+    customer_email_status: customer.status,
   })
-  return json({ ok: true, ref }, 200)
+  return json({ ok: true, ref, customerEmailed: customer.ok }, 200)
 }
 
 function json(body: unknown, status = 200): Response {
