@@ -57,10 +57,11 @@ export const SHARE_PRICE_RANGE: Record<string, string> = Object.fromEntries(
 /**
  * The cuts we have, sold individually on the Pork page and listed as what a
  * share may include. Pack sizes come from a sample quarter share's packages.
+ * Mark a cut `soldOut: true` to take it off the order form until it's back.
  */
 export const PORK_CUTS: OrderItem[] = [
-  { id: 'chops', title: 'Pork chops', detail: 'About 1–2½ lb packs' },
-  { id: 'ribs', title: 'Ribs', detail: 'About 3½ lb racks' },
+  { id: 'chops', title: 'Boneless pork chops', detail: 'About 1–2½ lb packs' },
+  { id: 'ribs', title: 'Ribs', detail: 'About 3½ lb racks', soldOut: true },
   { id: 'boston-butt', title: 'Boston butt', detail: 'About 5 lb roasts' },
   { id: 'bacon', title: 'Bacon', detail: 'About 1 lb packs' },
   { id: 'ham-steak', title: 'Smoked ham steak', detail: 'About 2 lb packs' },
@@ -69,7 +70,7 @@ export const PORK_CUTS: OrderItem[] = [
   { id: 'sweet-italian', title: 'Ground sweet Italian sausage', detail: 'About 1 lb packs' },
   { id: 'bratwurst', title: 'Bratwurst links', detail: 'About 1–1½ lb packs' },
   { id: 'ground-pork', title: 'Ground pork', detail: 'About 1 lb packs' },
-  { id: 'ham-hocks', title: 'Ham hocks', detail: 'For beans, soups, and greens' },
+  { id: 'ham-hocks', title: 'Ham hocks', detail: 'Fresh, not smoked — for soups and stock' },
   { id: 'soup-bones', title: 'Soup bones', detail: 'For broth and stock' },
   { id: 'lard-fat', title: 'Pork fat for lard', detail: 'For rendering your own lard' },
 ]

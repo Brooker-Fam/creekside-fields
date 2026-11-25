@@ -16,8 +16,9 @@ interface SentOrder {
  * /api/send-order, which emails them a confirmation with the farm CC'd. If that
  * fails, the form offers a pre-filled email to the farm so the order isn't lost.
  */
-export default function OrderForm({ items, copy }: { items: OrderItem[]; copy: OrderFormCopy }) {
+export default function OrderForm({ items: allItems, copy }: { items: OrderItem[]; copy: OrderFormCopy }) {
   const posthog = usePostHog()
+  const items = allItems.filter((item) => !item.soldOut)
   const [counts, setCounts] = useState<OrderCounts>({})
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)

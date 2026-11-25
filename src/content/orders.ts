@@ -14,6 +14,8 @@ export interface OrderItem {
   title: string
   /** Second line, e.g. "$16 per pound" or "About 1 lb packs". */
   detail: string
+  /** Out of stock: left off the order form (cuts still show as possible share cuts). */
+  soldOut?: boolean
 }
 
 /** Most of any one item a single online order can request. */
